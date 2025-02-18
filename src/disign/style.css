@@ -90,3 +90,31 @@
     background-color: #7E60BF;
      
 }
+.eye{
+    background-image: url(../../res/view.png);
+}
+.hidden{
+    background-image: url(../../res/hide.png);
+}
+.data{
+    display: none;
+}
+.contexto{
+    display: block;
+}
+.eye, .hidden{
+    display: flex;
+    position: absolute;
+    width: 3vw;
+    height: 3vw;
+    min-width: 30px;
+    min-height: 30px;
+    right: 12px;
+    top: 12px;
+    background-size: 100% 100%;
+    background-position: center;
+    background-color: antiquewhite;
+    border-radius: 50%;
+    border: solid 2px black;
+    z-index: 3;
+}

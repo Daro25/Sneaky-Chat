@@ -7,11 +7,12 @@
     <title>Document</title>
 </head>
 <body id="msjes">
-    
+    <button id="eye_data" class="eye" type="button" onclick="see()"></button>
     <div class="Remitente msj">
         <div id="box">             
         <h4>Remitente</h4>
-        <p id="contexto">
+        <h4 class="data">jbskjxka</h4>
+        <p class="contexto">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione facilis consequuntur officiis nesciunt obcaecati sequi fugit aperiam ducimus accusantium tenetur nulla fugiat inventore ipsam a quo voluptatem, dolores veritatis! Fugit, mollitia eligendi!
         </p></div>
     </div>
@@ -19,7 +20,8 @@
     <div class="Usuario msj">
         <div id="box">             
         <h4>Usuario</h4>
-        <p id="contexto">
+        <h4 class="data">hbkdchbkcb</h4>
+        <p class="contexto">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione facilis consequuntur officiis nesciunt obcaecati sequi fugit aperiam ducimus accusantium tenetur nulla fugiat inventore ipsam a quo voluptatem, dolores veritatis! Fugit, mollitia eligendi!
         </p></div>
     </div>
@@ -27,7 +29,8 @@
     <div class="Remitente msj">
         <div id="box">             
         <h4>Remitente</h4>
-        <p id="contexto">
+        <h4 class="data">mb mznb </h4>
+        <p class="contexto">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione facilis consequuntur officiis nesciunt obcaecati sequi fugit aperiam ducimus accusantium tenetur nulla fugiat inventore ipsam a quo voluptatem, dolores veritatis! Fugit, mollitia eligendi!
         </p></div>
     </div>
@@ -35,9 +38,46 @@
     <div class="Remitente msj">
         <div id="box">             
         <h4>Remitente</h4>
-        <p id="contexto">
+        <h4 class="data">mb zxn</h4>
+        <p class="contexto">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione facilis consequuntur officiis nesciunt obcaecati sequi fugit aperiam ducimus accusantium tenetur nulla fugiat inventore ipsam a quo voluptatem, dolores veritatis! Fugit, mollitia eligendi!
         </p></div>
     </div>
+    <script>
+        var visible = false;
+function see() {
+    if (visible) {
+        visible = false;
+        let cont = document.getElementById("eye_data");
+        cont.classList.remove("hidden");
+        cont.classList.add("eye");
+        const contexto = document.querySelectorAll('.contexto');
+        // Itera sobre cada elemento y aplica los cambios
+        contexto.forEach(elemento => {
+            elemento.style.display = 'block';
+        });
+        const data = document.querySelectorAll('.data');
+        // Itera sobre cada elemento y aplica los cambios
+        data.forEach(elemento => {
+        elemento.style.display = 'none';
+        });
+    } else {
+        visible = true;
+        let cont = document.getElementById("eye_data");
+        cont.classList.remove("eye");
+        cont.classList.add("hidden");
+        const contexto = document.querySelectorAll('.contexto');
+        // Itera sobre cada elemento y aplica los cambios
+        contexto.forEach(elemento => {
+            elemento.style.display = 'none';
+        });
+        const data = document.querySelectorAll('.data');
+        // Itera sobre cada elemento y aplica los cambios
+        data.forEach(elemento => {
+        elemento.style.display = 'block';
+        });
+    }
+}
+    </script>
 </body>
 </html>

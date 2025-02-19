@@ -104,7 +104,7 @@
 }
 .eye, .hidden{
     display: flex;
-    position: absolute;
+    position: fixed;
     width: 3vw;
     height: 3vw;
     min-width: 30px;

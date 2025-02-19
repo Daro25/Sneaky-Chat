@@ -9,9 +9,9 @@ function obtenerDatos(param1, param2) {
                     st += `
                         <div class="msj">
                             <div id="box">
-                                <h4>${fila.nombre}</h4>
-                                <h4 class="data">${fila.data}</h4>
-                                <p class="contexto">${fila.contexto}</p>
+                                <h4>${fila.User}</h4>
+                                <h4 class="data">${fila.FechayHora}</h4>
+                                <p class="contexto">${fila.Texto}</p>
                             </div>
                         </div>`;
                 });

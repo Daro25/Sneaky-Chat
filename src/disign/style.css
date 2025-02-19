@@ -47,7 +47,7 @@
     height: 40px;
     border: none;
     display: inline-block;
-    background-image: url(img/enviar.png);
+    background-image: url(../../res/enviar.png);
     background-size: 70% auto;
     background-repeat: no-repeat;
     background-position: center;

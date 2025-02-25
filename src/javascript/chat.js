@@ -1,7 +1,8 @@
-function obtenerDatos(param1, param2) {
+var id = 1;                                                                                                                                                      
+function obtenerDatos(param1) {
     return new Promise((resolve, reject) => {
         let st = '';
-        const url = `consultar.php?sala_id=${encodeURIComponent(param1)}&Id_User=${encodeURIComponent(param2)}`;
+        const url = `./Consultar.php?sala_id=${encodeURIComponent(param1)}&Id=${encodeURIComponent(id)}`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -14,6 +15,7 @@ function obtenerDatos(param1, param2) {
                                 <p class="contexto">${fila.Texto}</p>
                             </div>
                         </div>`;
+                        id = fila.Id;
                 });
                 resolve(st);
             })
@@ -26,7 +28,9 @@ function obtenerDatos(param1, param2) {
 //-------------------- Creacion de la tabla -------------------
 let tabla = document.getElementById('msjes');
 //---------------------Visualizar datos------------------------
-columna();//ejecutamos la funcion que genera la tabla
+setInterval(() => {
+    columna();
+}, 1000);//ejecutamos la funcion que genera la tabla
 function recargar() {
     while (tabla.firstChild) {
         tabla.removeChild(tabla.firstChild);
@@ -38,7 +42,7 @@ function columna() {
     obtenerDatos()
         .then(resultado => {
             st += resultado;
-            tabla.innerHTML = st;
+            tabla.innerHTML += st;
         })
         .catch(error => {
             // Manejar errores si es necesario

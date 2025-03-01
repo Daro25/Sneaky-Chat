@@ -1,12 +1,15 @@
 import { Text, View, StyleSheet } from "react-native";
 import { Link } from "expo-router";
 import { TextInput } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Registro_user() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Pantalla de registro.</Text>
-      <TextInput />
+      <SafeAreaView>
+        <TextInput/>
+      </SafeAreaView>
     </View>
   );
 }

@@ -7,9 +7,9 @@ export default function Registro_user() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Pantalla de registro.</Text>
-      <SafeAreaView>
+      {/*<SafeAreaView>
         <TextInput/>
-      </SafeAreaView>
+      </SafeAreaView>*/}
     </View>
   );
 }

@@ -1,0 +1,107 @@
+import { withLayoutContext } from "expo-router";
+import { PixelRatio, StyleSheet } from "react-native";
+import { useColorScheme } from 'react-native';
+
+export const head = '#433878';
+const colorScheme = useColorScheme();
+export const globalStyles = StyleSheet.create (
+{
+    container: {
+        flex: 1,
+        backgroundColor: colorContainer(),
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+    inputTxt : {
+       backgroundColor: colorBase(),
+       color: colorText(),
+       justifyContent: 'center',
+       padding: 5,
+       minHeight:20,
+       borderRadius: 7
+    },
+    text: {
+        color: colorText(),
+    },
+    link: {
+        fontSize: 20,
+        textDecorationLine: 'underline',
+        color: colorText()
+      },
+    container_H :{
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        width: '100%',
+        textAlign: 'center'
+    },
+    text_container_H : {
+        color: colorText(),
+        marginTop:10,
+        justifyContent: 'center',
+        display: 'flex',
+        fontWeight: 'bold'
+    },
+    inlineBlock: {
+        display: 'flex',
+        margin: 5, 
+      },
+      negrita: {
+        fontWeight: 'bold'
+      },
+      forms : {
+        textAlign: 'justify',
+        width: '100%',
+        maxWidth: PixelRatio.getPixelSizeForLayoutSize(400),
+        height: 'auto',
+        shadowColor: boxShadow(),
+        borderRadius: 10,
+        padding: 20,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 3,
+      },
+      alignNormal : {
+        textAlign: 'justify',
+      },
+      btn_normal: {
+        backgroundColor: '#9B7EBD',
+        borderRadius:10,
+        padding: 10,
+      },
+      btn_div2: {
+        minHeight:70,
+        width: '40%',
+        textAlign:'center',
+        justifyContent: 'center'
+      },
+});
+
+ // ----------- colores constantes -----------------
+export function colorContainer(){
+    if (colorScheme === 'dark') {
+        return '#25292e';
+      } else {
+        return '#CDC1FF';
+      }
+}
+export function colorBase() {
+    if (colorScheme === 'dark') {
+        return '#000';
+      } else {
+        return '#fff';
+      }
+}
+export function colorText() {
+    if (colorScheme === 'dark') {
+        return '#fff';
+      } else {
+        return '#000';
+      }
+}
+export function boxShadow() {
+    if (colorScheme === 'dark') {
+        return '#7E60BF';
+      } else {
+        return '#000';
+      }
+}

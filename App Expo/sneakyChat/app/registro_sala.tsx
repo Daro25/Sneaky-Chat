@@ -8,7 +8,7 @@ const [pass, setPass] = useState("")
 const [Rpass, setRpass] = useState("")
 const [year, setYear] = useState('');
 
-export default function Registro_user() {
+export default function Registro_sala() {
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={globalStyles.forms}>

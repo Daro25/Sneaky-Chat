@@ -1,4 +1,5 @@
 import { Stack } from "expo-router";
+import { head, colorText } from "./recursos/style";
 
 export default function RootLayout() {
   return (
@@ -6,7 +7,7 @@ export default function RootLayout() {
         screenOptions ={{
           statusBarBackgroundColor: '#ffd33d',
           headerStyle: {
-            backgroundColor: '#25292e',
+            backgroundColor: head,
           },
           headerShadowVisible: false,
           headerTintColor: '#fff',

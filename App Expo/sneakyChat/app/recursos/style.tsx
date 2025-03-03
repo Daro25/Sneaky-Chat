@@ -32,7 +32,8 @@ export const globalStyles = StyleSheet.create (
         flexDirection: 'row',
         flexWrap: 'wrap',
         width: '100%',
-        textAlign: 'center'
+        textAlign: 'center',
+        position:'relative'
     },
     text_container_H : {
         color: colorText(),
@@ -70,9 +71,32 @@ export const globalStyles = StyleSheet.create (
       },
       btn_div2: {
         minHeight:70,
-        width: '40%',
+        width: '47%',
         textAlign:'center',
         justifyContent: 'center'
+      },
+      unCheck:{
+        backgroundColor: 'rgba(155, 126, 189, 0.2)',
+        position:'relative',
+        
+        borderBottomLeftRadius: '50%',
+        borderBottomRightRadius: '50%',
+      },
+      check: {
+        borderBottomLeftRadius: '50%',
+        borderBottomRightRadius: '50%',
+        height: '100%',
+        position: 'absolute',
+        left: '2.5%'
+      },
+      center: {
+        textAlign:'center',
+        justifyContent: 'center'
+      },
+      header: {
+        position:'absolute',
+        top:0,
+        minHeight:90,
       },
 });
 

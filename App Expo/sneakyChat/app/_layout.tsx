@@ -14,6 +14,7 @@ export default function RootLayout() {
         }}>
       <Stack.Screen name="index" options={{title:'Home'}}/>
       <Stack.Screen name="registro_user" options={{title:'Registro de usuario'}}/>
+      <Stack.Screen name="registro_user" options={{title:'Registro de sala'}}/>
     </Stack>
   );
 }

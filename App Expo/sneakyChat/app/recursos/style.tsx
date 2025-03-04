@@ -1,9 +1,16 @@
 import { withLayoutContext } from "expo-router";
+import { useEffect, useState } from "react";
 import { PixelRatio, StyleSheet } from "react-native";
 import { useColorScheme } from 'react-native';
 
 export const head = '#433878';
 const colorScheme = useColorScheme();
+const [isDarkMode, setIsDarkMode] = useState(colorScheme === 'dark');
+  
+useEffect(() => {
+  setIsDarkMode(colorScheme === 'dark');
+}, [colorScheme]); 
+
 export const globalStyles = StyleSheet.create (
 {
     container: {
@@ -102,28 +109,28 @@ export const globalStyles = StyleSheet.create (
 
  // ----------- colores constantes -----------------
 export function colorContainer(){
-    if (colorScheme === 'dark') {
+    if (isDarkMode) {
         return '#25292e';
       } else {
         return '#CDC1FF';
       }
 }
 export function colorBase() {
-    if (colorScheme === 'dark') {
+    if (isDarkMode) {
         return '#000';
       } else {
         return '#fff';
       }
 }
 export function colorText() {
-    if (colorScheme === 'dark') {
+    if (isDarkMode) {
         return '#fff';
       } else {
         return '#000';
       }
 }
 export function boxShadow() {
-    if (colorScheme === 'dark') {
+    if (isDarkMode) {
         return '#7E60BF';
       } else {
         return '#000';

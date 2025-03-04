@@ -1,19 +1,17 @@
-import { Text, View, StyleSheet, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity } from "react-native";
+import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity } from "react-native";
 import { globalStyles } from "./recursos/style";
-import { useState } from "react";
-import { Link } from "expo-router";
+import { useState } from "react"
 
+export default function Registro_user() {
 const [name, setName] = useState("")
 const [pass, setPass] = useState("")
 const [Rpass, setRpass] = useState("")
-const [year, setYear] = useState('');
-
-export default function Registro_user() {
+const [year, setYear] = useState('')
   return (
     <SafeAreaView style={globalStyles.container}>
       <View style={globalStyles.forms}>
         <View style={globalStyles.container_H}>
-          <Text style={globalStyles.text_container_H}>Nombre de usuario: </Text>
+          <Text style={[globalStyles.text_container_H]}>Nombre de usuario: </Text>
           <TextInput 
           style={[globalStyles.inputTxt, globalStyles.inlineBlock]} 
           value={name} 
@@ -57,11 +55,11 @@ export default function Registro_user() {
           <View style={globalStyles.container_H}>
             <TouchableOpacity style={[globalStyles.btn_normal, globalStyles.inlineBlock, globalStyles.btn_div2]}
             onPress={login}>
-              <Text style={[globalStyles.text, globalStyles.negrita]}>Iniciar Sesión</Text>
+              <Text style={[globalStyles.text, globalStyles.negrita, globalStyles.center]}>Iniciar Sesión</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[globalStyles.btn_normal, globalStyles.inlineBlock, globalStyles.btn_div2]}
             onPress={registro}>
-              <Text style={[globalStyles.text, globalStyles.negrita]}>Registrarse por primera vez</Text>
+              <Text style={[globalStyles.text, globalStyles.negrita, globalStyles.center]}>Registrarse por primera vez</Text>
             </TouchableOpacity>
           </View>
         </View>

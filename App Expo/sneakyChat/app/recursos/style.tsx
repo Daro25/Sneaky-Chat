@@ -1,9 +1,16 @@
 import { withLayoutContext } from "expo-router";
+import { useEffect, useState } from "react";
 import { PixelRatio, StyleSheet } from "react-native";
 import { useColorScheme } from 'react-native';
 
 export const head = '#433878';
 const colorScheme = useColorScheme();
+const [isDarkMode, setIsDarkMode] = useState(colorScheme === 'dark');
+  
+useEffect(() => {
+  setIsDarkMode(colorScheme === 'dark');
+}, [colorScheme]); 
+
 export const globalStyles = StyleSheet.create (
 {
     container: {
@@ -32,7 +39,8 @@ export const globalStyles = StyleSheet.create (
         flexDirection: 'row',
         flexWrap: 'wrap',
         width: '100%',
-        textAlign: 'center'
+        textAlign: 'center',
+        position:'relative'
     },
     text_container_H : {
         color: colorText(),
@@ -70,36 +78,59 @@ export const globalStyles = StyleSheet.create (
       },
       btn_div2: {
         minHeight:70,
-        width: '40%',
+        width: '47%',
         textAlign:'center',
         justifyContent: 'center'
+      },
+      unCheck:{
+        backgroundColor: 'rgba(155, 126, 189, 0.2)',
+        position:'relative',
+        
+        borderBottomLeftRadius: '50%',
+        borderBottomRightRadius: '50%',
+      },
+      check: {
+        borderBottomLeftRadius: '50%',
+        borderBottomRightRadius: '50%',
+        height: '100%',
+        position: 'absolute',
+        left: '2.5%'
+      },
+      center: {
+        textAlign:'center',
+        justifyContent: 'center'
+      },
+      header: {
+        position:'absolute',
+        top:0,
+        minHeight:90,
       },
 });
 
  // ----------- colores constantes -----------------
 export function colorContainer(){
-    if (colorScheme === 'dark') {
+    if (isDarkMode) {
         return '#25292e';
       } else {
         return '#CDC1FF';
       }
 }
 export function colorBase() {
-    if (colorScheme === 'dark') {
+    if (isDarkMode) {
         return '#000';
       } else {
         return '#fff';
       }
 }
 export function colorText() {
-    if (colorScheme === 'dark') {
+    if (isDarkMode) {
         return '#fff';
       } else {
         return '#000';
       }
 }
 export function boxShadow() {
-    if (colorScheme === 'dark') {
+    if (isDarkMode) {
         return '#7E60BF';
       } else {
         return '#000';

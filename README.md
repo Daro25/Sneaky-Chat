@@ -20,12 +20,12 @@ la escalabilidad del proyecto y su potencial impacto en el mercado mexicano.
 
 ## *********MISIÓN, VISIÓN Y VALORES*********
 
-#MISIÓN
+###MISIÓN
 #Nos dedicamos a desarrollar una aplicación innovadora que funcione como Block de Notas 
 convencional con una plataforma de mensajería instantánea oculta. Herramienta eficiente y 
 segura para la gestión de información y comunicarse de manera privada entre usuarios.
 
-#VISIÓN
+###VISIÓN
 #Ser conocidos como la aplicación más usada a nivel mundial tanto instituciones como 
 organizaciones, una plataforma de comunicación segura, promover la privacidad y ofrecer 
 una experiencia confiable al usuario.

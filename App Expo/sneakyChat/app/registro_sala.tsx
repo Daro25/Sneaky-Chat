@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity, Dimensions } from "react-native";
+import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity, Dimensions } from "react-native";
 import { globalStyles } from "./recursos/style";
 import { useState } from "react";
 import Animated, {

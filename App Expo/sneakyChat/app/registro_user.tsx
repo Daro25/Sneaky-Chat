@@ -1,7 +1,6 @@
-import { Text, View, StyleSheet, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity } from "react-native";
+import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity } from "react-native";
 import { globalStyles } from "./recursos/style";
-import { useState } from "react";
-import { Link } from "expo-router";
+import { useState } from "react"
 
 export default function Registro_user() {
 const [name, setName] = useState("")

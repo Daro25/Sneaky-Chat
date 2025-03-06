@@ -18,7 +18,7 @@ funcional y segura, sino también un enfoque integral que considere la experienc
 la escalabilidad del proyecto y su potencial impacto en el mercado mexicano.
 
 
-## *********b.MISIÓN, VISIÓN Y VALORES*********
+## *********MISIÓN, VISIÓN Y VALORES*********
 
 #MISIÓN
 #Nos dedicamos a desarrollar una aplicación innovadora que funcione como Block de Notas 

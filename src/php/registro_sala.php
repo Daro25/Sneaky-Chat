@@ -9,10 +9,10 @@ class Respuesta
     }
 }
 
-$user = 'root';
+$user = 'droa';
 $server = 'localhost';
 $database = 'mensajer_a';
-$password = '';
+$password = 'droaPluving$1';
 $resultados;
 
 $conex = mysqli_connect($server, $user, $password, $database);

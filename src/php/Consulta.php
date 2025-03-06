@@ -1,6 +1,6 @@
 <?php
 
-$conexion = mysqli_connect("localhost", "root", "", "mensajer_a");
+$conexion = mysqli_connect("localhost", "droa", "droaPluving$1", "mensajer_a");
 
 if (!$conexion) {
     echo json_encode(['error' => 'No se ha podido conectar a la Base de Datos: ' . mysqli_connect_error()]);

@@ -51,6 +51,6 @@ if($conex){ //si la conexion tiene exito...
     echo $datos_json; // Se convierte el arreglo de objetos Tabla a formato JSON utilizando json_encode
 	// Finalmente, se envía el JSON para que el JavaScript lo pueda procesar.
 } else {
-	echo '[la comunicacion no fue posible]';
+	die("Conexión fallida: " . $conn->connect_error);
 }//si la conexon no tiene exito, pues no hace nada.
 ?>

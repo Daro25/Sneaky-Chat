@@ -8,10 +8,7 @@ echo `
 <title>404 Not Found</title>
 </head>
 <body>
-<script>
     <h1>Error: No hay conexión a Internet. Verifica tu red e inténtalo de nuevo.</h1>
-    window.onload = showError;
-</script>
 </body>
 </html>
     `;

@@ -13,7 +13,7 @@ if ($resultado) {
     $mensaje = $resultado->fetch_all(MYSQLI_ASSOC);
     echo json_encode($mensaje); 
 } else {
-    echo json_encode([]); 
+    echo json_encode(["no se pudo."]); 
 }
 
 mysqli_close($conexion);

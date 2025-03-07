@@ -15,6 +15,7 @@ $server = 'localhost';
 $database = 'mensajer_a';
 $password = 'droaPluving$1';
 $resultados;
+
 $conex = mysqli_connect($server, $user, $password, $database);
 //mysqli_connect es una función que se usa para conectarse a la base de datos usando las credenciales
 if ($conex->connect_error) {

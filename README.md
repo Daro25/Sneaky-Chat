@@ -1,21 +1,20 @@
+##                             ***SNEAKY CHAT***
+
+
+## El equipo está conformado por:
+
+Dávila Reyes Oscar Alexis            23500010            ITIC´s          4to sem.
+Flores Avendaño Zuris Aday           23500469            ITIC´s          4to sem.
+Mota Casados Johan Uriel             23500011            ITIC´s          4to sem.
+Tomas José Luz Elizabeth             23500014            ITIC´s          4to sem.
+López Capellini Michelle             22500436             IGE            6to sem.
+Balleza Torres Ana Lucía             21500301             IGE            6to sem. 
+Hernandez Martínez Angel Gustavo     22500052             CP             6to sem. 
+
+
 ## *********INTRODUCCIÓN*********
 
-#En un mundo donde la privacidad digital es una preocupación creciente, 
-Surge la necesidad de herramientas innovadoras que permitan una comunicación segura 
-y discreta. Este proyecto nace de la iniciativa de uno de los integrantes del equipo, 
-con el objetivo de desarrollar una aplicación que combine un bloc de notas con un 
-sistema de mensajería oculta, brindando una alternativa confiable para el intercambio 
-de información privada, siendo esto una innovación 100% de México.
-
-#El equipo esta conformado por 4 estudiantes de Ingeniería en Tecnologías de la Información 
-y Comunicaciones (ITIC's), quienes se encargan del desarrollo y la implementación del sistema. 
-Además, el proyecto cuenta con la colaboración de dos estudiantes de Ingeniería en Gestión 
-Empresarial (IGE), quienes aportan en la planificación y estrategia de implementación, y 
-un estudiante de Contaduría Pública, enfocado en la viabilidad financiera y gestión de costos.
-
-#A través de este trabajo interdisciplinario, se busca no solo la creación de una aplicación 
-funcional y segura, sino también un enfoque integral que considere la experiencia del usuario, 
-la escalabilidad del proyecto y su potencial impacto en el mercado mexicano.
+#A través de este trabajo interdisciplinario, se busca no solo la creación de una aplicación funcional y segura, sino también un enfoque integral que considere la experiencia del usuario, la escalabilidad del proyecto y su potencial impacto en el mercado mexicano.
 
 
 ## *********MISIÓN, VISIÓN Y VALORES*********
@@ -31,17 +30,19 @@ organizaciones, una plataforma de comunicación segura, promover la privacidad y
 una experiencia confiable al usuario.
 
 #VALORES
-#
-1)	Privacidad. Garantizamos la seguridad de la información y confidencialidad de datos en los usuarios.
-2)	Colaboración. Trabajo en equipo para la cooperación y alcanzar un objetivo común.
-3)	Responsabilidad. Compromiso con el desarrollo de una herramienta eficiente y segura.
-4)	Innovación. Integramos nuevas funciones tecnológicas para la mejora de la aplicación.
-5)	Usabilidad. Accesible y facilidad para los usuarios.
-6)	Ética. Toma de decisiones y acciones justas, responsables y alineadas con nuestros valores.
-7)	Sostenibilidad. Compromiso a adoptar las practicas ecológicas.
-8)	Respeto. Consideración y valoración a las ideas, opiniones y necesidades de cada uno del equipo, promover un ambiente de respeto mutuo.
-9)	Eco-Consciencia. Fomentamos una cultura de cuidado por el medio ambiente, educando a los miembros sobre la importancia de las prácticas ecológicas.
-10)	Excelencia. Buscamos la mejora en calidad, desempeño, perfección, expectativas del cliente y colaboradores.
+
+Los valores que rigen Sneaky Chat son:
+
+1)	Privacidad.
+2)	Colaboración. 
+3)	Responsabilidad.
+4)	Innovación.
+5)	Usabilidad.
+6)	Ética.
+7)	Sostenibilidad.
+8)	Respeto.
+9)	Eco-Consciencia.
+10)	Excelencia.
 
 
 

@@ -1,4 +1,4 @@
-import React from 'react';
+/*import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import useFetchMessages from './useFetchMessages';
 
@@ -30,4 +30,4 @@ const styles = StyleSheet.create({
     received: { backgroundColor: '#ffe0b2', alignSelf: 'flex-start' },
 });
 
-export default ChatScreen;
+export default ChatScreen;*/

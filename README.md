@@ -1,13 +1,18 @@
+##                             ***SNEAKY CHAT***
+
+
+## El equipo está conformado por:
+
+Dávila Reyes Oscar Alexis            23500010            ITIC´s          4to sem.
+Flores Avendaño Zuris Aday           23500469            ITIC´s          4to sem.
+Mota Casados Johan Uriel             23500011            ITIC´s          4to sem.
+Tomas José Luz Elizabeth             23500014            ITIC´s          4to sem.
+López Capellini Michelle             22500436             IGE            6to sem.
+Balleza Torres Ana Lucía             21500301             IGE            6to sem. 
+Hernandez Martínez Angel Gustavo     22500052             CP             6to sem. 
+
+
 ## *********INTRODUCCIÓN*********
-
-#En un mundo donde la privacidad digital es una preocupación creciente, 
-Surge la necesidad de herramientas innovadoras que permitan una comunicación segura 
-y discreta. Este proyecto nace de la iniciativa de uno de los integrantes del equipo, 
-con el objetivo de desarrollar una aplicación que combine un bloc de notas con un 
-sistema de mensajería oculta, brindando una alternativa confiable para el intercambio 
-de información privada, siendo esto una innovación 100% de México.
-
-#El equipo esta conformado por 4 estudiantes de Ingeniería en Tecnologías de la Información y Comunicaciones (ITIC's), quienes se encargan del desarrollo y la implementación del sistema. Además, el proyecto cuenta con la colaboración de dos estudiantes de Ingeniería en Gestión Empresarial (IGE), quienes aportan en la planificación y estrategia de implementación, y un estudiante de Contaduría Pública, enfocado en la viabilidad financiera y gestión de costos.
 
 #A través de este trabajo interdisciplinario, se busca no solo la creación de una aplicación funcional y segura, sino también un enfoque integral que considere la experiencia del usuario, la escalabilidad del proyecto y su potencial impacto en el mercado mexicano.
 

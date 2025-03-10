@@ -12,7 +12,10 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.ljusstudie.sneakychat",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
       }
     },
     "android": {
@@ -20,7 +23,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ljusstudie.sneakychat"
+      "package": "com.ljusstudie.sneakychat",
+      "permissions": ["INTERNET"]
     },
     "web": {
       "bundler": "metro",

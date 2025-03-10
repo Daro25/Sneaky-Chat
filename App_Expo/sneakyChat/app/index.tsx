@@ -50,5 +50,6 @@ export default function Index() {
       <Text style={globalStyles.text}>Pantalla de inicio.</Text>
       <Link href={"/registro_user"} style={globalStyles.link}>ir a pantalla de registro</Link>
       <Link href={"/registro_sala"} style={globalStyles.link}>ir a pantalla de registro de sala</Link>
+      <Link href={"/mensajeria"} style={globalStyles.link}>ir a pantalla de mensajes</Link>
     </View>
   );}

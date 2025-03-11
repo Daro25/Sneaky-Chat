@@ -16,10 +16,10 @@ class Tabla
 }
 // mysqli_connect se utiliza
 // para conectar al servidor de la base de datos MySQL utilizando las credenciales proporcionadas
-$user = 'root';
+$user = 'droa';
 $server = 'localhost';
 $database = 'mensajer_a';
-$password = '';
+$password = 'droaPluving$1';
 $conex = mysqli_connect($server, $user, $password, $database);
 if($conex){ //si la conexion tiene exito...
 	//Se verifica si la conexión a 

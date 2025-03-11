@@ -1,5 +1,5 @@
 <?php 
-
+header("Access-Control-Allow-Origin: *");
 class Tabla 
 {
 	public $ID, $sala_Id, $FechayHora, $Texto, $User_Id;

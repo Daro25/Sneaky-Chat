@@ -1,33 +1,44 @@
-/*import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, FlatList } from 'react-native';
 import useFetchMessages from './useFetchMessages';
+import  { MensajeLeft, MensajeRight } from '../assets/Componentes/mensaje'
+import { globalStyles } from "./recursos/style";
 
 const ChatScreen = () => {
-    const userId = "Juan"; // Simulación del ID del usuario actual
-    const messages = useFetchMessages(userId);
+    const userId = 1000; // Simulación del ID del usuario actual
+    const messages = useFetchMessages(userId); // Llamada al hook personalizado para obtener los mensajes
+    const flatListRef = useRef<FlatList>(null); // Referencia a FlatList para controlar el desplazamiento
+
+    // useEffect para desplazar automáticamente la lista al final cuando se añaden nuevos mensajes
+    useEffect(() => {
+        if (flatListRef.current) {
+            flatListRef.current.scrollToEnd({ animated: true });
+        }
+    }, [messages]); // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
 
     return (
-        <View style={styles.container}>
+        <View style={globalStyles.container}>
             <FlatList
-                data={messages}
-                keyExtractor={(item) => item.id.toString()}
+                ref={flatListRef} // Asigna la referencia a FlatList
+                data={messages} // Datos de los mensajes obtenidos
+                keyExtractor={(item) => item.id.toString()} // Clave única para cada mensaje
                 renderItem={({ item }) => (
-                    <View style={[styles.message, item.isCurrentUser ? styles.sent : styles.received]}>
-                        <Text>{item.userId}</Text>
-                        <Text>{item.timestamp}</Text>
-                        <Text>{item.text}</Text>
-                    </View>
+                    item.isCurrentUser ? 
+                    <MensajeRight 
+                    user= {item.userId}
+                    fecha= {item.fecha}
+                    context= {item.text}
+                    hora= {item.hora}/> 
+                    : 
+                    <MensajeLeft
+                    user= {item.userId}
+                    fecha= {item.timestamp}
+                    context= {item.text}
+                    hora= {item.hora}/> 
                 )}
             />
         </View>
     );
 };
 
-const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20 },
-    message: { padding: 10, marginVertical: 5, borderRadius: 5 },
-    sent: { backgroundColor: '#cceeff', alignSelf: 'flex-end' },
-    received: { backgroundColor: '#ffe0b2', alignSelf: 'flex-start' },
-});
-
-export default ChatScreen;*/
+export default ChatScreen;

@@ -5,7 +5,7 @@ import  { MensajeLeft, MensajeRight } from '../assets/Componentes/mensaje'
 import { globalStyles } from "./recursos/style";
 
 const ChatScreen = () => {
-    const userId = "1000"; // Simulación del ID del usuario actual
+    const userId = 1000; // Simulación del ID del usuario actual
     const messages = useFetchMessages(userId); // Llamada al hook personalizado para obtener los mensajes
     const flatListRef = useRef<FlatList>(null); // Referencia a FlatList para controlar el desplazamiento
 

@@ -1,5 +1,5 @@
 import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity, Dimensions } from "react-native";
-import { globalStyles } from "./recursos/style";
+import { useGlobalStyles } from "./recursos/style";
 import { useState } from "react";
 import Animated, {
   useSharedValue,
@@ -38,34 +38,34 @@ export default function Registro_sala() {
   };
 
   return (
-    <SafeAreaView style={globalStyles.container}>
-      <View style={[globalStyles.container_H, globalStyles.center, globalStyles.header]}>
+    <SafeAreaView style={useGlobalStyles().container}>
+      <View style={[useGlobalStyles().container_H, useGlobalStyles().center, useGlobalStyles().header]}>
         <Animated.View style={[
-          globalStyles.btn_div2, 
-          globalStyles.btn_normal, 
-          [globalStyles.check,{left: leftAnim}]]}/>
+          useGlobalStyles().btn_div2, 
+          useGlobalStyles().btn_normal, 
+          [useGlobalStyles().check,{left: leftAnim}]]}/>
             <TouchableOpacity
               onPress={()=>handlePress(false)}
-              style={[globalStyles.inlineBlock, globalStyles.btn_div2, globalStyles.unCheck]}>
-              <Text style={[globalStyles.text, globalStyles.negrita, globalStyles.center]}>Unirse a una sala.</Text>
+              style={[useGlobalStyles().inlineBlock, useGlobalStyles().btn_div2, useGlobalStyles().unCheck]}>
+              <Text style={[useGlobalStyles().text, useGlobalStyles().negrita, useGlobalStyles().center]}>Unirse a una sala.</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={()=>handlePress(true)}
-              style={[globalStyles.inlineBlock, globalStyles.btn_div2, globalStyles.unCheck]}>
-              <Text style={[globalStyles.text, globalStyles.negrita, globalStyles.center]}>Crear una sala.</Text>
+              style={[useGlobalStyles().inlineBlock, useGlobalStyles().btn_div2, useGlobalStyles().unCheck]}>
+              <Text style={[useGlobalStyles().text, useGlobalStyles().negrita, useGlobalStyles().center]}>Crear una sala.</Text>
             </TouchableOpacity>
       </View>
 
-      <View style={globalStyles.forms}>
+      <View style={useGlobalStyles().forms}>
         {visible2 && (
-          <Text style={[globalStyles.text, globalStyles.negrita]}>
+          <Text style={[useGlobalStyles().text, useGlobalStyles().negrita]}>
           Pidele al administrador de la sala que te pase nombre y contraseña o crea la tuya e invita a alguien presionando en el botón superior de Crear una sala.
           </Text>
         )}
-        <View style={globalStyles.container_H}>
-          <Text style={globalStyles.text_container_H}>Nombre de la Sala: </Text>
+        <View style={useGlobalStyles().container_H}>
+          <Text style={useGlobalStyles().text_container_H}>Nombre de la Sala: </Text>
           <TextInput 
-          style={[globalStyles.inputTxt, globalStyles.inlineBlock]} 
+          style={[useGlobalStyles().inputTxt, useGlobalStyles().inlineBlock]} 
           value={name} 
           onChangeText={setName}
           placeholder="Sala12334"
@@ -73,9 +73,9 @@ export default function Registro_sala() {
           maxLength={20}/>
         </View>
 
-        <Text style={[globalStyles.text, globalStyles.negrita]}>Contraseña:</Text>
+        <Text style={[useGlobalStyles().text, useGlobalStyles().negrita]}>Contraseña:</Text>
         <TextInput 
-        style={globalStyles.inputTxt} 
+        style={useGlobalStyles().inputTxt} 
         value={pass} 
         onChangeText={setPass}
         secureTextEntry={true}
@@ -84,21 +84,21 @@ export default function Registro_sala() {
         maxLength={20}/>
 
         {visible1 && 
-        (<><Text style={[globalStyles.text, globalStyles.negrita]}>Repita contraseña:</Text><TextInput
-          style={globalStyles.inputTxt}
+        (<><Text style={[useGlobalStyles().text, useGlobalStyles().negrita]}>Repita contraseña:</Text><TextInput
+          style={useGlobalStyles().inputTxt}
           value={Rpass}
           onChangeText={setRpass}
           secureTextEntry={true}
           placeholderTextColor={'#a9a9a9'}
           placeholder="Password25"
-          maxLength={20} /><TouchableOpacity style={[globalStyles.btn_normal, globalStyles.center, globalStyles.inlineBlock, [, { width: '100%', minHeight: 70 }]]}
+          maxLength={20} /><TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().center, useGlobalStyles().inlineBlock, [, { width: '100%', minHeight: 70 }]]}
             onPress={registro}>
-            <Text style={[globalStyles.text, globalStyles.negrita, globalStyles.center]}>Crear sala</Text>
+            <Text style={[useGlobalStyles().text, useGlobalStyles().negrita, useGlobalStyles().center]}>Crear sala</Text>
           </TouchableOpacity></>)}
           {visible2 && (
-            <TouchableOpacity style={[globalStyles.btn_normal, globalStyles.center, globalStyles.inlineBlock, [,{width:'100%', minHeight:70}]]}
+            <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().center, useGlobalStyles().inlineBlock, [,{width:'100%', minHeight:70}]]}
             onPress={login}>
-            <Text style={[globalStyles.text, globalStyles.negrita, globalStyles.center]}>Unirse</Text>
+            <Text style={[useGlobalStyles().text, useGlobalStyles().negrita, useGlobalStyles().center]}>Unirse</Text>
           </TouchableOpacity>
           )}
       </View>

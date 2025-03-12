@@ -1,39 +1,60 @@
-import { withLayoutContext } from "expo-router";
-import { useEffect, useState } from "react";
-import { PixelRatio, StyleSheet } from "react-native";
-import { useColorScheme } from 'react-native';
+import { useColorScheme } from "react-native";
+import { useEffect, useState, useMemo } from "react";
+import { StyleSheet, PixelRatio } from "react-native";
 
+export function useTheme() {
+  const colorScheme = useColorScheme();
+  const [isDarkMode, setIsDarkMode] = useState(colorScheme === "dark");
+
+  useEffect(() => {
+    setIsDarkMode(colorScheme === "dark");
+  }, [colorScheme]);
+
+  return isDarkMode;
+}
 export const head = '#433878';
-const colorScheme = useColorScheme();
-const [isDarkMode, setIsDarkMode] = useState(colorScheme === 'dark');
-  
-useEffect(() => {
-  setIsDarkMode(colorScheme === 'dark');
-}, [colorScheme]); 
+export function colorContainer(isDarkMode: Boolean) {
+  return isDarkMode ? "#25292e" : "#CDC1FF";
+}
 
-export const globalStyles = StyleSheet.create (
-{
-    container: {
+export function colorBase(isDarkMode: Boolean) {
+  return isDarkMode ? "#000" : "#fff";
+}
+
+export function colorText(isDarkMode: Boolean) {
+  return isDarkMode ? "#fff" : "#000";
+}
+
+export function boxShadow(isDarkMode: Boolean) {
+  return isDarkMode ? "#7E60BF" : "#000";
+}
+
+export function useGlobalStyles() {
+  const isDarkMode = useTheme(); // Usa el hook de tema
+
+  const styles = useMemo(() => {
+    return StyleSheet.create({
+      container: {
         flex: 1,
-        backgroundColor: colorContainer(),
+        backgroundColor: colorContainer(isDarkMode),
         alignItems: 'center',
         justifyContent: 'center',
       },
     inputTxt : {
-       backgroundColor: colorBase(),
-       color: colorText(),
-       justifyContent: 'center',
-       padding: 5,
-       minHeight:20,
-       borderRadius: 7
+      backgroundColor: colorBase(isDarkMode),
+      color: colorText(isDarkMode),
+      justifyContent: 'center',
+      padding: 5,
+      minHeight:20,
+      borderRadius: 7
     },
     text: {
-        color: colorText(),
+        color: colorText(isDarkMode),
     },
     link: {
         fontSize: 20,
         textDecorationLine: 'underline',
-        color: colorText()
+        color: colorText(isDarkMode)
       },
     container_H :{
         flexDirection: 'row',
@@ -43,7 +64,7 @@ export const globalStyles = StyleSheet.create (
         position:'relative'
     },
     text_container_H : {
-        color: colorText(),
+        color: colorText(isDarkMode),
         marginTop:10,
         justifyContent: 'center',
         display: 'flex',
@@ -61,7 +82,7 @@ export const globalStyles = StyleSheet.create (
         width: '100%',
         maxWidth: PixelRatio.getPixelSizeForLayoutSize(400),
         height: 'auto',
-        shadowColor: boxShadow(),
+        shadowColor: boxShadow(isDarkMode),
         borderRadius: 10,
         padding: 20,
         shadowOffset: { width: 0, height: 2 },
@@ -105,34 +126,7 @@ export const globalStyles = StyleSheet.create (
         top:0,
         minHeight:90,
       },
-});
-
- // ----------- colores constantes -----------------
-export function colorContainer(){
-    if (isDarkMode) {
-        return '#25292e';
-      } else {
-        return '#CDC1FF';
-      }
-}
-export function colorBase() {
-    if (isDarkMode) {
-        return '#000';
-      } else {
-        return '#fff';
-      }
-}
-export function colorText() {
-    if (isDarkMode) {
-        return '#fff';
-      } else {
-        return '#000';
-      }
-}
-export function boxShadow() {
-    if (isDarkMode) {
-        return '#7E60BF';
-      } else {
-        return '#000';
-      }
+    });
+  }, [isDarkMode]);
+  return styles;
 }

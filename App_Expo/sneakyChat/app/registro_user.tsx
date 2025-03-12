@@ -1,5 +1,5 @@
 import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity } from "react-native";
-import { globalStyles } from "./recursos/style";
+import { useGlobalStyles } from "./recursos/style";
 import { useState } from "react"
 
 export default function Registro_user() {
@@ -8,12 +8,12 @@ const [pass, setPass] = useState("")
 const [Rpass, setRpass] = useState("")
 const [year, setYear] = useState('')
   return (
-    <SafeAreaView style={globalStyles.container}>
-      <View style={globalStyles.forms}>
-        <View style={globalStyles.container_H}>
-          <Text style={[globalStyles.text_container_H]}>Nombre de usuario: </Text>
+    <SafeAreaView style={useGlobalStyles().container}>
+      <View style={useGlobalStyles().forms}>
+        <View style={useGlobalStyles().container_H}>
+          <Text style={[useGlobalStyles().text_container_H]}>Nombre de usuario: </Text>
           <TextInput 
-          style={[globalStyles.inputTxt, globalStyles.inlineBlock]} 
+          style={[useGlobalStyles().inputTxt, useGlobalStyles().inlineBlock]} 
           value={name} 
           onChangeText={setName}
           placeholder="nombre_user"
@@ -21,9 +21,9 @@ const [year, setYear] = useState('')
           maxLength={20}/>
         </View>
 
-        <Text style={[globalStyles.text, globalStyles.negrita]}>Contraseña:</Text>
+        <Text style={[useGlobalStyles().text, useGlobalStyles().negrita]}>Contraseña:</Text>
         <TextInput 
-        style={globalStyles.inputTxt} 
+        style={useGlobalStyles().inputTxt} 
         value={pass} 
         onChangeText={setPass}
         secureTextEntry={true}
@@ -31,9 +31,9 @@ const [year, setYear] = useState('')
         placeholderTextColor={'#a9a9a9'}
         maxLength={20}/>
 
-        <Text style={[globalStyles.text, globalStyles.negrita]}>Repita contraseña:</Text>
+        <Text style={[useGlobalStyles().text, useGlobalStyles().negrita]}>Repita contraseña:</Text>
         <TextInput 
-        style={globalStyles.inputTxt} 
+        style={useGlobalStyles().inputTxt} 
         value={Rpass} 
         onChangeText={setRpass}
         secureTextEntry={true}
@@ -41,10 +41,10 @@ const [year, setYear] = useState('')
         placeholder="Password25"
         maxLength={20}/>
 
-        <View style={globalStyles.container_H}>
-            <Text style={globalStyles.text_container_H}>Edad: </Text>
+        <View style={useGlobalStyles().container_H}>
+            <Text style={useGlobalStyles().text_container_H}>Edad: </Text>
             <TextInput 
-            style={[globalStyles.inputTxt, globalStyles.inlineBlock]} 
+            style={[useGlobalStyles().inputTxt, useGlobalStyles().inlineBlock]} 
             value={year} 
             onChangeText={setYear}
             placeholder="20"
@@ -52,14 +52,14 @@ const [year, setYear] = useState('')
             keyboardType="numeric"
             maxLength={2}/>
           </View>
-          <View style={globalStyles.container_H}>
-            <TouchableOpacity style={[globalStyles.btn_normal, globalStyles.inlineBlock, globalStyles.btn_div2]}
+          <View style={useGlobalStyles().container_H}>
+            <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().inlineBlock, useGlobalStyles().btn_div2]}
             onPress={login}>
-              <Text style={[globalStyles.text, globalStyles.negrita, globalStyles.center]}>Iniciar Sesión</Text>
+              <Text style={[useGlobalStyles().text, useGlobalStyles().negrita, useGlobalStyles().center]}>Iniciar Sesión</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[globalStyles.btn_normal, globalStyles.inlineBlock, globalStyles.btn_div2]}
+            <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().inlineBlock, useGlobalStyles().btn_div2]}
             onPress={registro}>
-              <Text style={[globalStyles.text, globalStyles.negrita, globalStyles.center]}>Registrarse por primera vez</Text>
+              <Text style={[useGlobalStyles().text, useGlobalStyles().negrita, useGlobalStyles().center]}>Registrarse por primera vez</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -25,7 +25,7 @@ const useFetchMessages = (userId: number) => {
                     fecha: fecha,
                     hora: hora,
                     text: fila.Texto,
-                    isCurrentUser: fila.User_id === userId,
+                    isCurrentUser: Number(fila.User_id) === userId,
                 });
                 newLastId = fila.ID;
             });

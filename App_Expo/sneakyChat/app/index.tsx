@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { Link} from "expo-router";
-import { globalStyles } from "./recursos/style";
+import { useGlobalStyles } from "./recursos/style";
 import { useCallback, useEffect, useState } from 'react';
 import Entypo from '@expo/vector-icons/Entypo';
 import * as SplashScreen from 'expo-splash-screen';
@@ -46,10 +46,10 @@ export default function Index() {
   }
 
   return (
-    <View style={globalStyles.container}>
-      <Text style={globalStyles.text}>Pantalla de inicio.</Text>
-      <Link href={"/registro_user"} style={globalStyles.link}>ir a pantalla de registro</Link>
-      <Link href={"/registro_sala"} style={globalStyles.link}>ir a pantalla de registro de sala</Link>
-      <Link href={"/mensajeria"} style={globalStyles.link}>ir a pantalla de mensajes</Link>
+    <View style={useGlobalStyles().container}>
+      <Text style={useGlobalStyles().text}>Pantalla de inicio.</Text>
+      <Link href={"/registro_user"} style={useGlobalStyles().link}>ir a pantalla de registro</Link>
+      <Link href={"/registro_sala"} style={useGlobalStyles().link}>ir a pantalla de registro de sala</Link>
+      <Link href={"/mensajeria"} style={useGlobalStyles().link}>ir a pantalla de mensajes</Link>
     </View>
   );}

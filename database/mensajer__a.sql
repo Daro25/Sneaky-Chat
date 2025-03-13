@@ -60,7 +60,7 @@ CREATE TABLE `sala` (
   `Id_sala` int(5) NOT NULL,
   `Contra_Sala` varchar(20) NOT NULL,
   `Nom_Sala` varchar(20) NOT NULL,
-  `Cupo` int(3) NOT NULL
+  `Cupo` int(3) NOT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -81,7 +81,8 @@ CREATE TABLE `usuario` (
   `Nomb` varchar(20) NOT NULL,
   `Contra` varchar(20) NOT NULL,
   `Sala_Id` int(5) NOT NULL,
-  `Edad` int(2) NOT NULL
+  `Edad` int(2) NOT NULL,
+  `keyPublic` text(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

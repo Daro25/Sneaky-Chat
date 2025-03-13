@@ -25,7 +25,7 @@ if ($conex->connect_error) {
     $nom_sala = $_GET['Nom_Sala']; 
     $cupo = $_GET['Cupo'];
 
-    $sql = "INSERT INTO salas (Id_sala, Contra_Sala, Nom_Sala, Cupo) VALUES ( '$Id_sala', '$Contra_Sala', '$Nom_Sala', '$Cupo')";
+    $sql = "INSERT INTO sala (Id_sala, Contra_Sala, Nom_Sala, Cupo) VALUES ( '$Id_sala', '$Contra_Sala', '$Nom_Sala', '$Cupo')";
 
     if ($conex->query($sql) ===TRUE ){
         $resultados = "Registro de sala exitoso.";

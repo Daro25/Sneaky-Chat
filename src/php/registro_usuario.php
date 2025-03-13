@@ -25,8 +25,9 @@ if ($conex->connect_error) {
     $contra = $_GET['contra']; 
     $sala_id = $_GET['sala_id'];
     $edad = $_GET['edad'];
+    $key = $_GET['key'];
     //contruir la consulta SQLpara insertar un nuevo registro
-    $sql = "INSERT INTO usuario (Id_user, nomb, contra, sala_id, Edad) VALUES ('$Id_user', '$nomb', '$contra', '$sala_id', '$Edad')";
+    $sql = "INSERT INTO usuario (Id_user, nomb, contra, sala_id, Edad, keyPublic) VALUES ('$Id_user', '$nomb', '$contra', '$sala_id', '$Edad', '$key')";
     // ejecutar la consulta
 
     if ($conex->query($sql)===TRUE) {

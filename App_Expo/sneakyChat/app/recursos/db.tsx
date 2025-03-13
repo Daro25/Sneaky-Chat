@@ -55,4 +55,6 @@ export const registro_Sala = () => {
 }
 export const registro_Emisor = () => {
     const realm = new Realm({ schema: [Emisor] });
-}*/
+}
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase('myDatabase.db');*/

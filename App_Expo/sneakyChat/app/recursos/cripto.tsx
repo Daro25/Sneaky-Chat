@@ -56,3 +56,4 @@ export const getPrivateKey = async () => {
     console.error('Error obteniendo la clave privada:', error);
   }
 };
+export default function name() {}

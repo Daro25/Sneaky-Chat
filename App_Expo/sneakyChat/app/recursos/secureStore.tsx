@@ -9,4 +9,4 @@ const obtenerLlavePrivada = async () => {
   return llavePrivada;
 };
 
-export { guardarLlavePrivada, obtenerLlavePrivada };
+export default { guardarLlavePrivada, obtenerLlavePrivada };

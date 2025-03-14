@@ -1,6 +1,7 @@
 import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity, Dimensions } from "react-native";
 import { useGlobalStyles } from "./recursos/style";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import * as SQLite from 'expo-sqlite';
 import Animated, {
   useSharedValue,
   withTiming,
@@ -15,9 +16,25 @@ export default function Registro_sala() {
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const [Rpass, setRpass] = useState("");
+  const [Id, setId] = useState("");
   const [visible1, setVisible1] = useState(false);
   const [visible2, setVisible2] = useState(true);
-
+  var db: SQLite.SQLiteDatabase;
+  const registro = async ()=>{
+    await db.execAsync(`INSERT INTO SALAS(Id_sala, pass, nombre) VALUES(`+Id+`,`+Rpass+`,`+name+`);`);
+  };
+  const login = async ()=>{
+    await db.execAsync(`INSERT INTO SALAS(Id_sala, pass, nombre) VALUES(`+Id+`,`+Rpass+`,`+name+`);`);
+  };
+  useEffect(() => {
+    const conexion = async () => {
+      try {
+        db = await SQLite.openDatabaseAsync('sneakychat.db');
+      } catch (error) {
+      }
+    };
+    conexion();
+  }, []);
   const screenWidth = Dimensions.get('window').width;
   const leftAnim = useSharedValue(screenWidth*0.025);
 
@@ -36,7 +53,7 @@ export default function Registro_sala() {
     duration: 500,
     easing: Easing.bezier(0.5, 0.01, 0, 1),
   };
-
+  
   return (
     <SafeAreaView style={useGlobalStyles().container}>
       <View style={[useGlobalStyles().container_H, useGlobalStyles().center, useGlobalStyles().header]}>
@@ -103,7 +120,4 @@ export default function Registro_sala() {
           )}
       </View>
     </SafeAreaView>
-  );
-}
-  function login() {}
-  function registro() {}
+  );}

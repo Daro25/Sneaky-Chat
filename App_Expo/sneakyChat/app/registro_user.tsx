@@ -1,12 +1,28 @@
 import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity } from "react-native";
 import { useGlobalStyles } from "./recursos/style";
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import * as SQLite from 'expo-sqlite';
 
 export default function Registro_user() {
 const [name, setName] = useState("")
 const [pass, setPass] = useState("")
 const [Rpass, setRpass] = useState("")
 const [year, setYear] = useState('')
+var db: SQLite.SQLiteDatabase;
+const registro = async ()=>{
+  db.execAsync(`INSERT INTO DATOSP(pass, Id_User) VALUES(`+pass+`,`+name+`);`);
+};
+const login = async ()=>{
+  db.execAsync(`INSERT INTO DATOSP(pass, Id_User) VALUES(`+pass+`,`+name+`);`);
+};
+useEffect(() => {
+    const conexion = async () => {
+      try {
+        db = await SQLite.openDatabaseAsync('sneakychat.db');
+      } catch (error) {}
+    };
+    conexion();
+  }, []);
   return (
     <SafeAreaView style={useGlobalStyles().container}>
       <View style={useGlobalStyles().forms}>
@@ -64,7 +80,5 @@ const [year, setYear] = useState('')
           </View>
         </View>
     </SafeAreaView>
-  );}
-  //Johan tu codigo aqui abajo
-  function login() {}
-  function registro() {}
+  );
+}

@@ -16,7 +16,7 @@ export default function Index() {
             ID_categoria INTEGER PRIMARY KEY AUTOINCREMENT, 
             Nombre TEXT(40) NOT NULL);`);
       await db.execAsync(
-        `CREATE TABLE IF NOT EXISTS MENSAJE (
+        `CREATE TABLE IF NOT EXISTS NOTAS (
             ID INTEGER PRIMARY KEY AUTOINCREMENT, 
             Titulo TEXT(40) NOT NULL, 
             Descripcion TEXT(120), 
@@ -25,9 +25,9 @@ export default function Index() {
       await db.execAsync(
         `CREATE TABLE IF NOT EXISTS MENSAJE (
             ID INTEGER PRIMARY KEY AUTOINCREMENT, 
-            Sala TEXT(20) NOT NULL, 
-            Dates DATETIME DEFAULT CURRENT_TIMESTAMP, 
-            Texto TEXT(120), 
+            Sala TEXT(20) NOT NULL,
+            Dates DATETIME DEFAULT CURRENT_TIMESTAMP,
+            Texto TEXT(120),
             Id_User TEXT(40) NOT NULL);`);
       await db.execAsync(
         `CREATE TABLE IF NOT EXISTS DATOSP (

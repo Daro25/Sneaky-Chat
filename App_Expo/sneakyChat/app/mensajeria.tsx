@@ -3,12 +3,14 @@ import { View, FlatList, Text, TouchableOpacity } from 'react-native';
 import useFetchMessages from './useFetchMessages';
 import  { MensajeLeft, MensajeRight } from '../assets/Componentes/mensaje'
 import { useGlobalStyles, head } from "./recursos/style";
+import * as SQLite from 'expo-sqlite';
 
 const ChatScreen = () => {
     const userId = 1000; // Simulación del ID del usuario actual
     const messages = useFetchMessages(userId); // Llamada al hook personalizado para obtener los mensajes
     const flatListRef = useRef<FlatList>(null); // Referencia a FlatList para controlar el desplazamiento
     const [initialLoad, setInitialLoad] = useState(0);
+      var db: SQLite.SQLiteDatabase;
     // useEffect para desplazar automáticamente la lista al final cuando se añaden nuevos mensajes
     useEffect(() => {
         if (initialLoad < 4 && flatListRef.current) {
@@ -16,6 +18,15 @@ const ChatScreen = () => {
             setInitialLoad(initialLoad+1)
         }
     }, [messages]); // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
+    useEffect(() => {
+        const conexion = async () => {
+          try {
+            db = await SQLite.openDatabaseAsync('sneakychat.db');
+          } catch (error) {
+          }
+        };
+        conexion();
+      }, []);
 
     return (
         <View style={[useGlobalStyles().container, [,{overflowX:'hidden'}]]}>

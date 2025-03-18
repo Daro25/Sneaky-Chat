@@ -17,7 +17,7 @@ export function colorContainer(isDarkMode: Boolean) {
   return isDarkMode ? "#25292e" : "#CDC1FF";
 }
 
-export function colorBase(isDarkMode: Boolean) {
+export default function colorBase(isDarkMode: Boolean) {
   return isDarkMode ? "#000" : "#fff";
 }
 

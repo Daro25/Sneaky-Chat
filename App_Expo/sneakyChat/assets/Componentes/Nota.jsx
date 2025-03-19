@@ -2,7 +2,7 @@ import { React } from "react";
 import { StyleSheet, View } from "react-native";
 import { globalStyles } from "../../app/recursos/style";
 
-export default function Nota(props) {
+export default function NotaView(props) {
     return (
         <View>
             <Text>{props.title}</Text>

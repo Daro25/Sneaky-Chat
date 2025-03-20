@@ -1,40 +1,37 @@
 import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity, Dimensions } from "react-native";
 import { useGlobalStyles } from "./recursos/style";
 import { useEffect, useState } from "react";
-import * as SQLite from 'expo-sqlite';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
+import * as schema from '@/db/schema';
 import Animated, {
   useSharedValue,
-  withTiming,
-  useAnimatedStyle,
   Easing,
-  SlideInLeft,
-  withSpring,
-  ReduceMotion,
 } from 'react-native-reanimated';
 
 export default function Registro_sala() {
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const [Rpass, setRpass] = useState("");
-  const [Id, setId] = useState("");
+  const [Id, setId] = useState(0);
   const [visible1, setVisible1] = useState(false);
   const [visible2, setVisible2] = useState(true);
-  var db: SQLite.SQLiteDatabase;
+  const db = useSQLiteContext();
+  const drizzleDb = drizzle(db, { schema});
   const registro = async ()=>{
-    await db.execAsync(`INSERT INTO SALAS(Id_sala, pass, nombre) VALUES(`+Id+`,`+Rpass+`,`+name+`);`);
+    await drizzleDb.insert(schema.salas).values({
+        idSala: Id,
+        nombre: name,
+        pass: pass
+      })
   };
   const login = async ()=>{
-    await db.execAsync(`INSERT INTO SALAS(Id_sala, pass, nombre) VALUES(`+Id+`,`+Rpass+`,`+name+`);`);
+    await drizzleDb.insert(schema.salas).values({
+      idSala: Id,
+      nombre: name,
+      pass: pass
+    })
   };
-  useEffect(() => {
-    const conexion = async () => {
-      try {
-        db = await SQLite.openDatabaseAsync('sneakychat.db');
-      } catch (error) {
-      }
-    };
-    conexion();
-  }, []);
   const screenWidth = Dimensions.get('window').width;
   const leftAnim = useSharedValue(screenWidth*0.025);
 

@@ -1,33 +1,36 @@
 import { useState, useEffect } from 'react';
-import * as SQLite from 'expo-sqlite';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
+import * as schema from '@/db/schema';
 
 const useFetchMessages = (userId: number) => {
     const [messages, setMessages] = useState<any[]>([]);
     const [lastId, setLastId] = useState(0);
-    var db: SQLite.SQLiteDatabase;
-      useEffect(() => {
-        const conexion = async () => {
-          try {
-            db = await SQLite.openDatabaseAsync('sneakychat.db');
-            let resultado = await db.getFirstAsync(`SELECT * FROM MENSAJE ORDER BY ID DESC LIMIT 1;`);
-            resultado? setLastId(Number(resultado)): setLastId(0)
-          } catch (error) {
-          }
-        };
-        conexion();
-      }, []);
-      const registro = async (ID: number,Sala: number,Dates: string,Texto: string,Id_User: number)=>{
-        await db.execAsync(`INSERT INTO MENSAJE(ID,Sala,Dates,Texto,Id_User) VALUES(`
-            +ID+`,`+Sala+`,`+Dates+`,`
-            +Texto+`,`+Id_User+`);`);
-      }
+    const db = useSQLiteContext();
+    const drizzleDb = drizzle(db, { schema});
+    const newMessages: { id: number; userId: number; fecha: string; 
+        hora: string; text: string; isCurrentUser: boolean; }[] = [];
+    //--------------------------------------------------------------------
     const fetchMessages = async () => {
+        const result = await drizzleDb.select().from(schema.mensaje)
+        result.length > 0 ? ()=>{
+            setLastId(result[result.length-1].id)
+            result.forEach(fila =>{
+                const date = new Date(fila.dates);
+                const fecha = date.toLocaleDateString(); // Convierte a formato de fecha local
+                const hora = date.toLocaleTimeString();
+                newMessages.push({
+                    id: fila.id, userId: parseInt(fila.idUser), fecha: fecha,
+                    hora: hora, text: fila.texto, 
+                    isCurrentUser: Number(fila.idUser) === userId,
+                });
+            });
+            setMessages((prevMessages: any[]) => [...prevMessages, ...newMessages]);
+         } : ()=>{}
         try {
             const response = await fetch(`http://134.209.211.47/Consulta.php?sala=1000&Id=${lastId}`);
             const data = await response.json();
 
-            let newMessages: { id: number; userId: number; fecha: string; 
-                hora: string; text: string; isCurrentUser: boolean; }[] = [];
             let newLastId = lastId;
 
             data.forEach((fila: {
@@ -42,11 +45,16 @@ const useFetchMessages = (userId: number) => {
                     hora: hora, text: fila.Texto, 
                     isCurrentUser: Number(fila.User_id) === userId,
                 });
+                const registrar = async()=>{
+                    await drizzleDb.insert(schema.mensaje).values({
+                        sala: fila.sala_Id+'',
+                        dates: fila.FechayHora, 
+                        texto: fila.Texto, 
+                        idUser: fila.User_id+''
+                    });
+                }
+                registrar();
                 newLastId = fila.ID;
-                registro(
-                    fila.ID, fila.sala_Id, fila.FechayHora,
-                    fila.Texto, fila.User_id
-                );
             });
 
             setMessages((prevMessages: any[]) => [...prevMessages, ...newMessages]);

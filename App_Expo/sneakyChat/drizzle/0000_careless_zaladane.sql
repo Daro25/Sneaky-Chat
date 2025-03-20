@@ -19,7 +19,7 @@ CREATE TABLE `EMISOR` (
 CREATE TABLE `MENSAJE` (
 	`ID` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`Sala` text(20) NOT NULL,
-	`Dates` text,
+	`Dates` text(30) NOT NULL,
 	`Texto` text(200),
 	`Id_User` text(40) NOT NULL
 );
@@ -27,7 +27,7 @@ CREATE TABLE `MENSAJE` (
 CREATE TABLE `NOTAS` (
 	`ID` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`Titulo` text(40) NOT NULL,
-	`Descripcion` text(120),
+	`Descripcion` text(250),
 	`ID_categoria` integer,
 	FOREIGN KEY (`ID_categoria`) REFERENCES `CATEGORIA`(`ID_categoria`) ON UPDATE no action ON DELETE no action
 );

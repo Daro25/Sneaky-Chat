@@ -1,0 +1,43 @@
+Date : 2025-03-20 08:04:57
+Directory : c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src
+Total : 13 files,  521 codes, 23 comments, 43 blanks, all 587 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| PHP        |          7 |        220 |         18 |         37 |        275 |
+| HTML       |          4 |        137 |          1 |          3 |        141 |
+| CSS        |          1 |        117 |          0 |          3 |        120 |
+| JavaScript |          1 |         47 |          4 |          0 |         51 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                        | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                           |         13 |        521 |         23 |         43 |        587 |
+| disign                                                                      |          5 |        254 |          1 |          6 |        261 |
+| javascript                                                                  |          1 |         47 |          4 |          0 |         51 |
+| php                                                                         |          7 |        220 |         18 |         37 |        275 |
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                    | language   | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Block Notas.html  | HTML       |         21 |          0 |          0 |         21 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Index.html        | HTML       |         22 |          1 |          0 |         23 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Mensajes.html     | HTML       |         80 |          0 |          3 |         83 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Notas.html        | HTML       |         14 |          0 |          0 |         14 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\style.css         | CSS        |        117 |          0 |          3 |        120 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\javascript\chat.js       | JavaScript |         47 |          4 |          0 |         51 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\php\Consulta.php         | PHP        |         41 |         12 |          1 |         54 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\php\Consulta_Sala.php    | PHP        |         37 |          0 |          7 |         44 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\php\Consulta_Usuario.php | PHP        |         35 |          0 |          7 |         42 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\php\index.php            | PHP        |          3 |          0 |          0 |          3 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\php\registro_mensaje.php | PHP        |         34 |          3 |          8 |         45 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\php\registro_sala.php    | PHP        |         34 |          0 |          8 |         42 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\php\registro_usuario.php | PHP        |         36 |          3 |          6 |         45 |
+| Total                                                                       |            |        521 |         23 |         43 |        587 |
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+

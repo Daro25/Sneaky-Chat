@@ -1,28 +1,29 @@
 import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity } from "react-native";
 import { useGlobalStyles } from "./recursos/style";
 import { useEffect, useState } from "react"
-import * as SQLite from 'expo-sqlite';
+import { useSQLiteContext } from 'expo-sqlite';
+import { drizzle } from 'drizzle-orm/expo-sqlite';
+import * as schema from '@/db/schema';
 
 export default function Registro_user() {
 const [name, setName] = useState("")
 const [pass, setPass] = useState("")
 const [Rpass, setRpass] = useState("")
 const [year, setYear] = useState('')
-var db: SQLite.SQLiteDatabase;
+const db = useSQLiteContext();
+const drizzleDb = drizzle(db, { schema});
 const registro = async ()=>{
-  db.execAsync(`INSERT INTO DATOSP(pass, Id_User) VALUES(`+pass+`,`+name+`);`);
+  await drizzleDb.insert(schema.datosp).values({
+    idUser: name,
+    pass: pass
+  })
 };
 const login = async ()=>{
-  db.execAsync(`INSERT INTO DATOSP(pass, Id_User) VALUES(`+pass+`,`+name+`);`);
+  await drizzleDb.insert(schema.datosp).values({
+    idUser: name,
+    pass: pass
+  })
 };
-useEffect(() => {
-    const conexion = async () => {
-      try {
-        db = await SQLite.openDatabaseAsync('sneakychat.db');
-      } catch (error) {}
-    };
-    conexion();
-  }, []);
   return (
     <SafeAreaView style={useGlobalStyles().container}>
       <View style={useGlobalStyles().forms}>

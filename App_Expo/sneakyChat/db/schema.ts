@@ -8,15 +8,15 @@ export const categoria = sqliteTable('CATEGORIA', {
 export const notas = sqliteTable('NOTAS', {
   id: integer('ID').primaryKey({ autoIncrement: true }),
   titulo: text('Titulo', { length: 40 }).notNull(),
-  descripcion: text('Descripcion', { length: 120 }),
+  descripcion: text('Descripcion', { length: 250 }),
   idCategoria: integer('ID_categoria').references(() => categoria.idCategoria),
 });
 
 export const mensaje = sqliteTable('MENSAJE', {
   id: integer('ID').primaryKey({ autoIncrement: true }),
   sala: text('Sala', { length: 20 }).notNull(),
-  dates: text('Dates'),
-  texto: text('Texto', { length: 200 }),
+  dates: text('Dates').notNull(),
+  texto: text('Texto', { length: 200 }).notNull(),
   idUser: text('Id_User', { length: 40 }).notNull(),
 });
 

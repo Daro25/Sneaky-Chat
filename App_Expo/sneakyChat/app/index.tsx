@@ -5,7 +5,8 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
 import { Nota } from "@/db/schema";
 import { View, FlatList, TouchableOpacity, Text } from "react-native";
-import NotaView from "../assets/Componentes/Nota";
+import NotaView from "@/assets/Componentes/Nota";
+import { router } from "expo-router";
 
 export default function Index() {
   //base de datos mas facil con drizzle
@@ -17,7 +18,11 @@ export default function Index() {
     setNotas(result)
   }
   useEffect(()=>{
-    const tablaCatalogo = async ()=>{
+    let abrirRegistroUser = false;
+    let abrirRegistroSala = false;
+    const accion = async ()=>{
+      abrirRegistroUser = (await drizzleDb.select().from(schema.datosp)).length == 0;
+      abrirRegistroSala = (await drizzleDb.select().from(schema.salas)).length == 0;
       const result = (await drizzleDb.select().from(schema.categoria)).length;
       if (result == 0){
         await drizzleDb.insert(schema.categoria).values({
@@ -40,17 +45,18 @@ export default function Index() {
         });
       }
     };
-    tablaCatalogo();//insertamos datos en la tabla catalogo
-    consulta()
+    accion();//insertamos datos en la tabla catalogo
+    consulta();
+    if (abrirRegistroUser) {
+      router.push('/registro_user')
+    } else if (abrirRegistroSala) {
+      router.push('/registro_sala')
+    }
   });
   const addNota = ()=>{
     const crearNota = async()=>{
-      const result = await drizzleDb.insert(schema.notas).values({
-        titulo: 'bhkhv',
-        descripcion: 'kvkhvk',
-        idCategoria: 1
-      });
-      result ? consulta() : ()=>{};
+      router.push('./crearNota');
+      consulta();
     };
     crearNota()
   };

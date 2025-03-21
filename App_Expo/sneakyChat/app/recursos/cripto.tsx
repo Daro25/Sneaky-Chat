@@ -1,4 +1,3 @@
-import * as Crypto from 'expo-crypto';
 import RNRsaNative, { RSA } from 'react-native-rsa-native';
 
 export const generateKeys = async () => {

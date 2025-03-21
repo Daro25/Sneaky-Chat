@@ -1,11 +1,12 @@
 import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity, Dimensions } from "react-native";
-import { useGlobalStyles } from "./recursos/style";
+import { colorContainer, useGlobalStyles, useTheme } from "./recursos/style";
 import { useEffect, useState } from "react";
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
 import Animated, {
   useSharedValue,
+  FadeIn,
   Easing,
 } from 'react-native-reanimated';
 
@@ -50,9 +51,11 @@ export default function Registro_sala() {
     duration: 500,
     easing: Easing.bezier(0.5, 0.01, 0, 1),
   };
-  
+  const isDarkMode = useTheme();
   return (
-    <SafeAreaView style={useGlobalStyles().container}>
+    <Animated.View
+      entering={FadeIn}>
+    <SafeAreaView style={[useGlobalStyles().container, [,{backgroundColor:colorContainer(isDarkMode)+'40'}]]}>
       <View style={[useGlobalStyles().container_H, useGlobalStyles().center, useGlobalStyles().header]}>
         <Animated.View style={[
           useGlobalStyles().btn_div2, 
@@ -117,4 +120,5 @@ export default function Registro_sala() {
           )}
       </View>
     </SafeAreaView>
+    </Animated.View>
   );}

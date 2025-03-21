@@ -1,6 +1,6 @@
 import { React } from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { useGlobalStyles } from "../../app/recursos/style";
+import { useGlobalStyles } from "@/app/recursos/style";
 
 export function MensajeLeft(props) {
     return (

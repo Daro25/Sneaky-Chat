@@ -1,9 +1,10 @@
 import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity } from "react-native";
-import { useGlobalStyles } from "./recursos/style";
+import { colorContainer, useGlobalStyles, useTheme } from "./recursos/style";
 import { useEffect, useState } from "react"
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 export default function Registro_user() {
 const [name, setName] = useState("")
@@ -24,8 +25,11 @@ const login = async ()=>{
     pass: pass
   })
 };
+  const isDarkMode = useTheme();
   return (
-    <SafeAreaView style={useGlobalStyles().container}>
+    <Animated.View
+          entering={FadeIn}>
+    <SafeAreaView style={[useGlobalStyles().container, [,{backgroundColor:colorContainer(isDarkMode)+'40'}]]}>
       <View style={useGlobalStyles().forms}>
         <View style={useGlobalStyles().container_H}>
           <Text style={[useGlobalStyles().text_container_H]}>Nombre de usuario: </Text>
@@ -81,5 +85,6 @@ const login = async ()=>{
           </View>
         </View>
     </SafeAreaView>
+    </Animated.View>
   );
 }

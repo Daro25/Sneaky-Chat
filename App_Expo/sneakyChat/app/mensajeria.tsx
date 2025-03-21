@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, FlatList, Text, TouchableOpacity } from 'react-native';
 import useFetchMessages from './useFetchMessages';
-import  { MensajeLeft, MensajeRight } from '../assets/Componentes/mensaje'
+import  { MensajeLeft, MensajeRight } from '@/assets/Componentes/mensaje'
 import { useGlobalStyles, head } from "./recursos/style";
 import * as SQLite from 'expo-sqlite';
 

@@ -9,7 +9,9 @@ import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import migrations from '@/drizzle/migrations';
 
 export const DATABASE_NAME = 'SneakyChatDB';
-
+export const unstable_settings = {
+  initialRouteName: 'index',
+};
 export default function RootLayout() {
   const expoDb = openDatabaseSync(DATABASE_NAME);
   const db = drizzle(expoDb);
@@ -31,8 +33,30 @@ export default function RootLayout() {
         headerTintColor: '#fff',
       }}>
       <Stack.Screen name="index" options={{ title: 'Home' }} />
-      <Stack.Screen name="registro_user" options={{ title: 'Registro de usuario' }} />
-      <Stack.Screen name="registro_sala" options={{ title: 'Registro de sala' }} />
+      <Stack.Screen
+        name="registro_user"
+        options={{
+          presentation: 'transparentModal',
+          animation: 'fade',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="registro_sala"
+        options={{
+          presentation: 'transparentModal',
+          animation: 'fade',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="crearNota"
+        options={{
+          presentation: 'transparentModal',
+          animation: 'fade',
+          headerShown: false,
+        }}
+      />
     </Stack><StatusBar style="light" />
     </SQLiteProvider>
     </Suspense>

@@ -36,7 +36,7 @@ export default function RootLayout() {
       <Stack.Screen
         name="registro_user"
         options={{
-          presentation: 'transparentModal',
+          presentation: 'card',
           animation: 'fade',
           headerShown: false,
         }}
@@ -44,7 +44,7 @@ export default function RootLayout() {
       <Stack.Screen
         name="registro_sala"
         options={{
-          presentation: 'transparentModal',
+          presentation: 'card',
           animation: 'fade',
           headerShown: false,
         }}

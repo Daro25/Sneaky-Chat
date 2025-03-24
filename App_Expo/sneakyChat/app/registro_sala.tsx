@@ -55,7 +55,7 @@ export default function Registro_sala() {
   return (
     <Animated.View
       entering={FadeIn}>
-    <SafeAreaView style={[useGlobalStyles().container, [,{backgroundColor:colorContainer(isDarkMode)+'40'}]]}>
+    <SafeAreaView style={[useGlobalStyles().container]}>
       <View style={[useGlobalStyles().container_H, useGlobalStyles().center, useGlobalStyles().header]}>
         <Animated.View style={[
           useGlobalStyles().btn_div2, 

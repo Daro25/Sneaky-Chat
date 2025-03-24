@@ -7,22 +7,31 @@ import { Nota } from "@/db/schema";
 import { View, FlatList, TouchableOpacity, Text } from "react-native";
 import NotaView from "@/assets/Componentes/Nota";
 import { router } from "expo-router";
+import { Image } from 'expo-image';
+import { eq } from "drizzle-orm";
 
 export default function Index() {
   //base de datos mas facil con drizzle
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db, { schema});
   const [Notas, setNotas] = useState<Nota[]>([]);
+  const PlaceholderImage = require('../assets/images/agregar.png')
+  var openUser = false
+  var openSala = false
+  const [msj, setMsj] = useState('')
   const consulta = async ()=>{
-    const result = await drizzleDb.select().from(schema.notas);
+    const result = (await drizzleDb.select().from(schema.notas)).toReversed();
     setNotas(result)
   }
+  function deleteForId (id: any){
+    drizzleDb.delete(schema.notas).where(eq(schema.notas.id, id));
+    setMsj(id)
+    consulta()
+  }
   useEffect(()=>{
-    let abrirRegistroUser = false;
-    let abrirRegistroSala = false;
     const accion = async ()=>{
-      abrirRegistroUser = (await drizzleDb.select().from(schema.datosp)).length == 0;
-      abrirRegistroSala = (await drizzleDb.select().from(schema.salas)).length == 0;
+      openUser = (await drizzleDb.select().from(schema.datosp)).length == 0;
+      openSala = (await drizzleDb.select().from(schema.salas)).length == 0;
       const result = (await drizzleDb.select().from(schema.categoria)).length;
       if (result == 0){
         await drizzleDb.insert(schema.categoria).values({
@@ -47,10 +56,12 @@ export default function Index() {
     };
     accion();//insertamos datos en la tabla catalogo
     consulta();
-    if (abrirRegistroUser) {
-      router.push('/registro_user')
-    } else if (abrirRegistroSala) {
-      router.push('/registro_sala')
+    if (openUser) {
+      openUser = false;
+      router.push('./registro_user')
+    } else if (openSala) {
+      openSala = false;
+      router.push('./registro_sala')
     }
   });
   const addNota = ()=>{
@@ -62,13 +73,14 @@ export default function Index() {
   };
   return (
     <View style={useGlobalStyles().container}>
+      <Text style={useGlobalStyles().text}>{msj}</Text>
       <FlatList style={{width:'100%', position:'relative'}} data={Notas} renderItem={({item})=>(
-        <NotaView title={item.titulo} context={item.descripcion} categoria={item.idCategoria}/>
+        <NotaView title={item.titulo} context={item.descripcion} categoria={item.idCategoria} id={item.id} delete={deleteForId}/>
       )}
       keyExtractor={item => item.id.toString()}/>
-      <TouchableOpacity style={[useGlobalStyles().btn_normal, [,{width: 'auto', display:'flex', position:'absolute', bottom:7, right: 7}]]}
+      <TouchableOpacity style={[ [,{width: 'auto', display:'flex', position:'absolute', bottom:7, right: 7, padding: 10, borderRadius: '50%', alignItems: 'center',justifyContent: 'center',}]]}
         onPress={addNota}>
-          <Text style={[useGlobalStyles().text, useGlobalStyles().negrita, useGlobalStyles().center]}>Añadir Nota</Text>
+          <Image style={{width: 90, height: 90, borderRadius:'50%'}} source={PlaceholderImage}/>
       </TouchableOpacity>
     </View>
   );

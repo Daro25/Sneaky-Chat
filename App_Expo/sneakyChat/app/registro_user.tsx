@@ -29,7 +29,7 @@ const login = async ()=>{
   return (
     <Animated.View
           entering={FadeIn}>
-    <SafeAreaView style={[useGlobalStyles().container, [,{backgroundColor:colorContainer(isDarkMode)+'40'}]]}>
+    <SafeAreaView style={[useGlobalStyles().container]}>
       <View style={useGlobalStyles().forms}>
         <View style={useGlobalStyles().container_H}>
           <Text style={[useGlobalStyles().text_container_H]}>Nombre de usuario: </Text>

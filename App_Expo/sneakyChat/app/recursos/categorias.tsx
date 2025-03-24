@@ -29,3 +29,4 @@ const Categorias = [
         {id: 6, nombre: 'Trabajo'}];
 
 export default Categorias;
+ export const basura = require('../../assets/images/papeBin.png');

@@ -20,8 +20,8 @@ $password = 'droaPluving$1';
 $conex = mysqli_connect($server, $user, $password, $database);
 
 if($conex) {
-    $tablas = $conex->query("SELECT Id_User, Nomb, keyPublic 
-             FROM usuarios 
+    $tablas = $conex->query("SELECT Id_User, Nomb, keyPublic
+             FROM usuario 
              WHERE Id_User = " . (int)$_GET["Id_User"])
              ->fetch_all(MYSQLI_ASSOC);
 
@@ -31,8 +31,8 @@ if($conex) {
     foreach ($tablas as $li) {
         $Id_User = $li['Id_User'];
         $Nomb = $li['Nomb']; 
-        $keyPublic = $li['keyPublic'];
-        $tablasArray[] = new Tabla($id, $nombre, $keyPublic);
+        $keyPublic = $li ['keyPublic'];
+        $tablasArray[] = new Tabla($Id_User, $Nomb, $keyPublic);
     }
 
     echo json_encode($tablasArray);

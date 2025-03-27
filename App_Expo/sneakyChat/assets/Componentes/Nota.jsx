@@ -21,7 +21,7 @@ export default function NotaView(props) {
         <View style={[styles.nota, [,{backgroundColor:Bgcolor(props.categoria)+transparent, position:'relative', overflow:'hidden'}]]}>
         <TouchableOpacity style={{position:'relative', width:'100%', 
         height: 'auto', minHeight: 120, borderRadius: 10, padding: 10,}}
-        onLongPress={seleccion} onPress={deseleccion}>
+        onLongPress={seleccion}>
             <Image style={styles.image} source={PlaceholderImage}/>
             <Text style={[[{color:'black'}], useGlobalStyles().negrita]}>{props.title}</Text>
             <Text style={{color:'black'}}>{props.context}</Text>

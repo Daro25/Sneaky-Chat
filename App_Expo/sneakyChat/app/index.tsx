@@ -23,10 +23,10 @@ export default function Index() {
     const result = (await drizzleDb.select().from(schema.notas)).toReversed();
     setNotas(result)
   }
-  function deleteForId (id: any){
-    drizzleDb.delete(schema.notas).where(eq(schema.notas.id, id));
+  const deleteForId = async (id: any)=> {
+    await drizzleDb.delete(schema.notas).where(eq(schema.notas.id, id));
     setMsj(id)
-    consulta()
+    await consulta()
   }
   useEffect(()=>{
     const accion = async ()=>{

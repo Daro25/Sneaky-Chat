@@ -3,6 +3,7 @@ import { colorContainer, useGlobalStyles, useTheme } from "./recursos/style";
 import { useEffect, useState } from "react";
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
+import { router } from "expo-router";
 import * as schema from '@/db/schema';
 import Animated, {
   useSharedValue,
@@ -25,6 +26,14 @@ export default function Registro_sala() {
         nombre: name,
         pass: pass
       })
+      try {
+        const consulta = await fetch(`http://134.209.211.47/registro_sala.php?Id_Sala=2&Contra_Sala=dgfhfj&Nom_Sala=foca&Cupo=3`);
+        const response = await fetch(`http://134.209.211.47/registro_sala.php?Id_Sala=2&Contra_Sala=dgfhfj&Nom_Sala=foca&Cupo=3`);
+        const data = await response.json();
+      } catch (error) {
+        
+      }
+      setTimeout(()=>{router.replace('/')}, 3000);
   };
   const login = async ()=>{
     await drizzleDb.insert(schema.salas).values({
@@ -32,6 +41,7 @@ export default function Registro_sala() {
       nombre: name,
       pass: pass
     })
+    setTimeout(()=>{router.replace('/')}, 3000);
   };
   const screenWidth = Dimensions.get('window').width;
   const leftAnim = useSharedValue(screenWidth*0.025);
@@ -51,7 +61,6 @@ export default function Registro_sala() {
     duration: 500,
     easing: Easing.bezier(0.5, 0.01, 0, 1),
   };
-  const isDarkMode = useTheme();
   return (
     <Animated.View
       entering={FadeIn}>

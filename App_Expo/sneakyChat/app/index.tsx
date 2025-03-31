@@ -62,13 +62,26 @@ export default function Index() {
     }
   };
   useEffect(()=>{
+    setTimeout(()=>{
+      const accion = async ()=>{
+        const userResult = await drizzleDb.select().from(schema.datosp);
+        const salaResult = await drizzleDb.select().from(schema.salas);
+        setOpenUser(userResult.length === 0);
+        setOpenSala(salaResult.length === 0);    
+      }
+      accion();
+      if (openUser) {
+        setOpenUser(false)
+        router.replace('/registro_user')
+      } else if (openSala) {
+        setOpenSala(false)
+        router.replace('/registro_sala')
+      }
+    },5000);
+  },[]);
+  useEffect(()=>{
     const accion = async ()=>{
-      const userResult = await drizzleDb.select().from(schema.datosp);
-      const salaResult = await drizzleDb.select().from(schema.salas);
       const categoriaResult = await drizzleDb.select().from(schema.categoria);
-
-    setOpenUser(userResult.length === 0);
-    setOpenSala(salaResult.length === 0);
 
       if (categoriaResult.length === 0){
         await drizzleDb.insert(schema.categoria).values([
@@ -82,13 +95,6 @@ export default function Index() {
       consulta();
     };
     accion();//insertamos datos en la tabla catalogo
-    if (openUser) {
-      setOpenUser(false)
-      router.push('./registro_user')
-    } else if (openSala) {
-      setOpenSala(false)
-      router.push('./registro_sala')
-    }
   }, []); 
   const addNota = ()=>{
     router.push('./0');

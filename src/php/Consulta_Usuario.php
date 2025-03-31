@@ -22,7 +22,7 @@ $conex = mysqli_connect($server, $user, $password, $database);
 if($conex) {
     $tablas = $conex->query("SELECT Id_User, Nomb, keyPublic
              FROM usuario 
-             WHERE Id_User = " . (int)$_GET["Id_User"])
+             WHERE Contra = " .$_GET["pass"]. " AND Nomb= ".$_GET["nombre"])
              ->fetch_all(MYSQLI_ASSOC);
 
     mysqli_close($conex);

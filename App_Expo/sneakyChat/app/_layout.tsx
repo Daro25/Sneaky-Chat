@@ -33,22 +33,8 @@ export default function RootLayout() {
         headerTintColor: '#fff',
       }}>
       <Stack.Screen name="index" options={{ title: 'Home' }} />
-      <Stack.Screen
-        name="registro_user"
-        options={{
-          presentation: 'card',
-          animation: 'fade',
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="registro_sala"
-        options={{
-          presentation: 'card',
-          animation: 'fade',
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen name="registro_user" options={{ title: 'Registro de usuario' }} />
+      <Stack.Screen name="registro_sala" options={{ title: 'Registro de Sala' }} />
       <Stack.Screen
         name="[id]"
         options={{

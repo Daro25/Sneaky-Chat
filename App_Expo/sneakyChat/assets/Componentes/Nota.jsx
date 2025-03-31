@@ -1,33 +1,35 @@
 import React, { useState } from "react";
 import { Text, StyleSheet, TouchableOpacity, View } from "react-native";
-import { useGlobalStyles } from "@/app/recursos/style";
+import { useGlobalStyles, useTheme } from "@/app/recursos/style";
 import { Src, basura } from "@/app/recursos/categorias";
 import { Image } from "expo-image";
 
-export default function NotaView(props) {
-  const PlaceholderImage = Src(props.categoria);
+export default function NotaView({ id = 1, categoria= 1, color = '#FFFFFF', title = 'Sin título', context = '', deleteFn = (id)=>{}, update= (id)=>{} }) {
+  const PlaceholderImage = Src(categoria) || require('@/assets/images/punto.png');  ;
   const [deleteN, setDeleteN] = useState(false);
   const [permiso, setPermiso] = useState(false);
 
-  const deseleccion = () => {
-    setDeleteN(false);
-    setPermiso(false);
-  };
-
   const seleccion = () => {
     setDeleteN(true);
-    setTimeout(deseleccion, 7000);
-    setTimeout(setPermiso(true), 2000);
+    setTimeout(() => {
+      setPermiso(true);
+    }, 2000);
+  
+    setTimeout(() => {
+      setDeleteN(false);
+      setPermiso(false);
+    }, 7000);
   };
+  
 
   return (
-    <View style={[styles.nota, { backgroundColor: props.color, position: "relative", overflow: "hidden" }]}>
+    <View style={[styles.nota, { backgroundColor: useTheme() ? 'transparent' : color, borderColor: color, borderWidth: 2, position: "relative", overflow: "hidden" }]}>
       <TouchableOpacity
         style={{ position: "relative", width: "100%", height: "auto", minHeight: 120, borderRadius: 10, padding: 10 }}
-        onLongPress={seleccion} onPress={()=>{props.update(props.id)}}>
+        onLongPress={seleccion} onPress={()=>{update?.(id);}}>
         <Image style={styles.image} source={PlaceholderImage} />
-        <Text style={[useGlobalStyles().negrita, styles.textNormal]}>{props.title}</Text>
-        <Text style={styles.textNormal}>{props.context}</Text>
+        <Text style={[useGlobalStyles().negrita, useGlobalStyles().text]}>{title}</Text>
+        <Text style={useGlobalStyles().text}>{context}</Text>
       </TouchableOpacity>
       {deleteN && (
         <View
@@ -43,7 +45,7 @@ export default function NotaView(props) {
             zIndex: 70,
           }}
         >
-          <TouchableOpacity onPress={() => {if(permiso){props.delete(props.id);}}} style={styles.deleteButton}>
+          <TouchableOpacity onPress={() => {if(permiso){deleteFn?.(id);}}} style={styles.deleteButton}>
             <Image source={basura} style={styles.deleteIcon} />
           </TouchableOpacity>
         </View>
@@ -68,9 +70,6 @@ const styles = StyleSheet.create({
     top: 5,
     right: 5,
   },
-  textNormal: {
-    color: "black"
-  },
   deleteButton: {
     width: 70,
     height: 70,
@@ -85,3 +84,9 @@ const styles = StyleSheet.create({
     height: 40,
   },
 });
+
+export function CategoriaView({nombre = '', color='black'}) {
+  return(
+    <Text style={[useGlobalStyles().negrita, useGlobalStyles().text, {borderColor:color, borderBottomWidth:2}]}>{nombre}</Text>
+  );
+}

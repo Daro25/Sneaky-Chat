@@ -19,6 +19,13 @@
     },
     "production": {
       "autoIncrement": true
+    },
+    "debug": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
     }
   },
   "submit": {

@@ -50,7 +50,7 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-        name="crearNota"
+        name="[id]"
         options={{
           presentation: 'transparentModal',
           animation: 'fade',

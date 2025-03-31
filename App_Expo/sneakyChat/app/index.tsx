@@ -5,7 +5,7 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
 import { Nota , Categoria } from "@/db/schema";
 import { View, FlatList, TouchableOpacity, Text, Pressable } from "react-native";
-import NotaView from "@/assets/Componentes/Nota";
+import NotaView, { CategoriaView } from "@/assets/Componentes/Nota";
 import { router } from "expo-router";
 import { Image } from 'expo-image';
 import { eq } from "drizzle-orm";
@@ -17,125 +17,137 @@ export default function Index() {
   const [Notas, setNotas] = useState<Nota[]>([]);
   const [Categorias, setCategorias] = useState<Categoria[]>([])
   const PlaceholderImage = require('../assets/images/agregar.png')
-  var openUser = false
-  var openSala = false
-  const [id, setId] = useState(0);
-  const consulta = async ()=>{
-    const result = (await drizzleDb.select().from(schema.notas)).toReversed();
-    setNotas(result)
-  }
-  const consultaCat = async ()=>{
-    const result = (await drizzleDb.select().from(schema.categoria));
-    setCategorias(result);
-  }
-  const getColor = (id: number)=>{
-    Categorias.forEach(element => {
-      if (element.idCategoria === id) {
-        return element.color;
+  const [openUser, setOpenUser] = useState(false);
+  const [openSala, setOpenSala] = useState(false);
+  const [lastId, setLastId] = useState(0);
+ 
+  const consulta = async () => {
+    let newid = lastId;
+    try {
+      const result = await drizzleDb.select().from(schema.notas);
+      let reverse = result.reverse();
+      setNotas(reverse);
+      newid = reverse[0].id;
+    } catch (error) {
+      setNotas([]);
+    }
+    setLastId(newid);
+    try {
+      const result = (await drizzleDb.select().from(schema.categoria));
+      if (Categorias.length != result.length) {
+        setCategorias(result);
       }
-    });
-  }
+    } catch (error) {
+      setCategorias([]);
+    }
+  } 
+  useEffect(()=>{consulta()},[]);
+  useEffect(()=>{
+    let interval = setInterval(()=>consulta(), 3000);
+    return () => clearInterval(interval);
+  },[lastId]);
+  const getColor = (id: number): string | undefined => {
+    const categoria = Categorias.find(element => element.idCategoria === id);
+    return categoria?.color;
+  };
   const deleteForId = async (id: any)=> {
     await drizzleDb.delete(schema.notas).where(eq(schema.notas.id, id));
     await consulta()
   }
-  const updateForId  = async (id: any) =>{
-    setId(id)
-    const result = (await drizzleDb.select().from(schema.notas));
-    result.length > 0? ()=>{
-      result.forEach(resultI => {
-    if (resultI.id === id) {
-      router.push({pathname: './crearNota',
-        params:{
-          id: resultI.id,
-          titulo: resultI.titulo,
-          context: resultI.descripcion,
-          cate: resultI.idCategoria,
-          edit: 'true',
-        }});
+  const updateForId = async (id: any) => {
+    const result = await drizzleDb.select().from(schema.notas);
+    const noteToUpdate = result.find(resultI => resultI.id === Number(id));
+    if (noteToUpdate) {
+      router.push(`./${noteToUpdate.id}`);
     }
-      }) }: ()=>{}
-  }
+  };
   useEffect(()=>{
     const accion = async ()=>{
-      openUser = (await drizzleDb.select().from(schema.datosp)).length == 0;
-      openSala = (await drizzleDb.select().from(schema.salas)).length == 0;
-      const result = (await drizzleDb.select().from(schema.categoria));
-      if (result.length === 0){
-        await drizzleDb.insert(schema.categoria).values({
-          nombre: 'Nulo',
-          color: '#9B7EBD'
-        });
-        await drizzleDb.insert(schema.categoria).values({
-          nombre: 'Primordial',
-          color: '#FAEDCB'
-        });
-        await drizzleDb.insert(schema.categoria).values({
-          nombre: 'Hogar',
-          color: '#9B7EBD'
-        });
-        await drizzleDb.insert(schema.categoria).values({
-          nombre: 'Pagos',
-          color: '#C9E4DE'
-        });
-        await drizzleDb.insert(schema.categoria).values({
-          nombre: 'Escuela',
-          color: '#C6DEF1'
-        });
-        await drizzleDb.insert(schema.categoria).values({
-          nombre: 'Trabajo',
-          color: '#F7D9C4'
-        });
+      const userResult = await drizzleDb.select().from(schema.datosp);
+      const salaResult = await drizzleDb.select().from(schema.salas);
+      const categoriaResult = await drizzleDb.select().from(schema.categoria);
+
+    setOpenUser(userResult.length === 0);
+    setOpenSala(salaResult.length === 0);
+
+      if (categoriaResult.length === 0){
+        await drizzleDb.insert(schema.categoria).values([
+          { nombre: 'Nulo', color: '#9B7EBD' },
+          { nombre: 'Primordial', color: '#FAEDCB' },
+          { nombre: 'Hogar', color: '#9B7EBD' },
+          { nombre: 'Pagos', color: '#C9E4DE' },
+          { nombre: 'Escuela', color: '#C6DEF1' },
+          { nombre: 'Trabajo', color: '#F7D9C4' },]);
       }
-    };
-    accion();//insertamos datos en la tabla catalogo
-    consulta();
-    consultaCat();
-    if (openUser) {
-      openUser = false;
-      router.push('./registro_user')
-    } else if (openSala) {
-      openSala = false;
-      router.push('./registro_sala')
-    }
-  });
-  const addNota = ()=>{
-    const crearNota = async()=>{
-      router.push({pathname:'./crearNota', params:{edit:''}});
       consulta();
     };
-    crearNota()
+    accion();//insertamos datos en la tabla catalogo
+    if (openUser) {
+      setOpenUser(false)
+      router.push('./registro_user')
+    } else if (openSala) {
+      setOpenSala(false)
+      router.push('./registro_sala')
+    }
+  }, []); 
+  const addNota = ()=>{
+    router.push('./0');
+    consulta();
   };
+  const [errors, setError] = useState('');
+  try {
+    Categorias.forEach(element => {
+      element.idCategoria;
+      element.nombre;
+      element.color;
+    });
+
+  } catch (e) {
+    setError(reportError.toString());
+  }
+  if(errors === ''){
   return (
     <View style={useGlobalStyles().container}>
-      <Text>{id}</Text>
       <FlatList style={{width:'100%', position:'relative'}} data={Notas} renderItem={({item})=>(
         <NotaView 
         title={item.titulo} 
-        context={item.descripcion} 
-        categoria={item.idCategoria} 
+        context={String(item.descripcion)} 
+        categoria={Number(item.idCategoria)} 
         id={item.id} 
         color={getColor(Number(item.idCategoria))}
-        delete={deleteForId}
+        deleteFn={deleteForId}
         update={updateForId}/>
       )}
       keyExtractor={item => item.id.toString()}/>
       
-      <TouchableOpacity style={[ [,{width: 'auto', display:'flex', position:'absolute', bottom:7, right: 7, padding: 10, borderRadius: '50%', alignItems: 'center',justifyContent: 'center',}]]}
+      <TouchableOpacity style={{width: 'auto', display:'flex', position:'absolute', bottom:7, right: 7, padding: 10, borderRadius: 45, alignItems: 'center',justifyContent: 'center',zIndex:20}}
         onPress={addNota}>
-          <Image style={{width: 90, height: 90, borderRadius:'50%'}} source={PlaceholderImage}/>
+          <Image style={{width: 90, height: 90, borderRadius:45}} source={PlaceholderImage}/>
       </TouchableOpacity>
 
-      <View style={{backgroundColor: useTheme()? 'black': 'white', borderRadius: 10, width:'70%', height: 100, padding: 9}}>
+      <View style={{backgroundColor: useTheme()? 'black': 'white',overflow:'hidden', borderRadius: 10, width:'70%', height: 'auto', padding: 9, alignSelf:'flex-start', margin:10}}>
         <Text style={[useGlobalStyles().negrita, useGlobalStyles().text]}>Categorias:</Text>
-        <View style={useGlobalStyles().container_H}>
-          <Pressable style={[useGlobalStyles().btn_normal, useGlobalStyles().btn_div2]}
-          onPress={()=> router.push('./crearCate')}>Añadir Categoria</Pressable>
-          <FlatList style={useGlobalStyles().btn_div2} data={Categorias} renderItem={({item})=>(
-            <Text style={[useGlobalStyles().negrita, useGlobalStyles().text]}>{item.nombre}</Text>
-          )} keyExtractor={item => item.idCategoria.toString()}/>
+        <View style={[useGlobalStyles().container_H, [{height:'auto', minHeight:120, maxHeight:'40%'}]]}>
+          <Pressable style={{width: '47%', justifyContent: 'center', height:'auto', backgroundColor: '#9B7EBD', borderRadius:10,}}
+          onPress={()=> router.push('./crearCate')}><Text style={{color:'white'}}>Añadir Categoria</Text></Pressable>
+        {Categorias.length > 0 && (
+          <FlatList
+            style={{ width: '47%', justifyContent: 'center', height:'auto', marginVertical:12 }}
+            data={Categorias}
+            renderItem={({ item }) => (
+              <CategoriaView nombre={item.nombre.toString()} color={item.color.toString()} />
+            )}
+            keyExtractor={item => item.idCategoria.toString()}
+          />
+        )}
         </View>
       </View>
+      
     </View>
   );
+}else {
+  return(
+    <Text>{errors}</Text>
+  );
+}
 }

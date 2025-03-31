@@ -18,7 +18,7 @@ const ChatScreen = () => {
             setInitialLoad(initialLoad+1)
         }
     }, [messages]); // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
-    useEffect(() => {
+    /*useEffect(() => {
         const conexion = async () => {
           try {
             db = await SQLite.openDatabaseAsync('sneakychat.db');
@@ -26,7 +26,7 @@ const ChatScreen = () => {
           }
         };
         conexion();
-      }, []);
+      }, []);*/
 
     return (
         <View style={[useGlobalStyles().container, [,{overflowX:'hidden'}]]}>

@@ -57,6 +57,14 @@ export default function RootLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="crearCate"
+        options={{
+          presentation: 'transparentModal',
+          animation: 'fade',
+          headerShown: false,
+        }}
+      />
     </Stack><StatusBar style="light" />
     </SQLiteProvider>
     </Suspense>

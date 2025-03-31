@@ -1,6 +1,7 @@
 CREATE TABLE `CATEGORIA` (
 	`ID_categoria` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`Nombre` text(40) NOT NULL
+	`Nombre` text(40) NOT NULL,
+	`Color` text(7) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `DATOSP` (

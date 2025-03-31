@@ -22,7 +22,7 @@ $conex = mysqli_connect($server, $user, $password, $database);
 
 if($conex) {
     $tablas = $conex->query("SELECT Id_sala, Contra_Sala, Nom_Sala, Cupo 
-             FROM salas 
+             FROM sala
              WHERE Id_sala = " . (int)$_GET["Id"])
              ->fetch_all(MYSQLI_ASSOC);
 

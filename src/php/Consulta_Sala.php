@@ -23,7 +23,7 @@ $conex = mysqli_connect($server, $user, $password, $database);
 if($conex) {
     $tablas = $conex->query("SELECT Id_sala, Contra_Sala, Nom_Sala, Cupo 
              FROM sala
-             WHERE Nom_Sala = " .$_GET["nombre"]. " AND Contra_Sala = ".$_GET["pass"])
+             WHERE Nom_Sala = " .(string)$_GET["nombre"]. " AND Contra_Sala = ".(string)$_GET["pass"])
              ->fetch_all(MYSQLI_ASSOC);
 
     mysqli_close($conex);

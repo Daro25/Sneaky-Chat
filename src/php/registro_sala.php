@@ -20,12 +20,11 @@ $conex = mysqli_connect($server, $user, $password, $database);
 if ($conex->connect_error) {
     $resultados = "La conexión a la base de datos falló: " . $conex->connect_error;
 } else {
-    $id_sala = $_GET['Id_Sala']; 
     $contra_sala = $_GET['Contra_Sala']; 
     $nom_sala = $_GET['Nom_Sala']; 
     $cupo = $_GET['Cupo'];
 
-    $sql = "INSERT INTO sala (Id_sala, Contra_Sala, Nom_Sala, Cupo) VALUES ( '$id_sala', '$contra_sala', '$nom_sala', '$cupo')";
+    $sql = "INSERT INTO sala (Id_sala, Contra_Sala, Nom_Sala, Cupo) VALUES ( NULL, '$contra_sala', '$nom_sala', '$cupo')";
 
     if ($conex->query($sql) ===TRUE ){
         $resultados = "Registro de sala exitoso.";

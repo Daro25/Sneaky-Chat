@@ -27,7 +27,6 @@ export default function Registro_sala() {
         pass: pass
       })
       try {
-        const consulta = await fetch(`http://134.209.211.47/registro_sala.php?Id_Sala=2&Contra_Sala=dgfhfj&Nom_Sala=foca&Cupo=3`);
         const response = await fetch(`http://134.209.211.47/registro_sala.php?Id_Sala=2&Contra_Sala=dgfhfj&Nom_Sala=foca&Cupo=3`);
         const data = await response.json();
       } catch (error) {

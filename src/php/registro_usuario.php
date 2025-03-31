@@ -20,14 +20,13 @@ $conex = mysqli_connect($server, $user, $password, $database);
 if ($conex->connect_error) {
     $resultados = "La conexión a la base de datos falló: " . $conex->connect_error;
 } else {
-    $id_user = $_GET['id_user']; 
     $nomb = $_GET['nomb']; 
     $contra = $_GET['contra']; 
     $sala_id = $_GET['sala_id'];
     $edad = $_GET['edad'];
     $key = $_GET['key'];
     //contruir la consulta SQLpara insertar un nuevo registro
-    $sql = "INSERT INTO usuario (Id_user, nomb, contra, sala_id, Edad, keyPublic) VALUES ('$id_user', '$nomb', '$contra', '$sala_id', '$edad', '$key')";
+    $sql = "INSERT INTO usuario (Id_user, nomb, contra, sala_id, Edad, keyPublic) VALUES (NULL, '$nomb', '$contra', '$sala_id', '$edad', '$key')";
     // ejecutar la consulta
 
     if ($conex->query($sql)===TRUE) {

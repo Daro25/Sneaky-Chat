@@ -1,5 +1,5 @@
 <?php
-
+header("Access-Control-Allow-Origin: *");
 class Respuesta
 {
     public $res; //Respuesta es una definición de un objeto que tiene una propiedad $res

@@ -30,7 +30,7 @@ export default function ModalCreacion2() {
   const handleCreate = () => {
     if (!nombre.trim()) {
       setMsjButton('Cancelando acción...');
-      setTimeout(() => router.back, 2000);
+      setTimeout(() => router.dismissAll(), 2000);
     } else {
       if (!visible) {
         setMsjButton('Confirmas esta acción, no hay retorno.')
@@ -56,7 +56,7 @@ export default function ModalCreacion2() {
           />
           <Text style={styles.charCount}>{nombre.length} / 40.</Text>
           <TouchableOpacity onPress={handleCreate} style={styles.createButton}>
-            <Text style={[useGlobalStyles().negrita, { color: 'white' }]}>{msjButton}</Text>
+            <Text style={[useGlobalStyles().negrita, { color: 'black' }]}>{msjButton}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
+import { encryptMessage, decryptMessage } from "@/app/recursos/cripto";
+import ObtenerLlavePrivada from "./recursos/secureStore";
 
 const useFetchMessages = (userId: number) => {
     const [messages, setMessages] = useState<any[]>([]);
@@ -13,6 +15,7 @@ const useFetchMessages = (userId: number) => {
     //--------------------------------------------------------------------
     const fetchMessages = async () => {
         const result = await drizzleDb.select().from(schema.mensaje)
+        const llavePrivada = await ObtenerLlavePrivada();
         result.length > 0 ? ()=>{
             setLastId(result[result.length-1].id)
             result.forEach(fila =>{
@@ -42,14 +45,14 @@ const useFetchMessages = (userId: number) => {
 
                 newMessages.push({
                     id: fila.ID, userId: fila.User_id, fecha: fecha,
-                    hora: hora, text: fila.Texto, 
+                    hora: hora, text: decryptMessage(fila.Texto, llavePrivada+'')+'', 
                     isCurrentUser: Number(fila.User_id) === userId,
                 });
                 const registrar = async()=>{
                     await drizzleDb.insert(schema.mensaje).values({
                         sala: fila.sala_Id+'',
                         dates: fila.FechayHora, 
-                        texto: fila.Texto, 
+                        texto: decryptMessage(fila.Texto, llavePrivada+'')+'', 
                         idUser: fila.User_id+''
                     });
                 }

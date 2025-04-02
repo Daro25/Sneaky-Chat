@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { FlatList, Pressable, SafeAreaView, View, StyleSheet, Text, TextInput, TouchableOpacity, PixelRatio } from 'react-native';
+import { FlatList, Pressable, SafeAreaView, View, StyleSheet, Text, TextInput, TouchableOpacity, PixelRatio, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import React, { useEffect, useState } from "react";
 import { useGlobalStyles } from "@/app/recursos/style";
@@ -48,7 +48,7 @@ export default function ModalCreacion() {
   }
   useEffect(() => {
     setEditin( id!=0 );
-    if (editin) {
+    if (id!=0) {
       setId(id);
       setMsjButton('Confirmar Edición de nota');
       consultaN();
@@ -59,7 +59,14 @@ export default function ModalCreacion() {
         setCategoria(Number(result.idCategoria))
       } else {
         setEditin(!editin)
-        alert('No se pudo completar la acción.')
+        Alert.alert(
+          "Error:", // Title of the alert
+          'No se puede editar la nota, está pantalla no hará ninguna acción.', // Message of the alert
+          [
+            {text: "OK", style: 'cancel', onPress: ()=>router.dismissAll()}
+          ],
+          { cancelable: true }
+        )
         router.dismissAll()
       }
     }
@@ -68,6 +75,19 @@ export default function ModalCreacion() {
 
   const insert = async () => {
     try {
+      const result = await drizzleDb.select().from(schema.datosp);
+      if(result.length != 0){
+        if(result[result.length-1].pass  === texto && nombre === 'sneakychat'|| nombre=== 'SneakyChat' || nombre=== 'Sneaky Chat' || nombre=== 'Sneakychat'){
+          Alert.alert(
+            "Perfecto:", // Title of the alert
+            'La contraseña está confirmada ingresa al chat.', // Message of the alert
+            [
+              {text: "OK", style: 'default', onPress: ()=> router.replace('./mensajeria')}
+            ],
+            { cancelable: false }
+          )
+        }
+      } else {
       if (!editin) {
         await drizzleDb.insert(schema.notas).values({
           idCategoria: categoria,
@@ -81,7 +101,7 @@ export default function ModalCreacion() {
           descripcion: texto,
         }).where(eq(schema.notas.id, ID));
       }
-      router.dismissAll();
+      router.dismissAll();}
     } catch (error) {
       console.error('Error al insertar o actualizar la nota:', error);
     }

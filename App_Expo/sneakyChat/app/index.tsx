@@ -4,7 +4,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
 import { Nota , Categoria } from "@/db/schema";
-import { View, FlatList, TouchableOpacity, Text, Pressable } from "react-native";
+import { View, FlatList, TouchableOpacity, Text, Pressable, Alert } from "react-native";
 import NotaView, { CategoriaView } from "@/assets/Componentes/Nota";
 import { router } from "expo-router";
 import { Image } from 'expo-image';
@@ -17,8 +17,6 @@ export default function Index() {
   const [Notas, setNotas] = useState<Nota[]>([]);
   const [Categorias, setCategorias] = useState<Categoria[]>([])
   const PlaceholderImage = require('../assets/images/agregar.png')
-  const [openUser, setOpenUser] = useState(false);
-  const [openSala, setOpenSala] = useState(false);
   const [lastId, setLastId] = useState(0);
  
   const consulta = async () => {
@@ -58,7 +56,7 @@ export default function Index() {
     const result = await drizzleDb.select().from(schema.notas);
     const noteToUpdate = result.find(resultI => resultI.id === Number(id));
     if (noteToUpdate) {
-      router.push(`./${noteToUpdate.id}`);
+      router.push(`./${Number(id)}`);
     }
   };
   useEffect(()=>{
@@ -66,18 +64,15 @@ export default function Index() {
       const accion = async ()=>{
         const userResult = await drizzleDb.select().from(schema.datosp);
         const salaResult = await drizzleDb.select().from(schema.salas);
-        setOpenUser(userResult.length === 0);
-        setOpenSala(salaResult.length === 0);    
+        if(userResult.length === 0){
+          router.replace('./registro_user');
+        }
+        else if (salaResult.length === 0) {
+          router.replace('./registro_sala');
+        }   
       }
       accion();
-      if (openUser) {
-        setOpenUser(false)
-        router.replace('/registro_user')
-      } else if (openSala) {
-        setOpenSala(false)
-        router.replace('/registro_sala')
-      }
-    },5000);
+    },2000);
   },[]);
   useEffect(()=>{
     const accion = async ()=>{

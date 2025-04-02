@@ -1,10 +1,11 @@
-import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity } from "react-native";
-import { colorContainer, useGlobalStyles, useTheme } from "./recursos/style";
-import { useEffect, useState } from "react"
+import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity, Alert } from "react-native";
+import { useGlobalStyles, useTheme } from "./recursos/style";
+import { useState } from "react"
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import { router } from "expo-router";
 
 export default function Registro_user() {
 const [name, setName] = useState("")
@@ -14,21 +15,87 @@ const [year, setYear] = useState('')
 const db = useSQLiteContext();
 const drizzleDb = drizzle(db, { schema});
 const registro = async ()=>{
-  await drizzleDb.insert(schema.datosp).values({
-    idUser: name,
-    pass: pass
-  })
-};
-const login = async ()=>{
-  await drizzleDb.insert(schema.datosp).values({
-    idUser: name,
-    pass: pass
-  })
-};
-  const isDarkMode = useTheme();
+  if (!(name.length === pass.length && name.length === 0)) {
+    if(Number(year) >= 15){
+      if(Rpass === pass) {
+        try {
+            await drizzleDb.insert(schema.datosp).values({
+              idUser: name,
+              pass: pass,
+              year: Number(year)
+            })
+            setTimeout(()=>{router.replace('/')}, 3000);
+        } catch (error) {
+          Alert.alert(
+            "Error:", // Title of the alert
+            error+'', // Message of the alert
+            [
+              {text: "OK", style: 'cancel'}
+            ],
+            { cancelable: true }
+          );
+        }
+      } else {
+        Alert.alert(
+          "Error:", // Title of the alert
+          'Las contraseñas no son identicas.', // Message of the alert
+          [
+            {text: "OK", style: 'cancel'}
+          ],
+          { cancelable: true }
+        );
+      }} else {
+        Alert.alert(
+          "Ups!", // Title of the alert
+          'No permitimos a menores de 15 años.', // Message of the alert
+          [
+            {text: "OK", style: 'cancel'}
+          ],
+          { cancelable: true }
+        );
+      }
+  } else {
+    Alert.alert(
+      "Llena los campos", // Title of the alert
+      'No dejes campos sin llenar', // Message of the alert
+      [
+        {text: "OK", style: 'cancel'}
+      ],
+      { cancelable: true }
+    );
+  }
+  };
+  const login = async ()=>{
+    try {
+      if (!(name.length === pass.length && name.length === 0)) {
+        await drizzleDb.insert(schema.datosp).values({
+          idUser: name,
+          pass: pass,
+          year: Number(year)
+        });
+        setTimeout(()=>{router.replace('/')}, 3000);
+      } else {
+        Alert.alert(
+          "Llena los campos", // Title of the alert
+          'No dejes campos sin llenar', // Message of the alert
+          [
+            {text: "OK", style: 'cancel'}
+          ],
+          { cancelable: true }
+        );
+      }
+    } catch (error) {
+      Alert.alert(
+        "Error:", // Title of the alert
+        error+'', // Message of the alert
+        [
+          {text: "OK", style: 'cancel'}
+        ],
+        { cancelable: true }
+      );
+    }
+  };
   return (
-    <Animated.View
-          entering={FadeIn}>
     <SafeAreaView style={[useGlobalStyles().container]}>
       <View style={useGlobalStyles().forms}>
         <View style={useGlobalStyles().container_H}>
@@ -85,6 +152,5 @@ const login = async ()=>{
           </View>
         </View>
     </SafeAreaView>
-    </Animated.View>
   );
 }

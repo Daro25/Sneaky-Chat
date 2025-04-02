@@ -8,23 +8,26 @@ import * as schema from '@/db/schema';
 import { RSA } from 'react-native-rsa-native';
 import { GuardarLlavePrivada } from "./recursos/secureStore";
 import Animated, { useSharedValue, Easing } from 'react-native-reanimated';
+import { replace } from "expo-router/build/global-state/routing";
 
 export default function Registro_sala() {
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const [Rpass, setRpass] = useState("");
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
-  const [visible1, setVisible1] = useState(false);
-  const [visible2, setVisible2] = useState(true);
+  const [visible1, setVisible1] = useState(true);
+  const [visible2, setVisible2] = useState(false);
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db, { schema });
   const screenWidth = Dimensions.get('window').width;
   const leftAnim = useSharedValue(screenWidth * 0.025);
+  leftAnim.value = screenWidth * 0.5;
   const [errors, setErrors] = useState('')
   const handlePress = (bool: boolean) => {
     if (!bool) {
+        router.replace('/registro_sala');
     } else {
-        router.replace('./login_sala');
+        
     }
   };
 

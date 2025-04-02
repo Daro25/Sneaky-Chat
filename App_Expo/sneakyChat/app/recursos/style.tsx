@@ -1,6 +1,6 @@
 import { useColorScheme } from "react-native";
 import { useEffect, useState, useMemo } from "react";
-import { StyleSheet, PixelRatio } from "react-native";
+import { StyleSheet, PixelRatio, Dimensions } from "react-native";
 
 export function useTheme() {
   const colorScheme = useColorScheme();
@@ -56,6 +56,27 @@ export function useGlobalStyles() {
         textDecorationLine: 'underline',
         color: colorText(isDarkMode)
       },
+    msjbox: {
+        width: '100%',
+        height: '20%',
+        position: 'relative',
+        backgroundColor: '#441752',
+        overflow: 'hidden'
+    },
+    msjboxBtn:{
+      width: PixelRatio.getPixelSizeForLayoutSize(40),
+      height: PixelRatio.getPixelSizeForLayoutSize(40),
+      borderRadius: '50%',
+      justifyContent: 'center',
+    },
+    leyenda: {
+      width: ((Dimensions.get('window').width * 0.9)- PixelRatio.getPixelSizeForLayoutSize(40)),
+      height: 'auto',
+      borderRadius: 10,
+      marginLeft: '5%',
+      backgroundColor: colorContainer(isDarkMode),
+      color: colorText(isDarkMode),
+    },
     container_H :{
         flexDirection: 'row',
         flexWrap: 'wrap',

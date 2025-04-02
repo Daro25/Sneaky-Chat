@@ -25,12 +25,13 @@ export const datosp = sqliteTable('DATOSP', {
   id: integer('ID').primaryKey({ autoIncrement: true }),
   pass: text('pass', { length: 20 }).notNull(),
   idUser: text('Id_User', { length: 40 }).notNull(),
+  year: integer('Year').notNull()
 });
 
 export const salas = sqliteTable('SALAS', {
   idSala: integer('Id_sala', { mode: "number" }).notNull(),
   pass: text('pass', { length: 20 }).notNull(),
-  nombre: text('nombre', { length: 20 }),
+  nombre: text('nombre', { length: 20 }).notNull(),
 });
 
 export const emisor = sqliteTable('EMISOR', {

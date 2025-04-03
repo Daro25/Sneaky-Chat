@@ -65,36 +65,7 @@ const registro = async ()=>{
     );
   }
   };
-  const login = async ()=>{
-    try {
-      if (!(name.length === pass.length && name.length === 0)) {
-        await drizzleDb.insert(schema.datosp).values({
-          idUser: name,
-          pass: pass,
-          year: Number(year)
-        });
-        setTimeout(()=>{router.replace('/')}, 3000);
-      } else {
-        Alert.alert(
-          "Llena los campos", // Title of the alert
-          'No dejes campos sin llenar', // Message of the alert
-          [
-            {text: "OK", style: 'cancel'}
-          ],
-          { cancelable: true }
-        );
-      }
-    } catch (error) {
-      Alert.alert(
-        "Error:", // Title of the alert
-        error+'', // Message of the alert
-        [
-          {text: "OK", style: 'cancel'}
-        ],
-        { cancelable: true }
-      );
-    }
-  };
+  
   return (
     <SafeAreaView style={[useGlobalStyles().container]}>
       <View style={useGlobalStyles().forms}>
@@ -141,13 +112,9 @@ const registro = async ()=>{
             maxLength={2}/>
           </View>
           <View style={useGlobalStyles().container_H}>
-            <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().inlineBlock, useGlobalStyles().btn_div2]}
-            onPress={login}>
-              <Text style={[useGlobalStyles().text, useGlobalStyles().negrita, useGlobalStyles().center]}>Iniciar Sesión</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().inlineBlock, useGlobalStyles().btn_div2]}
+            <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().inlineBlock, [, { width: '100%', minHeight: 70 }]]}
             onPress={registro}>
-              <Text style={[useGlobalStyles().text, useGlobalStyles().negrita, useGlobalStyles().center]}>Registrarse por primera vez</Text>
+              <Text style={[useGlobalStyles().text, useGlobalStyles().negrita, useGlobalStyles().center]}>Registrar</Text>
             </TouchableOpacity>
           </View>
         </View>

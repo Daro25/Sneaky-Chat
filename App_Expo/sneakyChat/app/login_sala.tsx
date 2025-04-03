@@ -62,7 +62,7 @@ export default function Registro_sala() {
         if (userResult.length > 0) {
           const { idUser, pass: userPass, year } = userResult[userResult.length - 1];
           const keys = await RSA.generateKeys(512);
-          await GuardarLlavePrivada(keys.private);
+          GuardarLlavePrivada(keys.private);
           const responseU = await fetch(`http://134.209.211.47/registro_usuario.php?nomb=${encodeURIComponent(idUser)}&contra=${encodeURIComponent(userPass)}&sala_id=${salaId}&edad=${year}&key=${encodeURIComponent(keys.public)}`);
           if (!responseU.ok) throw new Error(`HTTP error! status: ${responseU.status}`);
         }
@@ -89,9 +89,16 @@ export default function Registro_sala() {
       const consulta = await fetch(`http://134.209.211.47/Consulta_Sala.php?nombre=${encodeURIComponent(name)}&pass=${encodeURIComponent(pass)}`);
       if (!consulta.ok) throw new Error(`HTTP error! status: ${consulta.status}`);
       const data = await consulta.json();
-
       if (data.length > 0) {
         const salaId = data[0].ID_Sala;
+        const userResult = await drizzleDb.select().from(schema.datosp);
+        if (userResult.length > 0) {
+          const { idUser, pass: userPass, year } = userResult[userResult.length - 1];
+          const keys = await RSA.generateKeys(512);
+          GuardarLlavePrivada(keys.private);
+          const responseU = await fetch(`http://134.209.211.47/registro_usuario.php?nomb=${encodeURIComponent(idUser)}&contra=${encodeURIComponent(userPass)}&sala_id=${salaId}&edad=${year}&key=${encodeURIComponent(keys.public)}`);
+          if (!responseU.ok) throw new Error(`HTTP error! status: ${responseU.status}`);
+        }
         await drizzleDb.insert(schema.salas).values({ idSala: salaId, nombre: name, pass: pass });
         router.replace('/');
       } else {

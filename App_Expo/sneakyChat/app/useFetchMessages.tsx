@@ -15,6 +15,7 @@ const useFetchMessages = (userId: number) => {
     //--------------------------------------------------------------------
     const fetchMessages = async () => {
         const result = await drizzleDb.select().from(schema.mensaje)
+        const resultS = await drizzleDb.select().from(schema.salas)
         const llavePrivada = await ObtenerLlavePrivada();
         result.length > 0 ? ()=>{
             setLastId(result[result.length-1].id)
@@ -31,7 +32,9 @@ const useFetchMessages = (userId: number) => {
             setMessages((prevMessages: any[]) => [...prevMessages, ...newMessages]);
          } : ()=>{}
         try {
-            const response = await fetch(`http://134.209.211.47/Consulta.php?sala=1000&Id=${lastId}`);
+            const consulta = await fetch(`https://ljusstudie.site/Consulta_Sala.php?nombre=${encodeURIComponent(resultS[0].nombre)}&pass=${encodeURIComponent(resultS[0].pass)}`);
+            const dataC = await consulta.json();
+            const response = await fetch(`https://ljusstudie.site/Consulta.php?sala=${dataC.ID_Sala}&Id=${lastId}`);
             const data = await response.json();
 
             let newLastId = lastId;

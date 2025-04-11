@@ -20,27 +20,40 @@ $user = 'droa';
 $server = 'localhost';
 $database = 'mensajer_a';
 $password = 'droaPluving$1';
-$conex = mysqli_connect($server, $user, $password, $database);
+$conex = new mysqli($server, $user, $password, $database);
 
-if($conex) {
-    $tablas = $conex->query("SELECT Id_sala, Contra_Sala, Nom_Sala, Cupo 
-             FROM sala
-             WHERE Nom_Sala = " .(string)$_GET["nombre"]. " AND Contra_Sala = ".(string)$_GET["pass"])
-             ->fetch_all(MYSQLI_ASSOC);
+if ($conex->connect_error) {
+    die('[la comunicación no fue posible]');
+}
 
+if (isset($_GET["nombre"]) && isset($_GET["pass"])) {
+    // Prepara la declaración
+    $stmt = $conex->prepare("SELECT Id_sala, Contra_Sala, Nom_Sala, Cupo FROM sala WHERE Nom_Sala = ? AND Contra_Sala = ?");
+    
+    // Asocia los parámetros
+    $stmt->bind_param("ss", $_GET["nombre"], $_GET["pass"]);
+    
+    // Ejecuta la declaración
+    $stmt->execute();
+    
+    // Obtiene el resultado
+    $result = $stmt->get_result();
+    
+    // Cierra la declaración
+    $stmt->close();
+    
+    // Cierra la conexión
     mysqli_close($conex);
-
+    
+    // Procesa los resultados
     $tablasArray = [];
-    foreach ($tablas as $li) {
-        $id_sala = $li['Id_sala'];
-        $contra_sala = $li['Contra_Sala']; 
-        $nom_sala = $li['Nom_Sala']; 
-        $cupo = $li['Cupo']; 
-        $tablasArray[] = new Tabla($id_sala, $contra_sala, $nom_sala, $cupo);
+    while ($li = $result->fetch_assoc()) {
+        $tablasArray[] = new Tabla($li['Id_sala'], $li['Contra_Sala'], $li['Nom_Sala'], $li['Cupo']);
     }
 
     echo json_encode($tablasArray);
 } else {
-    echo '[la comunicación no fue posible]';
+    echo '[Parámetros faltantes]';
 }
 ?>
+

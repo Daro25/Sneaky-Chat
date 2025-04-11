@@ -21,27 +21,24 @@ $resultados;
 $conex = mysqli_connect($server, $user, $password, $database);
 //mysqli_connect es una función que se usa para conectarse a la base de datos usando las credenciales
 if ($conex->connect_error) {
-    $resultados = "La conexión a la base de datos falló: " . $conex->connect_error;
-    //verifica si hay un error en la conexión y guarda un mensaje de error en la variable $resultados
-} else {
-    $sala_Id = $_GET['sala_Id'];
-    $User_Id = $_GET['User_Id'];
-    $Texto = $_GET['Texto'];
-    $dates = date('Y-m-d-H:i:s'); 
-
-    $sql = "INSERT INTO mensaje(id, sala_Id, dates, Texto, User_Id) VALUE ('null', '$sala_Id', '$dates',' $Texto', '$User_Id')";
-
-
-    if ($conex->query($sql)) {
-        $resultados = "Mensaje registrado exitosamente.";
-    } else {
-        $resultados = "Error al registrar el mensaje.";
-    }
-
-    $conex->close();
+    echo json_encode(['resultado' => "La conexión a la base de datos falló: " . $conex->connect_error]);
+    exit();
 }
 
-$datos = array('resultado' => $resultados);
-$datos_json = json_encode($datos);
-echo $datos_json;
+$sala_Id = $_GET['sala_Id'];
+$User_Id = $_GET['User_Id'];
+$Texto = $_GET['Texto'];
+$dates = date('Y-m-d H:i:s');
+
+$stmt = $conex->prepare("INSERT INTO mensaje (sala_Id, dates, Texto, User_Id) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("isss", $sala_Id, $dates, $Texto, $User_Id);
+
+if ($stmt->execute()) {
+    echo json_encode(['resultado' => "Mensaje registrado exitosamente."]);
+} else {
+    echo json_encode(['resultado' => "Error al registrar el mensaje: " . mysqli_error($conex)]);
+}
+
+$stmt->close();
+$conex->close();
 ?>

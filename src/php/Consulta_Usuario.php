@@ -22,23 +22,32 @@ $password = 'droaPluving$1';
 $conex = mysqli_connect($server, $user, $password, $database);
 
 if($conex) {
-    $tablas = $conex->query("SELECT Id_User, Nomb, keyPublic
-             FROM usuario 
-             WHERE Contra = " .(string)$_GET["pass"]. " AND Nomb = ".(string)$_GET["nombre"])
-             ->fetch_all(MYSQLI_ASSOC);
+    // Saneamiento y validación
+    $nombre = filter_input(INPUT_GET, 'nombre', FILTER_SANITIZE_STRING);
+    $pass = filter_input(INPUT_GET, 'pass', FILTER_SANITIZE_STRING);
 
-    mysqli_close($conex);
-
+    // Uso de sentencias preparadas
+    $stmt = $conex->prepare("SELECT Id_User, Nomb, keyPublic FROM usuario WHERE Contra = ? AND Nomb = ?");
+    $stmt->bind_param("ss", $pass, $nombre);
+    $stmt->execute();
+    
+    // Obtener resultados
+    $result = $stmt->get_result();
     $tablasArray = [];
-    foreach ($tablas as $li) {
+    
+    while ($li = $result->fetch_assoc()) {
         $Id_User = $li['Id_User'];
         $Nomb = $li['Nomb']; 
-        $keyPublic = $li ['keyPublic'];
+        $keyPublic = $li['keyPublic'];
         $tablasArray[] = new Tabla($Id_User, $Nomb, $keyPublic);
     }
 
     echo json_encode($tablasArray);
+    
+    // Cerrar conexión
+    mysqli_close($conex);
 } else {
-    echo '[la comunicación no fue posible]';
+    echo json_encode(['error' => 'La comunicación no fue posible']);
 }
 ?>
+

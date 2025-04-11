@@ -68,7 +68,7 @@ export default function Index() {
           router.replace('./registro_user');
         }
         else if (salaResult.length === 0) {
-          router.replace('./registro_sala');
+          router.replace('./login_sala');
         }   
       }
       accion();

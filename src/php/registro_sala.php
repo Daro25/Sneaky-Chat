@@ -20,24 +20,29 @@ $resultados;
 $conex = mysqli_connect($server, $user, $password, $database);
 
 if ($conex->connect_error) {
-    $resultados = "La conexión a la base de datos falló: " . $conex->connect_error;
-} else {
-    $contra_sala = $_GET['Contra_Sala']; 
-    $nom_sala = $_GET['Nom_Sala']; 
-    $cupo = $_GET['Cupo'];
-
-    $sql = "INSERT INTO sala (Id_sala, Contra_Sala, Nom_Sala, Cupo) VALUES ( NULL, '$contra_sala', '$nom_sala', '$cupo')";
-
-    if ($conex->query($sql) ===TRUE ){
-        $resultados = "Registro de sala exitoso.";
-    } else {
-        $resultados = "Error al insertar la sala.";
-    }
-
-    $conex->close();
+    echo json_encode(['resultado' => "La conexión a la base de datos falló: " . $conex->connect_error]);
+    exit();
 }
 
-$datos = array('resultado' => $resultados);
-$datos_json = json_encode($datos);
-echo $datos_json;
+$contra_sala = $_GET['Contra_Sala']; 
+$nom_sala = $_GET['Nom_Sala']; 
+$cupo = (int)$_GET['Cupo']; // Asegúrate de convertir a entero
+
+// Validar los campos
+if (empty($contra_sala) || empty($nom_sala) || !is_int($cupo)) {
+    echo json_encode(['resultado' => "Todos los campos son obligatorios y Cupo debe ser un número."]);
+    exit();
+}
+
+$stmt = $conex->prepare("INSERT INTO sala (Contra_Sala, Nom_Sala, Cupo) VALUES (?, ?, ?)");
+$stmt->bind_param("ssi", $contra_sala, $nom_sala, $cupo);
+
+if ($stmt->execute()) {
+    echo json_encode(['resultado' => "Registro de sala exitoso."]);
+} else {
+    echo json_encode(['resultado' => "Error al insertar la sala: " . $stmt->error]);
+}
+
+$stmt->close();
+$conex->close();
 ?>

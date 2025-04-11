@@ -2,11 +2,10 @@
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST");
 header("Access-Control-Allow-Headers: Content-Type");
-class Respuesta
-{
+
+class Respuesta {
     public $res;
-    function __construct($res)
-    {
+    function __construct($res) {
         $this->res = $res;
     }
 }
@@ -15,32 +14,36 @@ $user = 'droa';
 $server = 'localhost';
 $database = 'mensajer_a';
 $password = 'droaPluving$1';
-$resultados;
 
 $conex = mysqli_connect($server, $user, $password, $database);
 
 if ($conex->connect_error) {
-    $resultados = "La conexión a la base de datos falló: " . $conex->connect_error;
-} else {
-    $nomb = $_GET['nomb']; 
-    $contra = $_GET['contra']; 
-    $sala_id = $_GET['sala_id'];
-    $edad = $_GET['edad'];
-    $key = $_GET['key'];
-    //contruir la consulta SQLpara insertar un nuevo registro
-    $sql = "INSERT INTO usuario (Id_user, nomb, contra, sala_id, Edad, keyPublic) VALUES (NULL, '$nomb', '$contra', '$sala_id', '$edad', '$key')";
-    // ejecutar la consulta
-
-    if ($conex->query($sql)===TRUE) {
-        $resultados = "Registro exitoso.";
-    } else {
-        $resultados = "Error al insertar el registro.";
-    }
-// Cerrar la conexion
-    $conex->close();
+    echo json_encode(['resultado' => "La conexión a la base de datos falló: " . $conex->connect_error]);
+    exit();
 }
 
-$datos = array('resultado' => $resultados);
-$datos_json = json_encode($datos);
-echo $datos_json;
+$nomb = $_GET['nomb']; 
+$contra = $_GET['contra']; 
+$sala_id = (int)$_GET['sala_id']; // Asegúrate de convertir a entero
+$edad = (int)$_GET['edad']; // Asegúrate de convertir a entero
+$key = $_GET['key'];
+
+// Validar los campos
+if (empty($nomb) || empty($contra) || empty($key) || !is_int($sala_id) || !is_int($edad)) {
+    echo json_encode(['resultado' => "Todos los campos son obligatorios y sala_id y edad deben ser números."]);
+    exit();
+}
+
+// Preparar la consulta SQL
+$stmt = $conex->prepare("INSERT INTO usuario (nomb, contra, sala_id, Edad, keyPublic) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("ssiss", $nomb, $contra, $sala_id, $edad, $key); // 'ssiss' indica tipos de datos: string, string, integer, integer, string
+
+if ($stmt->execute()) {
+    echo json_encode(['resultado' => "Registro exitoso."]);
+} else {
+    echo json_encode(['resultado' => "Error al insertar el registro: " . $stmt->error]);
+}
+
+$stmt->close();
+$conex->close();
 ?>

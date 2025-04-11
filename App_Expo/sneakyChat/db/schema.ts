@@ -15,6 +15,7 @@ export const notas = sqliteTable('NOTAS', {
 
 export const mensaje = sqliteTable('MENSAJE', {
   id: integer('ID').primaryKey({ autoIncrement: true }),
+  idServer : integer('IDSERV').notNull(),
   sala: text('Sala', { length: 20 }).notNull(),
   dates: text('Dates').notNull(),
   texto: text('Texto', { length: 200 }).notNull(),

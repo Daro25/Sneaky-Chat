@@ -67,14 +67,16 @@ export function useGlobalStyles() {
       width: PixelRatio.getPixelSizeForLayoutSize(40),
       height: PixelRatio.getPixelSizeForLayoutSize(40),
       borderRadius: '50%',
+      marginTop: 5,
       justifyContent: 'center',
     },
     leyenda: {
       width: ((Dimensions.get('window').width * 0.9)- PixelRatio.getPixelSizeForLayoutSize(40)),
       height: 'auto',
+      minHeight: '80%',
       borderRadius: 10,
       marginLeft: '5%',
-      backgroundColor: colorContainer(isDarkMode),
+      backgroundColor: colorBase(isDarkMode),
       color: colorText(isDarkMode),
     },
     container_H :{

@@ -4,8 +4,9 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
 import { encryptMessage, decryptMessage } from "@/app/recursos/cripto";
 import ObtenerLlavePrivada from "./recursos/secureStore";
+import { Alert } from 'react-native';
 
-const useFetchMessages = (userId: number) => {
+const useFetchMessages = () => {
     const [messages, setMessages] = useState<any[]>([]);
     const [lastId, setLastId] = useState(0);
     const db = useSQLiteContext();
@@ -16,6 +17,10 @@ const useFetchMessages = (userId: number) => {
     const fetchMessages = async () => {
         const result = await drizzleDb.select().from(schema.mensaje)
         const resultS = await drizzleDb.select().from(schema.salas)
+        const user = await drizzleDb.select().from(schema.datosp)
+        const consultaU = await fetch(`https://ljusstudie.site/Consulta_Usuario.php?nombre=${encodeURIComponent(user[0].idUser)}&pass=${encodeURIComponent(user[0].pass)}`);
+            if (!consultaU.ok) { Alert.alert(`HTTP error! statusU1: ${consultaU.status}`);}
+            const dataU = await consultaU.json();
         const llavePrivada = await ObtenerLlavePrivada();
         result.length > 0 ? ()=>{
             setLastId(result[result.length-1].id)
@@ -26,15 +31,17 @@ const useFetchMessages = (userId: number) => {
                 newMessages.push({
                     id: fila.id, userId: parseInt(fila.idUser), fecha: fecha,
                     hora: hora, text: fila.texto, 
-                    isCurrentUser: Number(fila.idUser) === userId,
+                    isCurrentUser: Number(fila.idUser) === Number(dataU[0].Id_User),
                 });
             });
             setMessages((prevMessages: any[]) => [...prevMessages, ...newMessages]);
          } : ()=>{}
         try {
             const consulta = await fetch(`https://ljusstudie.site/Consulta_Sala.php?nombre=${encodeURIComponent(resultS[0].nombre)}&pass=${encodeURIComponent(resultS[0].pass)}`);
+            if (!consulta.ok) { Alert.alert(`HTTP error! status1: ${consulta.status}`);}
             const dataC = await consulta.json();
             const response = await fetch(`https://ljusstudie.site/Consulta.php?sala=${dataC.ID_Sala}&Id=${lastId}`);
+            if (!response.ok) {Alert.alert(`HTTP error! status2: ${response.status}`);}
             const data = await response.json();
 
             let newLastId = lastId;
@@ -49,14 +56,15 @@ const useFetchMessages = (userId: number) => {
                 newMessages.push({
                     id: fila.ID, userId: fila.User_id, fecha: fecha,
                     hora: hora, text: decryptMessage(fila.Texto, llavePrivada+'')+'', 
-                    isCurrentUser: Number(fila.User_id) === userId,
+                    isCurrentUser: Number(fila.User_id) === Number(dataU[0].Id_User),
                 });
                 const registrar = async()=>{
                     await drizzleDb.insert(schema.mensaje).values({
                         sala: fila.sala_Id+'',
                         dates: fila.FechayHora, 
                         texto: decryptMessage(fila.Texto, llavePrivada+'')+'', 
-                        idUser: fila.User_id+''
+                        idUser: fila.User_id+'',
+                        idServer: fila.ID
                     });
                 }
                 registrar();

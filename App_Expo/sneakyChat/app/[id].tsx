@@ -76,8 +76,9 @@ export default function ModalCreacion() {
   const insert = async () => {
     try {
       const result = await drizzleDb.select().from(schema.datosp);
-      if(result.length != 0){
-        if(result[result.length-1].pass  === texto && nombre === 'sneakychat'|| nombre=== 'SneakyChat' || nombre=== 'Sneaky Chat' || nombre=== 'Sneakychat'){
+      if(result.length > 0 &&
+        (result[0].pass  === texto && (nombre === 'sneakychat'|| nombre=== 'SneakyChat' || nombre=== 'Sneaky Chat' || nombre=== 'Sneakychat'))
+      ){
           Alert.alert(
             "Perfecto:", // Title of the alert
             'La contraseña está confirmada ingresa al chat.', // Message of the alert
@@ -86,7 +87,6 @@ export default function ModalCreacion() {
             ],
             { cancelable: false }
           )
-        }
       } else {
       if (!editin) {
         await drizzleDb.insert(schema.notas).values({

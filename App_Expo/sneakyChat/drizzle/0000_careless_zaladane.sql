@@ -20,6 +20,7 @@ CREATE TABLE `EMISOR` (
 --> statement-breakpoint
 CREATE TABLE `MENSAJE` (
 	`ID` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`IDSERV` integer NOT NULL,
 	`Sala` text(20) NOT NULL,
 	`Dates` text(30) NOT NULL,
 	`Texto` text(200),

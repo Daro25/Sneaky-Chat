@@ -31,7 +31,7 @@ $Texto = $_GET['Texto'];
 $dates = date('Y-m-d H:i:s');
 
 $stmt = $conex->prepare("INSERT INTO mensaje (sala_Id, dates, Texto, User_Id) VALUES (?, ?, ?, ?)");
-$stmt->bind_param("isss", $sala_Id, $dates, $Texto, $User_Id);
+$stmt->bind_param("issi", $sala_Id, $dates, $Texto, $User_Id);
 
 if ($stmt->execute()) {
     echo json_encode(['resultado' => "Mensaje registrado exitosamente."]);

@@ -16,8 +16,10 @@ const ChatScreen = () => {
     const [texto, setText] = useState('');
     const [name, setName] = useState("");
     const [sala, setSala] = useState("");
-    const [nameId, setNameId] = useState("");
-    const [salaId, setSalaId] = useState("");
+    const [nameId, setNameId] = useState(0);
+    const [salaId, setSalaId] = useState(0);
+    const [passUser, setPassUser] = useState('');
+    const [passSala, setPassSala] = useState('');
     const [keyPublic, setKeyPublic] = useState('')
     //base de datos mas facil con drizzle
     const db = useSQLiteContext();
@@ -35,48 +37,47 @@ const ChatScreen = () => {
             const salaResult = await drizzleDb.select().from(schema.salas);
             setName(userResult[0].idUser);
             setSala(salaResult[0].nombre);
-            const consultaU = await fetch(`https://ljusstudie.site/Consulta_Usuario.php?nombre='${encodeURIComponent(name)}'&pass='${encodeURIComponent(userResult[0].pass)}'`);
+            setPassUser(userResult[0].pass);
+            const url = `https://ljusstudie.site/Consulta_Usuario.php?nombre='${encodeURIComponent(name)}'&pass='${encodeURIComponent(passUser)}'`;
+            const consultaU = await fetch(url);
             if (!consultaU.ok) { Alert.alert(`HTTP error! status1U: ${consultaU.status}`);}
             const dataU = await consultaU.json();
-            setNameId(dataU[0].Id_User)
-            setKeyPublic(dataU[0].KeyPublic)
-            const consulta = await fetch(`https://ljusstudie.site/Consulta_Sala.php?nombre='${encodeURIComponent(sala)}'&pass='${encodeURIComponent(salaResult[0].pass)}'`);
+            setNameId(Number(dataU[0].Id_User));
+            setKeyPublic(dataU[0].KeyPublic);
+            setPassSala(salaResult[0].pass);
+            const url2 = `https://ljusstudie.site/Consulta_Sala.php?nombre='${encodeURIComponent(sala)}'&pass='${encodeURIComponent(passSala)}'`;
+            const consulta = await fetch(url2);
             if (!consulta.ok) { Alert.alert(`HTTP error! status1S: ${consulta.status}`);}
             const data = await consulta.json();
-            setSalaId(data[0].ID_Sala)
-            messages = useFetchMessages();
+            setSalaId(Number(data[0].ID_Sala));
         }
         try {
             consulta();
         } catch (error) {
-            Alert.alert(
-                "Error:", // Title of the alert
-                error+'', // Message of the alert
-                [
-                    {text: "OK", style: 'cancel'}
-                ],
-                { cancelable: true }
-            );
+            Alert.alert("Error:", error+'' );
         }
     }, []);
     const digitMSJ = async()=>{
+        const textoVoid = '';
         if ( texto.trim())
         {
-            setText(encryptMessage(texto, keyPublic)+'')+'';
-            const response = await fetch(`https://ljusstudie.site/registro_mensaje.php?sala_Id=${salaId}&User_Id=${nameId}&Texto=${encodeURIComponent(texto)}`);
+            setText(textoVoid);
+            const url = `https://ljusstudie.site/registro_mensaje.php?sala_Id=${salaId}&User_Id=${nameId}&Texto=${encodeURIComponent(texto)}`;
+            const response = await fetch(url);
             if (!response.ok) { Alert.alert(`HTTP error! status1111: ${response.status}`);}
             const data = await response.json();
-            const consulta = await fetch(`https://ljusstudie.site/Consulta.php?sala=${salaId}&Id=${0}`);
+            const url2 = `https://ljusstudie.site/Consulta.php?sala=${sala}&Id=${0}`;
+            const consulta = await fetch(url2);
             if (!consulta.ok) {Alert.alert(`HTTP error! status2: ${consulta.status}`);}
             const dataC = await consulta.json();
             if(data[0].resultado != 'Registro de sala exitoso.'){
                 Alert.alert("Error:", data[0].resultado);} 
             else {
-                    setText(' ');
+                    setText(textoVoid);
                     await drizzleDb.insert(schema.mensaje).values({ 
                         idUser: nameId+'',
                         idServer: dataC[0].ID,
-                        sala: salaId,
+                        sala: salaId+'',
                         dates: dataC[0].FechayHora,
                         texto: texto,
                     });
@@ -133,6 +134,9 @@ const ChatScreen = () => {
                           width: PixelRatio.getPixelSizeForLayoutSize(40),
                           height: PixelRatio.getPixelSizeForLayoutSize(40),
                           borderRadius: '50%'}}/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>Alert.alert('data:', name+' '+passUser+' '+sala+' '+passSala)}>
+                    <Text>Prueba</Text>
                 </TouchableOpacity>
             </View>
         </View>

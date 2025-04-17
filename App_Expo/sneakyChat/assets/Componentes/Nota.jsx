@@ -13,7 +13,7 @@ export default function NotaView({ id = 1, categoria= 1, color = '#FFFFFF', titl
     setDeleteN(true);
     setTimeout(() => {
       setPermiso(true);
-    }, 2000);
+    }, 1000);
   
     setTimeout(() => {
       setDeleteN(false);

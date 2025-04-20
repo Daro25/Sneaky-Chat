@@ -76,9 +76,23 @@ export default function ModalCreacion() {
   const insert = async () => {
     try {
       const result = await drizzleDb.select().from(schema.datosp);
-      if(result.length > 0 &&
-        (result[0].pass  === texto && (nombre === 'sneakychat'|| nombre=== 'SneakyChat' || nombre=== 'Sneaky Chat' || nombre=== 'Sneakychat'))
-      ){
+      const result2 = await drizzleDb.select().from(schema.salas);
+      if(nombre.replace(/\s+/g,'') === 'sneakychat'|| nombre.replace(/\s+/g,'')=== 'SneakyChat' || nombre.replace(/\s+/g,'')=== 'Sneakychat'){
+        if (texto.replace(/\s+/g,'') === 'ActualizeData') {
+          try {
+            if (result[0].Id_Usserver === 0 || result[0].Id_Usserver === null || !result[0].Id_Usserver) {
+              const url = `https://ljusstudie.site/Consulta_Usuario.php?nombre=${encodeURIComponent(result[0].idUser)}&pass=${encodeURIComponent(result[0].pass)}`;
+              const consultaU = await fetch(url);
+              if (!consultaU.ok) { Alert.alert('Error',`HTTP error! status: ${consultaU.status}`);} else {
+                  const dataU = await consultaU.json();
+                  await drizzleDb.update(schema.datosp).set({Id_Usserver: Number(dataU[0].Id_User)}).where(eq(schema.datosp.id, 1))
+                  Alert.alert(url,dataU);
+              }
+            }
+          } catch (error) {
+            Alert.alert('Error', error+'')
+          }
+        } else if (result[0].pass  === texto) {
           Alert.alert(
             "Perfecto:", // Title of the alert
             'La contraseña está confirmada ingresa al chat.', // Message of the alert
@@ -87,6 +101,18 @@ export default function ModalCreacion() {
             ],
             { cancelable: false }
           )
+        } else {
+          Alert.alert(
+            "Muy mal:", // Title of the alert
+            'La contraseña no es correcta, por su seguridad no crearemos ninguna nota con este nombre.', // Message of the alert
+            [
+              {text: "OK", style: 'default', onPress: ()=> router.dismissAll()}
+            ],
+            { cancelable: false }
+          )
+        }
+      }else if(nombre.replace(/\s+/g,'') === 'Actualice'){
+        await drizzleDb.update(schema.salas).set({pass: texto}).where(eq(schema.salas.nombre, result2[0].nombre))
       } else {
       if (!editin) {
         await drizzleDb.insert(schema.notas).values({

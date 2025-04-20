@@ -8,6 +8,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
 import { encryptMessage } from './recursos/cripto';
+import { eq } from 'drizzle-orm';
 
 const ChatScreen = () => {
     var messages = useFetchMessages(); // Llamada al hook personalizado para obtener los mensajes
@@ -20,7 +21,39 @@ const ChatScreen = () => {
     const [salaId, setSalaId] = useState(0);
     const [passUser, setPassUser] = useState('');
     const [passSala, setPassSala] = useState('');
-    const [keyPublic, setKeyPublic] = useState('')
+    const [poss, setPoss] = useState(0);
+    const [alertas, setAlertas] = useState([{title: '', message:''},]);
+    function addAlert(data: {title: string, message: string}) {
+        setAlertas((prevAlertas)=>[...prevAlertas,data]);
+    }
+    function mostrarAlert(actualposs : number) {
+        if (actualposs < alertas.length) {
+            setPoss(actualposs)
+            Alert.alert(poss+alertas[poss].title,alertas[poss].message,
+                [{
+                    text: 'ok',
+                    onPress: ()=>{
+                        mostrarAlert(actualposs+1);
+                        return;
+                    }
+                }]
+            );
+        } else {
+            return;
+        }
+    }
+    function handleAlert(title : (string | number)[], message: string) {
+        if (title.length > 0) {
+            let str = '';
+            title.forEach(s => {
+                str += (s+'.')
+            });
+            addAlert({title:str,message: message})
+        } else {
+            addAlert({title:'Info',message: message})
+        }
+        mostrarAlert(poss+1);
+    }
     //base de datos mas facil con drizzle
     const db = useSQLiteContext();
     const drizzleDb = drizzle(db, { schema});
@@ -31,58 +64,93 @@ const ChatScreen = () => {
             setInitialLoad(initialLoad+1)
         }
     }, [messages]); // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
-    useEffect(()=>{
-        const consulta = async ()=>{
-            const userResult = await drizzleDb.select().from(schema.datosp);
-            const salaResult = await drizzleDb.select().from(schema.salas);
-            setName(userResult[0].idUser);
-            setSala(salaResult[0].nombre);
-            setPassUser(userResult[0].pass);
-            const url = `https://ljusstudie.site/Consulta_Usuario.php?nombre='${encodeURIComponent(name)}'&pass='${encodeURIComponent(passUser)}'`;
-            const consultaU = await fetch(url);
-            if (!consultaU.ok) { Alert.alert(`HTTP error! status1U: ${consultaU.status}`);}
-            const dataU = await consultaU.json();
-            setNameId(Number(dataU[0].Id_User));
-            setKeyPublic(dataU[0].KeyPublic);
-            setPassSala(salaResult[0].pass);
-            const url2 = `https://ljusstudie.site/Consulta_Sala.php?nombre='${encodeURIComponent(sala)}'&pass='${encodeURIComponent(passSala)}'`;
-            const consulta = await fetch(url2);
-            if (!consulta.ok) { Alert.alert(`HTTP error! status1S: ${consulta.status}`);}
-            const data = await consulta.json();
-            setSalaId(Number(data[0].ID_Sala));
+    const consulta = async ()=>{
+        const userResult = await drizzleDb.select().from(schema.datosp);
+        const salaResult = await drizzleDb.select().from(schema.salas);
+        setName(userResult[0].idUser);
+        setSala(salaResult[0].nombre);
+        setPassUser(userResult[0].pass);
+        setPassSala(salaResult[0].pass);
+        setSalaId(salaResult[0].idSala);
+        setNameId(userResult[0].Id_Usserver || 0);
+        try {
+            consultaSala()
+        } catch (error) {
+            handleAlert(['Error',1,1], error+'');
         }
+        try {
+            consultaUser()
+        } catch (error) {
+            handleAlert(['Error',1,2], error+'');
+        }
+    }
+    useEffect(()=>{
         try {
             consulta();
         } catch (error) {
-            Alert.alert("Error:", error+'' );
+            handleAlert(['Error',1], error+'' );
         }
     }, []);
     const digitMSJ = async()=>{
         const textoVoid = '';
         if ( texto.trim())
         {
-            setText(textoVoid);
-            const url = `https://ljusstudie.site/registro_mensaje.php?sala_Id=${salaId}&User_Id=${nameId}&Texto=${encodeURIComponent(texto)}`;
-            const response = await fetch(url);
-            if (!response.ok) { Alert.alert(`HTTP error! status1111: ${response.status}`);}
-            const data = await response.json();
-            const url2 = `https://ljusstudie.site/Consulta.php?sala=${sala}&Id=${0}`;
-            const consulta = await fetch(url2);
-            if (!consulta.ok) {Alert.alert(`HTTP error! status2: ${consulta.status}`);}
-            const dataC = await consulta.json();
-            if(data[0].resultado != 'Registro de sala exitoso.'){
-                Alert.alert("Error:", data[0].resultado);} 
-            else {
-                    setText(textoVoid);
-                    await drizzleDb.insert(schema.mensaje).values({ 
-                        idUser: nameId+'',
-                        idServer: dataC[0].ID,
-                        sala: salaId+'',
-                        dates: dataC[0].FechayHora,
-                        texto: texto,
-                    });
+            try {
+                setText(textoVoid);
+                const url1 = `https://ljusstudie.site/registro_mensaje.php?sala_Id=${salaId}&User_Id=${nameId}&Texto=${encodeURIComponent(texto)}`;
+                const response = await fetch(url1);
+                if (!response.ok) { handleAlert(['Error',2,1,1],`HTTP error! status: ${response.status}`);} else {
+                    try {
+                        const data = await response.json();
+                        handleAlert([], data[0].toString)
+                        const url2 = `https://ljusstudie.site/Consulta.php?sala=${sala}&Id=${0}`;
+                        const consulta = await fetch(url2);
+                        if (!consulta.ok) {handleAlert(['Error',2,1,2],`HTTP error! status2: ${consulta.status}`);}else{
+                            const dataC = await consulta.json();
+                            await drizzleDb.insert(schema.mensaje).values({ 
+                                idUser: nameId+'',
+                                idServer: dataC[0].ID,
+                                sala: salaId+'',
+                                dates: dataC[0].FechayHora,
+                                texto: texto,
+                            });
+                        }
+                    } catch (error) {
+                        handleAlert(['Error',2,1], error+'')
+                    }
                 }
+            } catch (error) {
+                handleAlert(['Error',2], error+'')
+            }
             }}
+            async function consultaSala() {
+                if (salaId === 0) {
+                    const urlsala = `https://ljusstudie.site/Consulta_Sala.php?nombre=${encodeURIComponent(sala)}&pass=${encodeURIComponent(passSala)}`;
+                    const consultaSala = await fetch(urlsala);
+                    if (!consultaSala.ok) {
+                        handleAlert(['Error',1,1],`HTTP error! status: ${consultaSala.status}`);
+                    } else {
+                        const dataS = await consultaSala.json();
+                        setSalaId(Number(dataS[0].ID_Sala));
+                        const result2 = await drizzleDb.select().from(schema.salas);
+                        await drizzleDb.update(schema.salas).set({idSala: Number(dataS[0].ID_Sala)}).where(eq(schema.salas.nombre, result2[0].nombre))
+                    }
+                }
+            }
+            async function consultaUser() {
+                    const result = await drizzleDb.select().from(schema.datosp);
+                    if (nameId === 0) {
+                        const url = `https://ljusstudie.site/Consulta_Usuario.php?nombre=${encodeURIComponent(result[0].idUser)}&pass=${encodeURIComponent(result[0].pass)}`;
+                        const consultaU = await fetch(url);
+                        if (!consultaU.ok) { Alert.alert('Error',`HTTP error! status: ${consultaU.status}`);
+                        } else {
+                            const dataU = await consultaU.json();
+                            await drizzleDb.update(schema.datosp).set({Id_Usserver: Number(dataU[0].Id_User)}).where(eq(schema.datosp.id, 1))
+                            handleAlert([url],dataU);
+                            setNameId(Number(dataU[0].Id_User || 0));
+                        }
+                    }
+            }
     return (
         <View style={[useGlobalStyles().container, [,{overflowX:'hidden'}]]}>
             <FlatList style={{width:'101%', position:'relative'}}
@@ -106,9 +174,11 @@ const ChatScreen = () => {
             />
             <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().center, useGlobalStyles().inlineBlock, [,{position:'absolute',right:7, backgroundColor: head}]]}
             onPress={() => {
-                    if (flatListRef.current) {
+                try { consultaUser();} catch (error) {handleAlert(['Error',name,nameId,passUser,sala,salaId,passSala], error+'')}
+                //Alert.alert('data:', url)
+                    /*if (flatListRef.current) {
                         flatListRef.current.scrollToEnd({ animated: true });
-                    }
+                    }*/
                 }
             }>
                 <Text style={[[,{color:'white'}], useGlobalStyles().negrita, useGlobalStyles().center]}>▼</Text>
@@ -134,9 +204,6 @@ const ChatScreen = () => {
                           width: PixelRatio.getPixelSizeForLayoutSize(40),
                           height: PixelRatio.getPixelSizeForLayoutSize(40),
                           borderRadius: '50%'}}/>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={()=>Alert.alert('data:', name+' '+passUser+' '+sala+' '+passSala)}>
-                    <Text>Prueba</Text>
                 </TouchableOpacity>
             </View>
         </View>

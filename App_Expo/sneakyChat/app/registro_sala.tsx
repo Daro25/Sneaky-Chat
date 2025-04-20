@@ -66,7 +66,7 @@ export default function Registro_sala() {
           if (!responseU.ok) throw new Error(`HTTP error! status3: ${responseU.status}`);
         }
 
-        await drizzleDb.insert(schema.salas).values({ idSala: salaId, nombre: name, pass: pass });
+        await drizzleDb.insert(schema.salas).values([{ idSala: salaId, nombre: name, pass: pass }]);
         router.replace('/');
       } else {
         Alert.alert("Error:", 'no se pudo hacer el registro');

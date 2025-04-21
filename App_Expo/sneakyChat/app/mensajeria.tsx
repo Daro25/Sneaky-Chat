@@ -80,19 +80,22 @@ const ChatScreen = () => {
         setSalaId(salaResult[0].idSala);
         setNameId(userResult[0].Id_Usserver);
         try {
-            consultaSala()
+            await consultaSala()
         } catch (error) {
-            handleAlert(['Error',1,1], error+'');
+            const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
+            handleAlert(['Error',1,1], message);
         }
         try {
-            consultaUser()
+            await consultaUser()
         } catch (error) {
-            handleAlert(['Error',1,2], error+'');
+            const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
+            handleAlert(['Error',1,2], message);
         }
         try {
-            consultaEmisor()
+            await consultaEmisor()
         } catch (error) {
-            handleAlert(['Error',1,3],error+'');
+            const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
+            handleAlert(['Error',1,3],message);
         }
     }
     useEffect(()=>{
@@ -111,7 +114,7 @@ const ChatScreen = () => {
         {
             try {
                 if (keyPublic === '') {
-                    consultaEmisor();
+                    await consultaEmisor();
                 } else {
                     setText(textoVoid);
                     let newTexto = encryptMessage (texto, keyPublic) +'';
@@ -134,12 +137,14 @@ const ChatScreen = () => {
                                 });
                             }
                         } catch (error) {
-                            handleAlert(['Error',2,1], error+'')
+                            const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
+                            handleAlert(['Error',2,1], message)
                         }
                     }
                 }
             } catch (error) {
-                handleAlert(['Error',2], error+'')
+                const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
+                handleAlert(['Error',2], message)
             }
             }}
             async function consultaSala() {
@@ -194,7 +199,7 @@ const ChatScreen = () => {
                                 }
                             }
                         } else {
-                            handleAlert([urlUss], 'No podrás enviar mensaje hasta que esté otro usuario en esta sala');
+                            handleAlert([dataU], urlUss);
                         }
                     }
                 } else if (result.length > 0 && keyPublic === '') {

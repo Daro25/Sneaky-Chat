@@ -57,19 +57,24 @@ export default function Registro_sala() {
         const salaId = dataConsult[0].ID_Sala;
 
         const userResult = await drizzleDb.select().from(schema.datosp);
-        if (userResult.length > 0) {
-          const { idUser, pass: userPass, year } = userResult[userResult.length - 1];
-          const keys = await RSA.generateKeys(512);
-          await GuardarLlavePrivada(keys.private);
-          const url = `https://ljusstudie.site/registro_usuario.php?nomb=${encodeURIComponent(idUser)}&contra=${encodeURIComponent(userPass)}&sala_id=${encodeURIComponent(salaId)}&edad=${year}&key=${encodeURIComponent(keys.public)}`;
-          const responseU = await fetch(url);
-          if (!responseU.ok) throw new Error(`HTTP error! status3: ${responseU.status}`);
+        const { idUser, pass: userPass, year } = userResult[userResult.length - 1];
+        const urlUss = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(userPass)}&nombre=${encodeURIComponent(idUser)}`;
+        const consultaU = await fetch(urlUss);
+        if (!consultaU.ok) { Alert.alert('Error',`HTTP error! status: ${consultaU.status}`);
+        } else {
+          const dataU = await consultaU.json();
+          if (dataU.length === 0) {
+            if (userResult.length > 0) {
+              const keys = await RSA.generateKeys(512);
+              await GuardarLlavePrivada(keys.private);
+              const url = `https://ljusstudie.site/registro_usuario.php?nomb=${encodeURIComponent(idUser)}&contra=${encodeURIComponent(userPass)}&sala_id=${encodeURIComponent(salaId)}&edad=${year}&key=${encodeURIComponent(keys.public)}`;
+              const responseU = await fetch(url);
+              if (!responseU.ok) throw new Error(`HTTP error! status3: ${responseU.status}`);
+            }
+          }
+          await drizzleDb.insert(schema.salas).values([{ idSala: salaId, nombre: name, pass: pass }]);
+          router.replace('/');
         }
-
-        await drizzleDb.insert(schema.salas).values([{ idSala: salaId, nombre: name, pass: pass }]);
-        router.replace('/');
-      } else {
-        Alert.alert("Error:", 'no se pudo hacer el registro');
       }
     } catch (error) {
       Alert.alert("Error:", error+'' || String(error));

@@ -26,7 +26,7 @@ if($conex) {
     $id_sala = filter_input(INPUT_GET, 'id_sala', FILTER_SANITIZE_STRING);
 
     // Uso de sentencias preparadas
-    $stmt = $conex->prepare("SELECT Id_User, Nomb, keyPublic FROM usuario WHERE sala_id = ?");
+    $stmt = $conex->prepare("SELECT Id_User, Nomb, keyPublic FROM usuario WHERE Sala_Id = ?");
     $stmt->bind_param("i", $id_sala);
     $stmt->execute();
     

@@ -8,7 +8,9 @@ import { Alert } from 'react-native';
 
 const useFetchMessages = () => {
     const [messages, setMessages] = useState<any[]>([]);
+    const [errors, setError] = useState('');
     const [lastId, setLastId] = useState(0);
+    const [keyPublic, setKey] = useState('');
     const db = useSQLiteContext();
     const drizzleDb = drizzle(db, { schema});
     const newMessages: { id: number; userId: number; fecha: string; 
@@ -18,13 +20,34 @@ const useFetchMessages = () => {
         const result = await drizzleDb.select().from(schema.mensaje)
         const resultS = await drizzleDb.select().from(schema.salas)
         const user = await drizzleDb.select().from(schema.datosp)
-        if (user.length > 0){
-            const urlUss = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(user[0].pass)}&nombre=${encodeURIComponent(user[0].idUser)}`;
+        const emisors = await drizzleDb.select().from(schema.emisor)
+        const [Id_User, setId_User] = useState(0);
+        function hadleError(s: string) {
+            setError(s);
+        }
+        if (emisors.length === 0){
+            const urlUss = `https://ljusstudie.site/ConsultaUsuarioWsala.php?id_sala=${resultS[0].idSala}`;
             const consultaU = await fetch(urlUss);
-            if (!consultaU.ok) { Alert.alert(`HTTP error! statusU1: ${consultaU.status}`);
+            if (!consultaU.ok) { hadleError(`HTTP error! statusU1: ${consultaU.status}`);
             } else {
                 const dataU = await consultaU.json();
+                for (let i = 0; i < dataU.length; i++) {
+                    const element = dataU[i];
+                    if (element.Id_User != user[0].Id_Usserver) {
+                        setId_User(Number(element.Id_User));
+                        setKey(element.KeyPublic);
+                        await drizzleDb.insert(schema.emisor).values({
+                            idUsserver: Number(element.Id_User),
+                            n: element.KeyPublic,
+                            idUser: element.Nomb
+                        });
+                        break;
+                    }
+                }
             }
+        } else {
+            setId_User(emisors[0].idUsserver);
+            setKey(emisors[0].n);
         }
         const llavePrivada = await ObtenerLlavePrivada();
         result.length > 0 ? ()=>{
@@ -36,17 +59,14 @@ const useFetchMessages = () => {
                 newMessages.push({
                     id: fila.id, userId: parseInt(fila.idUser), fecha: fecha,
                     hora: hora, text: fila.texto, 
-                    isCurrentUser: Number(fila.idUser) === Number(dataU[0].Id_User),
+                    isCurrentUser: Number(fila.idUser) === Number(Id_User),
                 });
             });
             setMessages((prevMessages: any[]) => [...prevMessages, ...newMessages]);
          } : ()=>{}
         try {
-            const consulta = await fetch(`https://ljusstudie.site/Consulta_Sala.php?nombre=${encodeURIComponent(resultS[0].nombre)}&pass=${encodeURIComponent(resultS[0].pass)}`);
-            if (!consulta.ok) { Alert.alert(`HTTP error! status1: ${consulta.status}`);}
-            const dataC = await consulta.json();
-            const response = await fetch(`https://ljusstudie.site/Consulta.php?sala=${dataC.ID_Sala}&Id=${lastId}`);
-            if (!response.ok) {Alert.alert(`HTTP error! status2: ${response.status}`);}
+            const response = await fetch(`https://ljusstudie.site/Consulta.php?sala=${resultS[0].idSala}&Id=${lastId}`);
+            if (!response.ok) {hadleError(`HTTP error! status2: ${response.status}`);}
             const data = await response.json();
 
             let newLastId = lastId;
@@ -61,7 +81,7 @@ const useFetchMessages = () => {
                 newMessages.push({
                     id: fila.ID, userId: fila.User_id, fecha: fecha,
                     hora: hora, text: decryptMessage(fila.Texto, llavePrivada+'')+'', 
-                    isCurrentUser: Number(fila.User_id) === Number(dataU[0].Id_User),
+                    isCurrentUser: Number(fila.User_id) === Number(user[0].Id_Usserver),
                 });
                 const registrar = async()=>{
                     await drizzleDb.insert(schema.mensaje).values({
@@ -79,7 +99,7 @@ const useFetchMessages = () => {
             setMessages((prevMessages: any[]) => [...prevMessages, ...newMessages]);
             setLastId(newLastId);
         } catch (error) {
-            console.error('Error al obtener mensajes:', error);
+            hadleError('Error al obtener mensajes:'+ error);
         }
     };
     useEffect(() => {
@@ -87,6 +107,9 @@ const useFetchMessages = () => {
         return () => clearInterval(interval); // Limpia el intervalo al desmontar
     }, [lastId]);
 
-    return messages;
+    return {
+        messages: messages,
+        error: errors
+    };
 };
 export default useFetchMessages;

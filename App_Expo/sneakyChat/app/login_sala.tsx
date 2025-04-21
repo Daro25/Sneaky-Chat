@@ -43,7 +43,7 @@ export default function Registro_sala() {
       const consulta = await fetch(url);
       if (!consulta.ok) throw new Error(`HTTP error! status1: ${consulta.status}`);
       const data = await consulta.json();
-      const salaId = data[0].ID_Sala;
+      const salaId = Number(data[0].ID_Sala) || 0;
       const userResult = await drizzleDb.select().from(schema.datosp);
       const { idUser, pass: userPass, year } = userResult[userResult.length - 1];
       const urlUss = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(userPass)}&nombre=${encodeURIComponent(idUser)}`;

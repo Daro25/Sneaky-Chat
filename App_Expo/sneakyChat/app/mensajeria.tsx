@@ -9,6 +9,7 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
 import { encryptMessage } from './recursos/cripto';
 import { eq } from 'drizzle-orm';
+import { halfvec } from 'drizzle-orm/pg-core';
 
 const ChatScreen = () => {
     var messages = useFetchMessages(); // Llamada al hook personalizado para obtener los mensajes
@@ -23,6 +24,8 @@ const ChatScreen = () => {
     const [passSala, setPassSala] = useState('');
     const [poss, setPoss] = useState(0);
     const [alertas, setAlertas] = useState([{title: '', message:''},]);
+    const [keyPublic, setKey] = useState('');
+    const [emisorName, setEmisorName] = useState('')
     function addAlert(title: string, message: string) {
         setAlertas((prevAlertas)=>[...prevAlertas,{title: title, message: message}]);
     }
@@ -67,6 +70,9 @@ const ChatScreen = () => {
     const consulta = async ()=>{
         const userResult = await drizzleDb.select().from(schema.datosp);
         const salaResult = await drizzleDb.select().from(schema.salas);
+        const emisorResult = await drizzleDb.select().from(schema.emisor);
+        setEmisorName(emisorResult[0].idUser);
+        setKey(emisorResult[0].n);
         setName(userResult[0].idUser);
         setSala(salaResult[0].nombre);
         setPassUser(userResult[0].pass);
@@ -83,6 +89,11 @@ const ChatScreen = () => {
         } catch (error) {
             handleAlert(['Error',1,2], error+'');
         }
+        try {
+            consultaEmisor()
+        } catch (error) {
+            handleAlert(['Error',1,3],error+'');
+        }
     }
     useEffect(()=>{
         try {
@@ -92,31 +103,39 @@ const ChatScreen = () => {
         }
     }, []);
     const digitMSJ = async()=>{
+        if (messages.error != '') {
+            handleAlert([], messages.error);
+        }
         const textoVoid = '';
         if ( texto.trim())
         {
             try {
-                setText(textoVoid);
-                const url1 = `https://ljusstudie.site/registro_mensaje.php?sala_Id=${salaId}&User_Id=${nameId}&Texto=${encodeURIComponent(texto)}`;
-                const response = await fetch(url1);
-                if (!response.ok) { handleAlert(['Error',2,1,1],`HTTP error! status: ${response.status}`);} else {
-                    try {
-                        const data = await response.json();
-                        handleAlert([], data[0].toString)
-                        const url2 = `https://ljusstudie.site/Consulta.php?sala=${sala}&Id=${0}`;
-                        const consulta = await fetch(url2);
-                        if (!consulta.ok) {handleAlert(['Error',2,1,2],`HTTP error! status2: ${consulta.status}`);}else{
-                            const dataC = await consulta.json();
-                            await drizzleDb.insert(schema.mensaje).values({ 
-                                idUser: nameId+'',
-                                idServer: dataC[0].ID,
-                                sala: salaId+'',
-                                dates: dataC[0].FechayHora,
-                                texto: texto,
-                            });
+                if (keyPublic === '') {
+                    consultaEmisor();
+                } else {
+                    setText(textoVoid);
+                    let newTexto = encryptMessage (texto, keyPublic) +'';
+                    const url1 = `https://ljusstudie.site/registro_mensaje.php?sala_Id=${salaId}&User_Id=${nameId}&Texto=${encodeURIComponent(newTexto)}`;
+                    const response = await fetch(url1);
+                    if (!response.ok) { handleAlert(['Error',2,1,1],`HTTP error! status: ${response.status}`);} else {
+                        try {
+                            const data = await response.json();
+                            handleAlert([], data[0].toString)
+                            const url2 = `https://ljusstudie.site/Consulta.php?sala=${sala}&Id=${0}`;
+                            const consulta = await fetch(url2);
+                            if (!consulta.ok) {handleAlert(['Error',2,1,2],`HTTP error! status2: ${consulta.status}`);}else{
+                                const dataC = await consulta.json();
+                                await drizzleDb.insert(schema.mensaje).values({ 
+                                    idUser: nameId+'',
+                                    idServer: dataC[0].ID,
+                                    sala: salaId+'',
+                                    dates: dataC[0].FechayHora,
+                                    texto: texto,
+                                });
+                            }
+                        } catch (error) {
+                            handleAlert(['Error',2,1], error+'')
                         }
-                    } catch (error) {
-                        handleAlert(['Error',2,1], error+'')
                     }
                 }
             } catch (error) {
@@ -124,7 +143,7 @@ const ChatScreen = () => {
             }
             }}
             async function consultaSala() {
-                if (salaId === 0) {
+                if (salaId === 0 || typeof salaId === 'string') {
                     const urlsala = `https://ljusstudie.site/Consulta_Sala.php?nombre=${encodeURIComponent(sala)}&pass=${encodeURIComponent(passSala)}`;
                     const consultaSala = await fetch(urlsala);
                     if (!consultaSala.ok) {
@@ -138,35 +157,80 @@ const ChatScreen = () => {
                 }
             }
             async function consultaUser() {
-                    const result = await drizzleDb.select().from(schema.datosp);
-                    if (nameId === 0) {
-                        const url = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(result[0].pass)}&nombre=${encodeURIComponent(result[0].idUser)}`;
-                        const consultaU = await fetch(url);
-                        if (!consultaU.ok) { Alert.alert('Error',`HTTP error! status: ${consultaU.status}`);
+                const result = await drizzleDb.select().from(schema.datosp);
+                if (nameId === 0) {
+                    const url = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(result[0].pass)}&nombre=${encodeURIComponent(result[0].idUser)}`;
+                    const consultaU = await fetch(url);
+                    if (!consultaU.ok) { Alert.alert('Error',`HTTP error! status: ${consultaU.status}`);
+                    } else {
+                        const dataU = await consultaU.json();
+                        await drizzleDb.update(schema.datosp).set({Id_Usserver: Number(dataU[0].Id_User)}).where(eq(schema.datosp.id, result[0].id))
+                        handleAlert([url],dataU);
+                        setNameId(Number(dataU[0].Id_User));
+                    }
+                }
+            }
+            async function consultaEmisor() {
+                const result = await drizzleDb.select().from(schema.emisor);
+                const urlUss = `https://ljusstudie.site/ConsultaUsuarioWsala.php?id_sala=${salaId}`;
+                if (result.length === 0) {
+                    const consultaU = await fetch(urlUss);
+                    if (!consultaU.ok) { handleAlert([], `HTTP error! statusU1: ${consultaU.status}`);
+                    } else {
+                        const dataU = await consultaU.json();
+                        if (dataU.length > 1) {
+                            for (let i = 0; i < dataU.length; i++) {
+                                const element = dataU[i];
+                                if (element.Id_User != nameId) {
+                                    setEmisorName(element.Id_User);
+                                    setKey(element.KeyPublic);
+                                    await drizzleDb.insert(schema.emisor).values({
+                                        idUsserver: Number(element.Id_User),
+                                        n: element.KeyPublic,
+                                        idUser: element.Nomb
+                                    });
+                                    handleAlert([],'User encontrado');
+                                    break;
+                                }
+                            }
                         } else {
-                            const dataU = await consultaU.json();
-                            await drizzleDb.update(schema.datosp).set({Id_Usserver: Number(dataU[0].Id_User) || 0}).where(eq(schema.datosp.id, result[0].id))
-                            handleAlert([url],dataU);
-                            setNameId(Number(dataU[0].Id_User));
+                            handleAlert([urlUss], 'No podrás enviar mensaje hasta que esté otro usuario en esta sala');
                         }
                     }
+                } else if (result.length > 0 && keyPublic === '') {
+                    const consultaU = await fetch(urlUss);
+                    if (!consultaU.ok) { handleAlert([], `HTTP error! statusU1: ${consultaU.status}`);
+                    } else {
+                        const dataU = await consultaU.json();
+                        for (let i = 0; i < dataU.length; i++) {
+                            const element = dataU[i];
+                            handleAlert([],'User encontrado');
+                            if (element.Id_User != nameId) {
+                                setEmisorName(element.Id_User);
+                                setKey(element.KeyPublic);
+                                await drizzleDb.update(schema.emisor).set({n: element.KeyPublic}).where(eq(schema.emisor.id, result[0].id));
+                                break;
+                            }
+                        }
+                    }
+                }
             }
     return (
         <View style={[useGlobalStyles().container, [,{overflowX:'hidden'}]]}>
             <FlatList style={{width:'101%', position:'relative'}}
                 ref={flatListRef} // Asigna la referencia a FlatList
-                data={messages} // Datos de los mensajes obtenidos
+                data={messages.messages} // Datos de los mensajes obtenidos
                 keyExtractor={(item) => item.id.toString()} // Clave única para cada mensaje
                 renderItem={({ item }) => (
                     item.isCurrentUser ? 
                     <MensajeRight 
-                    user= {item.userId}
+                    user= {emisorName}
                     fecha= {item.fecha}
                     context= {item.text}
                     hora= {item.hora}/> 
                     : 
                     <MensajeLeft
-                    user= {item.userId}
+                    user= {name}
                     fecha= {item.fecha}
                     context= {item.text}
                     hora= {item.hora}/> 
@@ -174,13 +238,9 @@ const ChatScreen = () => {
             />
             <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().center, useGlobalStyles().inlineBlock, [,{position:'absolute',right:7, backgroundColor: head}]]}
             onPress={() => {
-                try { consultaUser();
-                    handleAlert([], typeof nameId+ nameId)
-                } catch (error) {handleAlert(['Error',name,nameId,passUser,sala,salaId,passSala], error+'')}
-                //Alert.alert('data:', url)
-                    /*if (flatListRef.current) {
+                    if (flatListRef.current) {
                         flatListRef.current.scrollToEnd({ animated: true });
-                    }*/
+                    }
                 }
             }>
                 <Text style={[[,{color:'white'}], useGlobalStyles().negrita, useGlobalStyles().center]}>▼</Text>

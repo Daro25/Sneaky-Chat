@@ -31,15 +31,15 @@ export const datosp = sqliteTable('DATOSP', {
 });
 
 export const salas = sqliteTable('SALAS', {
-  idSala: integer('Id_sala', { mode: "number" }).notNull(),
+  idSala: integer('Id_sala').notNull(),
   pass: text('pass', { length: 20 }).notNull(),
   nombre: text('nombre', { length: 20 }).notNull(),
 });
 
 export const emisor = sqliteTable('EMISOR', {
   id: integer('ID').primaryKey({ autoIncrement: true }),
-  e: text('e'),
-  n: text('n', { length: 2048 }),
+  idUsserver: integer('idUsserver').notNull(),
+  n: text('n', { length: 2048 }).notNull(),
   idUser: text('Id_User', { length: 40 }).notNull(),
 });
 export type Nota = typeof notas.$inferSelect;

@@ -54,7 +54,7 @@ export default function Registro_sala() {
         const consulta = await fetch(url);
         if (!consulta.ok) throw new Error(`HTTP error! status2: ${consulta.status}`);
         const dataConsult = await consulta.json();
-        const salaId = dataConsult[0].ID_Sala;
+        const salaId = Number(dataConsult[0].ID_Sala) || 0;
 
         const userResult = await drizzleDb.select().from(schema.datosp);
         const { idUser, pass: userPass, year } = userResult[userResult.length - 1];

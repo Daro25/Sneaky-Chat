@@ -14,7 +14,7 @@ CREATE TABLE `DATOSP` (
 --> statement-breakpoint
 CREATE TABLE `EMISOR` (
 	`ID` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`e` text,
+	`idUsserver` integer,
 	`n` text(2048),
 	`Id_User` text(40) NOT NULL
 );

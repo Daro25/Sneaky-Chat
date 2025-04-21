@@ -81,11 +81,11 @@ export default function ModalCreacion() {
         if (texto.replace(/\s+/g,'') === 'ActualizeData') {
           try {
             if (result[0].Id_Usserver === 0 || result[0].Id_Usserver === null || !result[0].Id_Usserver) {
-              const url = `https://ljusstudie.site/Consulta_Usuario.php?nombre=${encodeURIComponent(result[0].idUser)}&pass=${encodeURIComponent(result[0].pass)}`;
+              const url = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(result[0].pass)}&nombre=${encodeURIComponent(result[0].idUser)}`;
               const consultaU = await fetch(url);
               if (!consultaU.ok) { Alert.alert('Error',`HTTP error! status: ${consultaU.status}`);} else {
                   const dataU = await consultaU.json();
-                  await drizzleDb.update(schema.datosp).set({Id_Usserver: Number(dataU[0].Id_User)}).where(eq(schema.datosp.id, 1))
+                  await drizzleDb.update(schema.datosp).set({Id_Usserver: Number(dataU[0].Id_User)}).where(eq(schema.datosp.id, result[0].id))
                   Alert.alert(url,dataU);
               }
             }

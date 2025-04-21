@@ -23,13 +23,13 @@ const ChatScreen = () => {
     const [passSala, setPassSala] = useState('');
     const [poss, setPoss] = useState(0);
     const [alertas, setAlertas] = useState([{title: '', message:''},]);
-    function addAlert(data: {title: string, message: string}) {
-        setAlertas((prevAlertas)=>[...prevAlertas,data]);
+    function addAlert(title: string, message: string) {
+        setAlertas((prevAlertas)=>[...prevAlertas,{title: title, message: message}]);
     }
     function mostrarAlert(actualposs : number) {
         if (actualposs < alertas.length) {
             setPoss(actualposs)
-            Alert.alert(poss+alertas[poss].title,alertas[poss].message,
+            Alert.alert(alertas[poss].title,alertas[poss].message,
                 [{
                     text: 'ok',
                     onPress: ()=>{
@@ -48,11 +48,11 @@ const ChatScreen = () => {
             title.forEach(s => {
                 str += (s+'.')
             });
-            addAlert({title:str,message: message})
+            addAlert(str, message)
         } else {
-            addAlert({title:'Info',message: message})
+            addAlert('Info',message)
         }
-        mostrarAlert(poss+1);
+        mostrarAlert(poss);
     }
     //base de datos mas facil con drizzle
     const db = useSQLiteContext();
@@ -72,7 +72,7 @@ const ChatScreen = () => {
         setPassUser(userResult[0].pass);
         setPassSala(salaResult[0].pass);
         setSalaId(salaResult[0].idSala);
-        setNameId(userResult[0].Id_Usserver || 0);
+        setNameId(userResult[0].Id_Usserver);
         try {
             consultaSala()
         } catch (error) {
@@ -140,14 +140,14 @@ const ChatScreen = () => {
             async function consultaUser() {
                     const result = await drizzleDb.select().from(schema.datosp);
                     if (nameId === 0) {
-                        const url = `https://ljusstudie.site/Consulta_Usuario.php?nombre=${encodeURIComponent(result[0].idUser)}&pass=${encodeURIComponent(result[0].pass)}`;
+                        const url = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(result[0].pass)}&nombre=${encodeURIComponent(result[0].idUser)}`;
                         const consultaU = await fetch(url);
                         if (!consultaU.ok) { Alert.alert('Error',`HTTP error! status: ${consultaU.status}`);
                         } else {
                             const dataU = await consultaU.json();
-                            await drizzleDb.update(schema.datosp).set({Id_Usserver: Number(dataU[0].Id_User)}).where(eq(schema.datosp.id, 1))
+                            await drizzleDb.update(schema.datosp).set({Id_Usserver: Number(dataU[0].Id_User) || 0}).where(eq(schema.datosp.id, result[0].id))
                             handleAlert([url],dataU);
-                            setNameId(Number(dataU[0].Id_User || 0));
+                            setNameId(Number(dataU[0].Id_User));
                         }
                     }
             }
@@ -174,7 +174,9 @@ const ChatScreen = () => {
             />
             <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().center, useGlobalStyles().inlineBlock, [,{position:'absolute',right:7, backgroundColor: head}]]}
             onPress={() => {
-                try { consultaUser();} catch (error) {handleAlert(['Error',name,nameId,passUser,sala,salaId,passSala], error+'')}
+                try { consultaUser();
+                    handleAlert([], typeof nameId+ nameId)
+                } catch (error) {handleAlert(['Error',name,nameId,passUser,sala,salaId,passSala], error+'')}
                 //Alert.alert('data:', url)
                     /*if (flatListRef.current) {
                         flatListRef.current.scrollToEnd({ animated: true });

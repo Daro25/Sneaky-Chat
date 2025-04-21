@@ -8,7 +8,7 @@ CREATE TABLE `DATOSP` (
 	`ID` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`pass` text(20) NOT NULL,
 	`Id_User` text(40) NOT NULL,
-	`Id_Usserver` integer,
+	`Id_Usserver` integer NOT NULL,
 	`Year` integer NOT NULL
 );
 --> statement-breakpoint

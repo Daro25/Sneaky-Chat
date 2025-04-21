@@ -18,9 +18,14 @@ const useFetchMessages = () => {
         const result = await drizzleDb.select().from(schema.mensaje)
         const resultS = await drizzleDb.select().from(schema.salas)
         const user = await drizzleDb.select().from(schema.datosp)
-        const consultaU = await fetch(`https://ljusstudie.site/Consulta_Usuario.php?nombre=${encodeURIComponent(user[0].idUser)}&pass=${encodeURIComponent(user[0].pass)}`);
-            if (!consultaU.ok) { Alert.alert(`HTTP error! statusU1: ${consultaU.status}`);}
-            const dataU = await consultaU.json();
+        if (user.length > 0){
+            const urlUss = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(user[0].pass)}&nombre=${encodeURIComponent(user[0].idUser)}`;
+            const consultaU = await fetch(urlUss);
+            if (!consultaU.ok) { Alert.alert(`HTTP error! statusU1: ${consultaU.status}`);
+            } else {
+                const dataU = await consultaU.json();
+            }
+        }
         const llavePrivada = await ObtenerLlavePrivada();
         result.length > 0 ? ()=>{
             setLastId(result[result.length-1].id)

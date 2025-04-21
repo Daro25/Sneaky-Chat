@@ -26,7 +26,7 @@ export const datosp = sqliteTable('DATOSP', {
   id: integer('ID').primaryKey({ autoIncrement: true }),
   pass: text('pass', { length: 20 }).notNull(),
   idUser: text('Id_User', { length: 40 }).notNull(),
-  Id_Usserver: integer('Id_Usserver'),
+  Id_Usserver: integer('Id_Usserver').notNull(),
   year: integer('Year').notNull()
 });
 

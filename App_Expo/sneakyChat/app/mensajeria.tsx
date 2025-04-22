@@ -9,8 +9,10 @@ import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import RNRsaNative, { RSA } from 'react-native-rsa-native';
 import * as SecureStore from 'expo-secure-store';
+import useFetchMessages from './useFetchMessages';
 
 const ChatScreen = () => {
+    var messages = useFetchMessages();
     const flatListRef = useRef<FlatList>(null); // Referencia a FlatList para controlar el desplazamiento
     const [initialLoad, setInitialLoad] = useState(0);
     const [texto, setText] = useState('');
@@ -20,17 +22,18 @@ const ChatScreen = () => {
     const [salaId, setSalaId] = useState(0);
     const [passUser, setPassUser] = useState('');
     const [passSala, setPassSala] = useState('');
-    const [poss, setPoss] = useState(1);
+    const [poss, setPoss] = useState(0);
     const [alertas, setAlertas] = useState([{title: '', message:''},]);
     const [keyPublic, setKey] = useState('');
     const [emisorName, setEmisorName] = useState('');
     const [emisorId, setEmisorId] = useState(0);
+    const [pausa, setPausa] =  useState(false);
     function addAlert(title: string, message: string) {
         setAlertas((prevAlertas)=>[...prevAlertas,{title: title, message: message}]);
     }
     function mostrarAlert(actualposs : number) {
-        setPoss(actualposs)
         if (actualposs < alertas.length) {
+            setPoss(actualposs)
             Alert.alert(alertas[poss].title,alertas[poss].message,
                 [{
                     text: 'ok',
@@ -56,81 +59,9 @@ const ChatScreen = () => {
         }
         mostrarAlert(poss);
     }
-    const useFetchMessages = () => {
-        const [messages, setMessages] = useState
-        <{ id: number; userId: string; fecha: string; 
-            hora: string; text: string; isCurrentUser: boolean; }[]>([]);
-        const [lastId, setLastId] = useState(0);
-        const db = useSQLiteContext();
-        const drizzleDb = drizzle(db, { schema});
-        //--------------------------------------------------------------------
-        const fetchMessages = async () => {
-            const newMessages: { id: number; userId: string; fecha: string; 
-                hora: string; text: string; isCurrentUser: boolean; }[] = [];
-            const result = await drizzleDb.select().from(schema.mensaje)
-            var llavePrivada = await SecureStore.getItemAsync('llavePrivada') || '';
-            if(result.length > 0) {
-                setLastId(result[result.length-1].idServer);
-                result.forEach(fila =>{
-                    const date = new Date(fila.dates);
-                    const fecha = date.toLocaleDateString(); // Convierte a formato de fecha local
-                    const hora = date.toLocaleTimeString();
-                    newMessages.push({
-                        id: fila.id, userId: fila.idUser, fecha: fecha,
-                        hora: hora, text: fila.texto, 
-                        isCurrentUser: fila.idUser === name,
-                    });
-                });
-                setMessages((prevMessages) => {
-                    const existingIds = new Set(prevMessages.map(m => m.id));
-                    const filteredNewMessages = newMessages.filter(m => !existingIds.has(m.id));
-                    return [...prevMessages, ...filteredNewMessages];
-                });
-             }
-            try {
-                if (!llavePrivada) {
-                    throw new Error("Llave privada no encontrada en SecureStore");
-                }else{             
-                    const response = await fetch(`https://ljusstudie.site/Consulta.php?sala=${salaId}&Id=${lastId}`);
-                    if (!response.ok) {handleAlert(['Error',0,1],`HTTP error! status2: ${response.status}`);}
-                    const data = await response.json();
-                    for (const fila of data){
-                        const texto = await RSA.decrypt(fila.Texto, llavePrivada);
-                        const registrar = async()=>{
-                            const busqueda = await drizzleDb.select().from(schema.mensaje).where(eq(schema.mensaje.idServer, fila.ID));
-                            if (busqueda.length === 0) {
-                                await drizzleDb.insert(schema.mensaje).values({
-                                    sala: sala,
-                                    dates: fila.FechayHora, 
-                                    texto: texto, 
-                                    idUser: Number(fila.User_id) === emisorId ? emisorName : name,
-                                    idServer: fila.ID
-                                });
-                            }
-                        }
-                        registrar();
-                    }
-                }
-            } catch (error) {
-                handleAlert(['Error',0,2],error+'');
-            }
-        };
-        useEffect(() => {
-            const interval = setInterval(() => {
-                if (emisorName != ''&& salaId!=0&& emisorId!=0&& name != '') {
-                    fetchMessages();
-                }
-            }, 1000);
-            return () => clearInterval(interval); // Limpia el intervalo si el componente se desmonta
-        }, []);
-    
-        return messages;
-    };
     //base de datos mas facil con drizzle
     const db = useSQLiteContext();
     const drizzleDb = drizzle(db, { schema});
-    const messages: { id: number; userId: string; fecha: string; 
-        hora: string; text: string; isCurrentUser: boolean; }[] = useFetchMessages();
     // useEffect para desplazar automáticamente la lista al final cuando se añaden nuevos mensajes
     useEffect(() => {
         if (initialLoad < 4 && flatListRef.current) {
@@ -192,7 +123,7 @@ const ChatScreen = () => {
         if ( texto.trim())
         {
             try {
-                if (keyPublic === '') {
+                if (keyPublic === ''|| salaId === 0 || nameId === 0 || name === '') {
                     await consulta();
                 } else {
                     setText(textoVoid);
@@ -202,7 +133,7 @@ const ChatScreen = () => {
                     if (!response.ok) { handleAlert(['Error',2,1,1],`HTTP error! status: ${response.status}`);} else {
                         try {
                             const dataC = await response.json();
-                            if(dataC.length === 1){
+                            if(dataC.length === 1 || true){
                                 await drizzleDb.insert(schema.mensaje).values({ 
                                     idUser: name,
                                     idServer: dataC[0].ID,
@@ -210,6 +141,8 @@ const ChatScreen = () => {
                                     dates: dataC[0].FechayHora,
                                     texto: texto,
                                 });
+                            } else {
+                                handleAlert(['Error',2,1,2], 'No se registró nada en la base de datos local' + url1);
                             }
                         } catch (error) {
                             const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
@@ -238,9 +171,8 @@ const ChatScreen = () => {
                 }
             }
             async function consultaUser() {
-                const result = await drizzleDb.select().from(schema.datosp);
                 if (nameId === 0) {
-                    const url = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(result[0].pass)}&nombre=${encodeURIComponent(result[0].idUser)}`;
+                    const url = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(passUser)}&nombre=${encodeURIComponent(name)}`;
                     const consultaU = await fetch(url);
                     if (!consultaU.ok) { handleAlert(['Error',1,2,1],`HTTP error! status: ${consultaU.status}`);
                     } else {
@@ -303,62 +235,67 @@ const ChatScreen = () => {
                 }
                 return null;
             };
-    return (
-        <View style={[useGlobalStyles().container, [,{overflowX:'hidden'}]]}>
-            <FlatList style={{width:'101%', position:'relative'}}
-                ref={flatListRef} // Asigna la referencia a FlatList
-                data={messages} // Datos de los mensajes obtenidos
-                keyExtractor={(item) => item.id.toString()} // Clave única para cada mensaje
-                renderItem={({ item }) => (
-                    item.isCurrentUser ? 
-                    <MensajeRight 
-                    user= {emisorName}
-                    fecha= {item.fecha}
-                    context= {item.text}
-                    hora= {item.hora}/> 
-                    : 
-                    <MensajeLeft
-                    user= {name}
-                    fecha= {item.fecha}
-                    context= {item.text}
-                    hora= {item.hora}/> 
-                )}
-            />
-            <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().center, useGlobalStyles().inlineBlock, [,{position:'absolute',right:7, backgroundColor: head}]]}
-            onPress={() => {
-                mostrarAlert(poss);
-                    if (flatListRef.current) {
-                        flatListRef.current.scrollToEnd({ animated: true });
+    try {
+        return (
+            <View style={[useGlobalStyles().container, [,{overflowX:'hidden'}]]}>
+                <FlatList style={{width:'101%', position:'relative'}}
+                    ref={flatListRef} // Asigna la referencia a FlatList
+                    data={messages} // Datos de los mensajes obtenidos
+                    keyExtractor={(item) => item.id.toString()} // Clave única para cada mensaje
+                    renderItem={({ item }) => (
+                        item.isCurrentUser ? 
+                        <MensajeRight 
+                        user= {emisorName}
+                        fecha= {item.fecha}
+                        context= {item.text}
+                        hora= {item.hora}/> 
+                        : 
+                        <MensajeLeft
+                        user= {name}
+                        fecha= {item.fecha}
+                        context= {item.text}
+                        hora= {item.hora}/> 
+                    )}
+                />
+                <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().center, useGlobalStyles().inlineBlock, [,{position:'absolute',right:7, backgroundColor: head}]]}
+                onPress={() => {
+                    mostrarAlert(poss);
+                    setPausa(false);
+                        if (flatListRef.current) {
+                            flatListRef.current.scrollToEnd({ animated: true });
+                        }
                     }
-                }
-            }>
-                <Text style={[[,{color:'white'}], useGlobalStyles().negrita, useGlobalStyles().center]}>▼</Text>
-            </TouchableOpacity>
-            <View style={[useGlobalStyles().msjbox, useGlobalStyles().container_H]}>
-                <TextInput
-                value={texto}
-                onChangeText={setText}
-                placeholder='Digite su mensaje'
-                placeholderTextColor={'#a9a9a9'}
-                numberOfLines={7}
-                maxLength={100}
-                textAlignVertical="top"
-                textAlign="left"
-                multiline={true}
-                style={useGlobalStyles().leyenda}/>
-
-                <TouchableOpacity style={useGlobalStyles().msjboxBtn}
-                onPress={digitMSJ}
-                >
-                    <Image source={require('@/assets/images/enviar.png')}
-                    style={{
-                          width: PixelRatio.getPixelSizeForLayoutSize(40),
-                          height: PixelRatio.getPixelSizeForLayoutSize(40),
-                          borderRadius: '50%'}}/>
+                }>
+                    <Text style={[[,{color:'white'}], useGlobalStyles().negrita, useGlobalStyles().center]}>▼</Text>
                 </TouchableOpacity>
+                <View style={[useGlobalStyles().msjbox, useGlobalStyles().container_H]}>
+                    <TextInput
+                    value={texto}
+                    onChangeText={setText}
+                    placeholder='Digite su mensaje'
+                    placeholderTextColor={'#a9a9a9'}
+                    numberOfLines={7}
+                    maxLength={100}
+                    textAlignVertical="top"
+                    textAlign="left"
+                    multiline={true}
+                    style={useGlobalStyles().leyenda}/>
+    
+                    <TouchableOpacity style={useGlobalStyles().msjboxBtn}
+                    onPress={digitMSJ}
+                    >
+                        <Image source={require('@/assets/images/enviar.png')}
+                        style={{
+                              width: PixelRatio.getPixelSizeForLayoutSize(40),
+                              height: PixelRatio.getPixelSizeForLayoutSize(40),
+                              borderRadius: '50%'}}/>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
-    );
+        );
+    } catch (error) {
+        return(<Text>{(error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error)}</Text>);
+    }
 };
 
 export default ChatScreen;

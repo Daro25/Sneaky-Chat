@@ -1,114 +1,102 @@
-import { useState, useEffect } from 'react';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
-import * as schema from '@/db/schema';
+import { useEffect, useState } from "react";
+import * as schema from "@/db/schema";
 import * as SecureStore from 'expo-secure-store';
-import RNRsaNative, { RSA } from 'react-native-rsa-native';
+import { RSA } from 'react-native-rsa-native';
+import { eq } from 'drizzle-orm';
 
 const useFetchMessages = () => {
-    const [messages, setMessages] = useState<any[]>([]);
-    const [errors, setError] = useState('');
-    const [lastId, setLastId] = useState(0);
-    const [keyPublic, setKey] = useState('');
-    const db = useSQLiteContext();
-    const drizzleDb = drizzle(db, { schema});
-    const newMessages: { id: number; userId: number; fecha: string; 
-        hora: string; text: string; isCurrentUser: boolean; }[] = [];
-    //--------------------------------------------------------------------
-    const fetchMessages = async () => {
-        const result = await drizzleDb.select().from(schema.mensaje)
-        const resultS = await drizzleDb.select().from(schema.salas)
-        const user = await drizzleDb.select().from(schema.datosp)
-        const emisors = await drizzleDb.select().from(schema.emisor)
-        const [Id_User, setId_User] = useState('');
-        function hadleError(s: string) {
-            setError(s);
-        }
-        if (emisors.length === 0){
-            const urlUss = `https://ljusstudie.site/ConsultaUsuarioWsala.php?id_sala=${resultS[0].idSala}`;
-            const consultaU = await fetch(urlUss);
-            if (!consultaU.ok) { hadleError(`HTTP error! statusU1: ${consultaU.status}`);
-            } else {
-                const dataU = await consultaU.json();
-                for (let i = 0; i < dataU.length; i++) {
-                    const element = dataU[i];
-                    if (element.Id_User != user[0].Id_Usserver) {
-                        setId_User(element.Nomb);
-                        setKey(element.KeyPublic);
-                        await drizzleDb.insert(schema.emisor).values({
-                            idUsserver: Number(element.Id_User),
-                            n: element.KeyPublic,
-                            idUser: element.Nomb
-                        });
-                        break;
+        const [messages, setMessages] = useState <any[]>([]);
+        const [lastId, setLastId] = useState(0);
+        const db = useSQLiteContext();
+        const [name, setName] = useState("");
+        const [sala, setSala] = useState("");
+        const [salaId, setSalaId] = useState(0);
+        const [emisorName, setEmisorName] = useState('');
+        const [emisorId, setEmisorId] = useState(0);
+        const [pausa, setPausa] =  useState(false);
+        const drizzleDb = drizzle(db, { schema});
+        //--------------------------------------------------------------------
+        const fetchMessages = async () => {
+            const newMessages: { id: number; userId: string; fecha: string; 
+                hora: string; text: string; isCurrentUser: boolean; }[] = [];
+            const result = await drizzleDb.select().from(schema.mensaje)
+            var llavePrivada = await SecureStore.getItemAsync('llavePrivada') || '';
+            if(result.length > 0) {
+                setLastId(result[result.length-1].idServer);
+                result.forEach(fila =>{
+                    const date = new Date(fila.dates);
+                    const fecha = date.toLocaleDateString(); // Convierte a formato de fecha local
+                    const hora = date.toLocaleTimeString();
+                    newMessages.push({
+                        id: fila.id, userId: fila.idUser, fecha: fecha,
+                        hora: hora, text: fila.texto, 
+                        isCurrentUser: fila.idUser === name,
+                    });
+                });
+                setMessages((prevMessages) => {
+                    const existingIds = new Set(prevMessages.map(m => m.id));
+                    const filteredNewMessages = newMessages.filter(m => !existingIds.has(m.id));
+                    return [...prevMessages, ...filteredNewMessages];
+                });
+             }
+            try {
+                if (!llavePrivada) {
+                    throw new Error("Llave privada no encontrada en SecureStore");
+                }else{         
+                    const urlMsj = `https://ljusstudie.site/Consulta.php?sala=${salaId}&Id=${lastId}`;    
+                    const response = await fetch(urlMsj);
+                    if (!response.ok) {}
+                    const data = await response.json();
+                    for (const fila of data){
+                        const texto = await RSA.decrypt(fila.Texto, llavePrivada);
+                        const registrar = async()=>{
+                            const busqueda = await drizzleDb.select().from(schema.mensaje).where(eq(schema.mensaje.idServer, fila.ID));
+                            if (busqueda.length === 0) {
+                                await drizzleDb.insert(schema.mensaje).values({
+                                    sala: sala,
+                                    dates: fila.FechayHora, 
+                                    texto: texto, 
+                                    idUser: Number(fila.User_id) === emisorId ? emisorName : name,
+                                    idServer: fila.ID
+                                });
+                            }
+                        }
+                        registrar();
                     }
                 }
+            } catch (error) {
+                setPausa(true)
             }
-        } else {
-            setId_User(emisors[0].idUser);
-            setKey(emisors[0].n);
-        }
-        var llavePrivada = await SecureStore.getItemAsync('llavePrivada') || '';
-        result.length > 0 ? ()=>{
-            setLastId(result[result.length-1].id)
-            result.forEach(fila =>{
-                const date = new Date(fila.dates);
-                const fecha = date.toLocaleDateString(); // Convierte a formato de fecha local
-                const hora = date.toLocaleTimeString();
-                newMessages.push({
-                    id: fila.id, userId: parseInt(fila.idUser), fecha: fecha,
-                    hora: hora, text: fila.texto, 
-                    isCurrentUser: fila.idUser === Id_User,
-                });
-            });
-            setMessages((prevMessages: any[]) => [...prevMessages, ...newMessages]);
-         } : ()=>{}
-        try {
-            const response = await fetch(`https://ljusstudie.site/Consulta.php?sala=${resultS[0].idSala}&Id=${lastId}`);
-            if (!response.ok) {hadleError(`HTTP error! status2: ${response.status}`);}
-            const data = await response.json();
-
-            let newLastId = lastId;
-            await data.forEach(async (fila: {
-                ID: number; User_id: number; FechayHora: string; Texto: string; sala_Id:number;
-}) => {
-                const date = new Date(fila.FechayHora);
-                const fecha = date.toLocaleDateString(); // Convierte a formato de fecha local
-                const hora = date.toLocaleTimeString(); // Convierte a formato de hora local
-                const texto = await RSA.decrypt(fila.Texto, llavePrivada);
-
-                newMessages.push({
-                    id: fila.ID, userId: fila.User_id, fecha: fecha,
-                    hora: hora, text: texto, 
-                    isCurrentUser: Number(fila.User_id) === Number(user[0].Id_Usserver),
-                });
-                const registrar = async()=>{
-                    await drizzleDb.insert(schema.mensaje).values({
-                        sala: resultS[0].nombre,
-                        dates: fila.FechayHora, 
-                        texto: texto, 
-                        idUser: Number(fila.User_id) === user[0].Id_Usserver ? user[0].idUser : Id_User,
-                        idServer: fila.ID
-                    });
+        };
+        useEffect(() => {
+            const interval = setInterval(() => {
+                if (emisorName != ''&& salaId!=0 && emisorId!=0 && name != '' && !pausa) {
+                    fetchMessages();
+                }else{
+                    const corregir = async ()=> {
+                        const usuario = await drizzleDb.select().from(schema.datosp);
+                        if (usuario.length >0) {
+                            setName(usuario[0].idUser);
+                        }
+                        const emisor = await drizzleDb.select().from(schema.emisor);
+                        if (emisor.length >0) {
+                            setEmisorId(emisor[0].idUsserver)
+                            setEmisorName(emisor[0].idUser)
+                        }
+                        const sala = await drizzleDb.select().from(schema.salas);
+                        if (sala.length >0) {
+                            setSala(sala[0].nombre)
+                            setSalaId(sala[0].idSala)
+                        }
+                    }
+                    corregir();
                 }
-                registrar();
-                newLastId = fila.ID;
-            });
-
-            setMessages((prevMessages: any[]) => [...prevMessages, ...newMessages]);
-            setLastId(newLastId);
-        } catch (error) {
-            hadleError('Error al obtener mensajes:'+ error);
-        }
+            }, 5000);
+            return () => clearInterval(interval); // Limpia el intervalo si el componente se desmonta
+        }, []);
+    
+        return messages;
     };
-    useEffect(() => {
-        const interval = setInterval(fetchMessages, 1000);
-        return () => clearInterval(interval); // Limpia el intervalo al desmontar
-    }, [lastId]);
-
-    return {
-        messages: messages,
-        error: errors
-    };
-};
 export default useFetchMessages;

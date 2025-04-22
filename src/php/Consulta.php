@@ -2,16 +2,18 @@
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST");
 header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json");
+
 class Tabla 
 {
 	public $ID, $sala_Id, $FechayHora, $Texto, $User_Id;
-	function __construct($ID, $sala_Id, $FechayHora, $Texto, $User_Id)
+	function __construct($ID, $sala_Id, $FechayHora, $Texto, $User_id)
 	{
 		$this->ID= $ID;
 		$this->sala_Id= $sala_Id;
         $this->FechayHora= $FechayHora;
         $this->Texto = $Texto;
-        $this->User_id = $User_Id; //Esta clase define un objeto Tabla con cinco propiedades: ID, sala_Id, FechayHora, Texto, y User_Id.
+        $this->User_id = $User_id; //Esta clase define un objeto Tabla con cinco propiedades: ID, sala_Id, FechayHora, Texto, y User_Id.
 		// el constructor recibe parametros que son valores que se pasaran al crear un nuevo objeto de la clase
 		//asigna el valor del parametro al atributo
 	}

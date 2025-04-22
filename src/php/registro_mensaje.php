@@ -2,15 +2,7 @@
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST");
 header("Access-Control-Allow-Headers: Content-Type");
-class Respuesta
-{
-    public $res; //Respuesta es una definición de un objeto que tiene una propiedad $res
-    function __construct($res)
-    {
-        $this->res = $res; //inicializa la propiedad $res con el valor pasado cuando se crea un 
-        // nuevo objeto de esta clase.
-    }
-}
+header("Content-Type: application/json");
 
 $user = 'droa';
 $server = 'localhost';
@@ -34,7 +26,8 @@ $stmt = $conex->prepare("INSERT INTO mensaje (sala_Id, dates, Texto, User_Id) VA
 $stmt->bind_param("issi", $sala_Id, $dates, $Texto, $User_Id);
 
 if ($stmt->execute()) {
-    echo json_encode(['resultado' => "Mensaje registrado exitosamente."]);
+    $id = $conex->insert_id;
+    echo json_encode(['ID' => $id, 'FechayHora' => $dates]);
 } else {
     echo json_encode(['resultado' => "Error al registrar el mensaje: " . mysqli_error($conex)]);
 }

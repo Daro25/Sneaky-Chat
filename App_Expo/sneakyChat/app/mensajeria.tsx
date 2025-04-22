@@ -77,7 +77,9 @@ const ChatScreen = () => {
             setSala(salaResult[0].nombre);
             setPassSala(salaResult[0].pass);
             setSalaId(salaResult[0].idSala || 0);
-            await consultaSala()
+            if (salaId) {
+                await consultaSala()
+            }
         } catch (error) {
             const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
             handleAlert(['Error',1,1], message);
@@ -87,7 +89,9 @@ const ChatScreen = () => {
             setName(userResult[0].idUser);
             setPassUser(userResult[0].pass);
             setNameId(userResult[0].Id_Usserver);
-            await consultaUser()
+            if (nameId === 0) {
+                await consultaUser()
+            }
         } catch (error) {
             const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
             handleAlert(['Error',1,2], message);
@@ -98,7 +102,9 @@ const ChatScreen = () => {
                 setEmisorName(emisorResult[0].idUser);
                 setKey(emisorResult[0].n);
             }
-            await consultaEmisor()
+            if (keyPublic === '') {
+                await consultaEmisor()
+            }
         } catch (error) {
             const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
             handleAlert(['Error',1,3],message);
@@ -125,10 +131,8 @@ const ChatScreen = () => {
                     const response = await fetch(url1);
                     if (!response.ok) { handleAlert(['Error',2,1,1],`HTTP error! status: ${response.status}`);} else {
                         try {
-                            const url2 = `https://ljusstudie.site/Consulta.php?sala=${sala}&Id=${0}`;
-                            const consulta = await fetch(url2);
-                            if (!consulta.ok) {handleAlert(['Error',2,1,2],`HTTP error! status2: ${consulta.status}`);}else{
-                                const dataC = await consulta.json();
+                            const dataC = await response.json();
+                            if(dataC.length === 1){
                                 await drizzleDb.insert(schema.mensaje).values({ 
                                     idUser: name,
                                     idServer: dataC[0].ID,

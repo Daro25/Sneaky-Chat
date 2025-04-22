@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
-import { encryptMessage, decryptMessage } from "@/app/recursos/cripto";
-import ObtenerLlavePrivada from "./recursos/secureStore";
-import { Alert } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import RNRsaNative, { RSA } from 'react-native-rsa-native';
 
 const useFetchMessages = () => {
     const [messages, setMessages] = useState<any[]>([]);
@@ -21,7 +20,7 @@ const useFetchMessages = () => {
         const resultS = await drizzleDb.select().from(schema.salas)
         const user = await drizzleDb.select().from(schema.datosp)
         const emisors = await drizzleDb.select().from(schema.emisor)
-        const [Id_User, setId_User] = useState(0);
+        const [Id_User, setId_User] = useState('');
         function hadleError(s: string) {
             setError(s);
         }
@@ -34,7 +33,7 @@ const useFetchMessages = () => {
                 for (let i = 0; i < dataU.length; i++) {
                     const element = dataU[i];
                     if (element.Id_User != user[0].Id_Usserver) {
-                        setId_User(Number(element.Id_User));
+                        setId_User(element.Nomb);
                         setKey(element.KeyPublic);
                         await drizzleDb.insert(schema.emisor).values({
                             idUsserver: Number(element.Id_User),
@@ -46,10 +45,10 @@ const useFetchMessages = () => {
                 }
             }
         } else {
-            setId_User(emisors[0].idUsserver);
+            setId_User(emisors[0].idUser);
             setKey(emisors[0].n);
         }
-        const llavePrivada = await ObtenerLlavePrivada();
+        var llavePrivada = await SecureStore.getItemAsync('llavePrivada') || '';
         result.length > 0 ? ()=>{
             setLastId(result[result.length-1].id)
             result.forEach(fila =>{
@@ -59,7 +58,7 @@ const useFetchMessages = () => {
                 newMessages.push({
                     id: fila.id, userId: parseInt(fila.idUser), fecha: fecha,
                     hora: hora, text: fila.texto, 
-                    isCurrentUser: Number(fila.idUser) === Number(Id_User),
+                    isCurrentUser: fila.idUser === Id_User,
                 });
             });
             setMessages((prevMessages: any[]) => [...prevMessages, ...newMessages]);
@@ -70,25 +69,25 @@ const useFetchMessages = () => {
             const data = await response.json();
 
             let newLastId = lastId;
-
-            data.forEach((fila: {
+            await data.forEach(async (fila: {
                 ID: number; User_id: number; FechayHora: string; Texto: string; sala_Id:number;
 }) => {
                 const date = new Date(fila.FechayHora);
                 const fecha = date.toLocaleDateString(); // Convierte a formato de fecha local
                 const hora = date.toLocaleTimeString(); // Convierte a formato de hora local
+                const texto = await RSA.decrypt(fila.Texto, llavePrivada);
 
                 newMessages.push({
                     id: fila.ID, userId: fila.User_id, fecha: fecha,
-                    hora: hora, text: decryptMessage(fila.Texto, llavePrivada+'')+'', 
+                    hora: hora, text: texto, 
                     isCurrentUser: Number(fila.User_id) === Number(user[0].Id_Usserver),
                 });
                 const registrar = async()=>{
                     await drizzleDb.insert(schema.mensaje).values({
-                        sala: fila.sala_Id+'',
+                        sala: resultS[0].nombre,
                         dates: fila.FechayHora, 
-                        texto: decryptMessage(fila.Texto, llavePrivada+'')+'', 
-                        idUser: fila.User_id+'',
+                        texto: texto, 
+                        idUser: Number(fila.User_id) === user[0].Id_Usserver ? user[0].idUser : Id_User,
                         idServer: fila.ID
                     });
                 }

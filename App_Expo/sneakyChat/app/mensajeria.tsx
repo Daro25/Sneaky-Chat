@@ -8,7 +8,6 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import RNRsaNative, { RSA } from 'react-native-rsa-native';
-import * as SecureStore from 'expo-secure-store';
 import useFetchMessages from './useFetchMessages';
 
 const ChatScreen = () => {
@@ -133,16 +132,16 @@ const ChatScreen = () => {
                     if (!response.ok) { handleAlert(['Error',2,1,1],`HTTP error! status: ${response.status}`);} else {
                         try {
                             const dataC = await response.json();
-                            if(dataC.length === 1 || true){
+                            if(dataC?.ID){
                                 await drizzleDb.insert(schema.mensaje).values({ 
                                     idUser: name,
-                                    idServer: dataC[0].ID,
+                                    idServer: dataC.ID,
                                     sala: sala,
-                                    dates: dataC[0].FechayHora,
+                                    dates: dataC.FechayHora,
                                     texto: texto,
                                 });
                             } else {
-                                handleAlert(['Error',2,1,2], 'No se registró nada en la base de datos local' + url1);
+                                handleAlert(['Error',2,1,2], 'No se registró nada en la base de datos local');
                             }
                         } catch (error) {
                             const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
@@ -259,7 +258,6 @@ const ChatScreen = () => {
                 />
                 <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().center, useGlobalStyles().inlineBlock, [,{position:'absolute',right:7, backgroundColor: head}]]}
                 onPress={() => {
-                    mostrarAlert(poss);
                     setPausa(false);
                         if (flatListRef.current) {
                             flatListRef.current.scrollToEnd({ animated: true });

@@ -22,32 +22,39 @@ const useFetchMessages = () => {
             const newMessages: { id: number; userId: string; fecha: string; 
                 hora: string; text: string; isCurrentUser: boolean; }[] = [];
             const result = await drizzleDb.select().from(schema.mensaje)
-            var llavePrivada = await SecureStore.getItemAsync('llavePrivada') || '';
-            if(result.length > 0) {
-                setLastId(result[result.length-1].idServer);
-                result.forEach(fila =>{
-                    const date = new Date(fila.dates);
-                    const fecha = date.toLocaleDateString(); // Convierte a formato de fecha local
-                    const hora = date.toLocaleTimeString();
-                    newMessages.push({
-                        id: fila.id, userId: fila.idUser, fecha: fecha,
-                        hora: hora, text: fila.texto, 
-                        isCurrentUser: fila.idUser === name,
-                    });
-                });
-                setMessages((prevMessages) => {
-                    const existingIds = new Set(prevMessages.map(m => m.id));
-                    const filteredNewMessages = newMessages.filter(m => !existingIds.has(m.id));
-                    return [...prevMessages, ...filteredNewMessages];
-                });
-             }
             try {
+                var llavePrivada = await SecureStore.getItemAsync('llavePrivada') || '';
+                if(result.length > 0) {
+                    setLastId(result[result.length-1].idServer);
+                    result.forEach(fila =>{
+                        const date = new Date(fila.dates);
+                        const fecha = date.toLocaleDateString(); // Convierte a formato de fecha local
+                        const hora = date.toLocaleTimeString();
+                        newMessages.push({
+                            id: fila.id, userId: fila.idUser, fecha: fecha,
+                            hora: hora, text: fila.texto, 
+                            isCurrentUser: fila.idUser === name,
+                        });
+                    });
+                    setMessages((prevMessages) => {
+                        const existingIds = new Set(prevMessages.map(m => m.id));
+                        const filteredNewMessages = newMessages.filter(m => !existingIds.has(m.id));
+                        return [...prevMessages, ...filteredNewMessages];
+                    });
+                 }
                 if (!llavePrivada) {
                     throw new Error("Llave privada no encontrada en SecureStore");
                 }else{         
                     const urlMsj = `https://ljusstudie.site/Consulta.php?sala=${salaId}&Id=${lastId}`;    
                     const response = await fetch(urlMsj);
-                    if (!response.ok) {}
+                    if (!response.ok) {
+                        newMessages.push({
+                            id: 0, userId: '', fecha: '',
+                            hora: '', text: `HTTP error! status: ${response.status}`, 
+                            isCurrentUser: false,
+                        });
+                        setMessages(newMessages)
+                    }
                     const data = await response.json();
                     for (const fila of data){
                         const texto = await RSA.decrypt(fila.Texto, llavePrivada);
@@ -68,6 +75,13 @@ const useFetchMessages = () => {
                 }
             } catch (error) {
                 setPausa(true)
+                const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
+                newMessages.push({
+                    id: 0, userId: '', fecha: '',
+                    hora: '', text: message, 
+                    isCurrentUser: false,
+                });
+                setMessages(newMessages)
             }
         };
         useEffect(() => {

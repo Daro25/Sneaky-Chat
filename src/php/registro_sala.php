@@ -40,7 +40,8 @@ $stmt = $conex->prepare("INSERT INTO sala (Contra_Sala, Nom_Sala, Cupo) VALUES (
 $stmt->bind_param("ssi", $contra_sala, $nom_sala, $cupo);
 
 if ($stmt->execute()) {
-    echo json_encode(['resultado' => "Registro de sala exitoso."]);
+    $id = $conex->insert_id;
+    echo json_encode(['ID' => $id]);
 } else {
     echo json_encode(['resultado' => "Error al insertar la sala: " . $stmt->error]);
 }

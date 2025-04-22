@@ -41,7 +41,8 @@ $stmt = $conex->prepare("INSERT INTO usuario (nomb, contra, sala_id, Edad, keyPu
 $stmt->bind_param("ssiss", $nomb, $contra, $sala_id, $edad, $key); // 'ssiss' indica tipos de datos: string, string, integer, integer, string
 
 if ($stmt->execute()) {
-    echo json_encode(['resultado' => "Registro exitoso."]);
+    $id = $conex->insert_id;
+    echo json_encode(['ID' => $id]);
 } else {
     echo json_encode(['resultado' => "Error al insertar el registro: " . $stmt->error]);
 }

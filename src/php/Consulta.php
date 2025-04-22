@@ -6,7 +6,7 @@ header("Content-Type: application/json");
 
 class Tabla 
 {
-	public $ID, $sala_Id, $FechayHora, $Texto, $User_Id;
+	public $ID, $sala_Id, $FechayHora, $Texto, $User_id;
 	function __construct($ID, $sala_Id, $FechayHora, $Texto, $User_id)
 	{
 		$this->ID= $ID;

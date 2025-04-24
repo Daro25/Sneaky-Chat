@@ -40,25 +40,25 @@ export default function ModalCreacion() {
   }, []);
   async function consultaN () {
     try {
-      const result = await drizzleDb.select().from(schema.notas);
+      const result = await drizzleDb.select().from(schema.notas).where(eq(schema.notas.id, id));
       setNotas(result);
+      setEditin(result.length > 0);
     } catch (error) {
       setNotas([]);
     }
   }
   useEffect(() => {
-    setEditin( id!=0 );
     if (id!=0) {
       setId(id);
       setMsjButton('Confirmar Edición de nota');
       consultaN();
       const result = Notas.find(notasId => notasId.id === id);
-      if (result) {
-        setName(result.titulo)
-        setText(result.descripcion?.toString || '')
-        setCategoria(Number(result.idCategoria))
+      if (result?.id){
+        setCategoria(result.idCategoria);
+        setName(result.titulo);
+        setText(result.descripcion);
       } else {
-        setEditin(!editin)
+        setEditin(false);
         Alert.alert(
           "Error:", // Title of the alert
           'No se puede editar la nota, está pantalla no hará ninguna acción.', // Message of the alert

@@ -59,14 +59,16 @@ export function useGlobalStyles() {
     msjbox: {
         width: '100%',
         height: '20%',
+        maxHeight: PixelRatio.getPixelSizeForLayoutSize(70),
         position: 'relative',
         backgroundColor: '#441752',
         overflow: 'hidden'
     },
     msjboxBtn:{
-      width: PixelRatio.getPixelSizeForLayoutSize(40),
-      height: PixelRatio.getPixelSizeForLayoutSize(40),
+      maxWidth: PixelRatio.getPixelSizeForLayoutSize(20),
+      maxHeight: PixelRatio.getPixelSizeForLayoutSize(20),
       borderRadius: '50%',
+      backgroundColor: '#9B7EBD',
       marginTop: 5,
       justifyContent: 'center',
     },

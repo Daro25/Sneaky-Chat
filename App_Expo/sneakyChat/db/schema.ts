@@ -9,8 +9,8 @@ export const categoria = sqliteTable('CATEGORIA', {
 export const notas = sqliteTable('NOTAS', {
   id: integer('ID').primaryKey({ autoIncrement: true }),
   titulo: text('Titulo', { length: 40 }).notNull(),
-  descripcion: text('Descripcion', { length: 250 }),
-  idCategoria: integer('ID_categoria').references(() => categoria.idCategoria),
+  descripcion: text('Descripcion', { length: 250 }).notNull(),
+  idCategoria: integer('ID_categoria').references(() => categoria.idCategoria).notNull(),
 });
 
 export const mensaje = sqliteTable('MENSAJE', {

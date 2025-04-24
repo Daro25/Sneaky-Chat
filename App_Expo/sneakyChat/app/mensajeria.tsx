@@ -6,12 +6,11 @@ import { Image } from 'expo-image';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import RNRsaNative, { RSA } from 'react-native-rsa-native';
+import { eq, gt, max } from 'drizzle-orm';
+import { RSA } from 'react-native-rsa-native';
 import useFetchMessages from './useFetchMessages';
 
 const ChatScreen = () => {
-    var messages = useFetchMessages();
     const flatListRef = useRef<FlatList>(null); // Referencia a FlatList para controlar el desplazamiento
     const [initialLoad, setInitialLoad] = useState(0);
     const [texto, setText] = useState('');
@@ -25,8 +24,8 @@ const ChatScreen = () => {
     const [alertas, setAlertas] = useState([{title: '', message:''},]);
     const [keyPublic, setKey] = useState('');
     const [emisorName, setEmisorName] = useState('');
-    const [emisorId, setEmisorId] = useState(0);
-    const [pausa, setPausa] =  useState(false);
+    const [messages, setMessages] = useState<{id: number; userId: string; fecha: string; hora: string; text: string; isCurrentUser: boolean; }[]>([]);
+    const [lastId, setLastId] = useState(0);
     function addAlert(title: string, message: string) {
         setAlertas((prevAlertas)=>[...prevAlertas,{title: title, message: message}]);
     }
@@ -70,6 +69,12 @@ const ChatScreen = () => {
     }, [messages]); // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
     const consulta = async ()=>{
         try {
+            await consultaMensajes();
+        } catch (error) {
+            const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
+            handleAlert(['Error',1,1], message);
+        }
+        try {
             const salaResult = await drizzleDb.select().from(schema.salas);
             setSala(salaResult[0].nombre);
             setPassSala(salaResult[0].pass);
@@ -79,7 +84,7 @@ const ChatScreen = () => {
             }
         } catch (error) {
             const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
-            handleAlert(['Error',1,1], message);
+            handleAlert(['Error',1,2], message);
         }
         try {
             const userResult = await drizzleDb.select().from(schema.datosp);
@@ -91,21 +96,20 @@ const ChatScreen = () => {
             }
         } catch (error) {
             const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
-            handleAlert(['Error',1,2], message);
+            handleAlert(['Error',1,3], message);
         }
         try {
             const emisorResult = await drizzleDb.select().from(schema.emisor);
             if (emisorResult.length != 0) {
                 setEmisorName(emisorResult[0].idUser);
                 setKey(emisorResult[0].n);
-                setEmisorId(emisorResult[0].idUsserver);
             }
             if (keyPublic === '') {
                 await consultaEmisor()
             }
         } catch (error) {
             const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
-            handleAlert(['Error',1,3],message);
+            handleAlert(['Error',1,4],message);
         }
     }
     useEffect(()=>{
@@ -117,6 +121,10 @@ const ChatScreen = () => {
             }
         })();
     }, []);
+    useEffect(()=>{
+        let interval = setInterval(()=>consultaMensajes, 1000);
+        return () => clearInterval(interval);
+      },[lastId]);
     const digitMSJ = async()=>{
         const textoVoid = '';
         if ( texto.trim())
@@ -228,12 +236,35 @@ const ChatScreen = () => {
                     if (usuario.Id_User !== nameId) {
                         setEmisorName(usuario.Nomb);
                         setKey(usuario.KeyPublic);
-                        setEmisorId(usuario.Id_User);
                         return usuario;
                     }
                 }
                 return null;
             };
+            async function consultaMensajes() {
+                const result = await drizzleDb.select().from(schema.mensaje).where(gt(schema.mensaje.id,lastId));
+                let newMsj: {id: number; userId: string; fecha: string; 
+                    hora: string; text: string; isCurrentUser: boolean; } []= [];
+                if (result.length != 0) {
+                    for (const msj of result) {
+                        const date = new Date(msj.dates);
+                        const fecha = date.toLocaleDateString(); // Convierte a formato de fecha local
+                        const hora = date.toLocaleTimeString();
+                        const msjconvert = {
+                            id: msj.id, userId: msj.idUser, fecha: fecha,
+                            hora: hora, text: msj.texto, 
+                            isCurrentUser: msj.idUser === name,
+                        }
+                        newMsj.push(msjconvert);
+                    }
+                    setLastId(newMsj[newMsj.length-1].id);
+                    setMessages((prevMsj)=>{
+                        const existingIds = new Set(prevMsj.map(m => m.id));
+                        const filteredNewMessages = newMsj.filter(m => !existingIds.has(m.id));
+                        return [...prevMsj, ...filteredNewMessages];
+                    });
+                }
+            } 
     try {
         return (
             <View style={[useGlobalStyles().container, [,{overflowX:'hidden'}]]}>
@@ -258,7 +289,6 @@ const ChatScreen = () => {
                 />
                 <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().center, useGlobalStyles().inlineBlock, [,{position:'absolute',right:7, backgroundColor: head}]]}
                 onPress={() => {
-                    setPausa(false);
                         if (flatListRef.current) {
                             flatListRef.current.scrollToEnd({ animated: true });
                         }

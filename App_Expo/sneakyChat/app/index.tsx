@@ -6,7 +6,7 @@ import * as schema from '@/db/schema';
 import { Nota , Categoria } from "@/db/schema";
 import { View, FlatList, TouchableOpacity, Text, Pressable, Alert } from "react-native";
 import NotaView, { CategoriaView } from "@/assets/Componentes/Nota";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import { Image } from 'expo-image';
 import { eq } from "drizzle-orm";
 
@@ -41,7 +41,7 @@ export default function Index() {
   } 
   useEffect(()=>{consulta()},[]);
   useEffect(()=>{
-    let interval = setInterval(()=>consulta(), 3000);
+    let interval = setInterval(()=>consulta(), 1000);
     return () => clearInterval(interval);
   },[lastId]);
   const getColor = (id: number): string | undefined => {
@@ -52,11 +52,12 @@ export default function Index() {
     await drizzleDb.delete(schema.notas).where(eq(schema.notas.id, id));
     await consulta()
   }
-  const updateForId = async (id: any) => {
-    const result = await drizzleDb.select().from(schema.notas);
-    const noteToUpdate = result.find(resultI => resultI.id === Number(id));
-    if (noteToUpdate) {
-      router.push(`./${Number(id)}`);
+  const updateForId = async (id: number) => {
+    const result = await drizzleDb.select().from(schema.notas).where(eq(schema.notas.id, id));
+    const noteToUpdate = result.find(resultI => resultI.id === id);
+    if (noteToUpdate?.id) {
+      const href: Href = `./${noteToUpdate.id}`;
+      router.push(href);
     }
   };
   useEffect(()=>{

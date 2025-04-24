@@ -8,6 +8,7 @@ import * as schema from '@/db/schema';
 import { RSA } from 'react-native-rsa-native';
 import { GuardarLlavePrivada } from "./recursos/secureStore";
 import Animated, { useSharedValue, Easing } from 'react-native-reanimated';
+import { eq } from "drizzle-orm";
 
 export default function Registro_sala() {
   const [name, setName] = useState("");
@@ -59,6 +60,10 @@ export default function Registro_sala() {
                 const url = `https://ljusstudie.site/registro_usuario.php?nomb=${encodeURIComponent(idUser)}&contra=${encodeURIComponent(userPass)}&sala_id=${encodeURIComponent(salaId)}&edad=${encodeURIComponent(year)}&key=${encodeURIComponent(keys.public)}`;
                 const responseU = await fetch(url);
                 if (!responseU.ok) throw new Error(`HTTP error! status2: ${responseU.status}`);
+                if (responseU.ok) {
+                    const resultU = await responseU.json();
+                    await drizzleDb.update(schema.datosp).set({Id_Usserver: resultU?.ID? resultU.ID : 0}).where(eq(schema.datosp.id, 0));
+                }
               }
             }
           }

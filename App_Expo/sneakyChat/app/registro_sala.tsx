@@ -8,6 +8,7 @@ import * as schema from '@/db/schema';
 import { RSA } from 'react-native-rsa-native';
 import { GuardarLlavePrivada } from "./recursos/secureStore";
 import Animated, { useSharedValue, Easing } from 'react-native-reanimated';
+import { eq } from "drizzle-orm";
 
 export default function Registro_sala() {
   const [name, setName] = useState("");
@@ -47,14 +48,9 @@ export default function Registro_sala() {
       const url = `https://ljusstudie.site/registro_sala.php?Contra_Sala=${encodeURIComponent(pass)}&Nom_Sala=${encodeURIComponent(name)}&Cupo=${encodeURIComponent(2)}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP error! status1: ${response.status}`);
-      const data = await response.json();
-
       if (response.ok) {
-        const url = `https://ljusstudie.site/Consulta_Sala.php?nombre=${encodeURIComponent(name)}&pass=${encodeURIComponent(pass)}`;
-        const consulta = await fetch(url);
-        if (!consulta.ok) throw new Error(`HTTP error! status2: ${consulta.status}`);
-        const dataConsult = await consulta.json();
-        const salaId = Number(dataConsult[0].ID_Sala) || 0;
+        const data = await response.json();
+        const salaId = Number(data?.ID? data.ID : 0);
 
         const userResult = await drizzleDb.select().from(schema.datosp);
         const { idUser, pass: userPass, year } = userResult[userResult.length - 1];
@@ -66,10 +62,14 @@ export default function Registro_sala() {
           if (dataU.length === 0) {
             if (userResult.length > 0) {
               const keys = await RSA.generateKeys(512);
-              await GuardarLlavePrivada(keys.private);
+              GuardarLlavePrivada(keys.private);
               const url = `https://ljusstudie.site/registro_usuario.php?nomb=${encodeURIComponent(idUser)}&contra=${encodeURIComponent(userPass)}&sala_id=${encodeURIComponent(salaId)}&edad=${year}&key=${encodeURIComponent(keys.public)}`;
               const responseU = await fetch(url);
               if (!responseU.ok) throw new Error(`HTTP error! status3: ${responseU.status}`);
+              if (responseU.ok) {
+                const resultU = await responseU.json();
+                await drizzleDb.update(schema.datosp).set({Id_Usserver: resultU?.ID? resultU.ID : 0}).where(eq(schema.datosp.id, 0));
+              }
             }
           }
           await drizzleDb.insert(schema.salas).values([{ idSala: salaId, nombre: name, pass: pass }]);

@@ -126,6 +126,7 @@ const ChatScreen = () => {
             }
         })();
     }, [conectado]);
+    //--------------------------------------------------
     const [contador, setContador] = useState(0)
     useEffect(()=>{
         const intervalo = setInterval(() => {
@@ -139,9 +140,10 @@ const ChatScreen = () => {
             clearInterval(intervalo);
         };
     }, [contador]);
+    //----------------------------------------------------
     const digitMSJ = async()=>{
         const textoVoid = '';
-        if (conectado) {
+        if (true) {
             if ( texto.trim()){
                 try {
                     if (keyPublic === ''|| salaId === 0 || nameId === 0 || name === '') {
@@ -179,7 +181,7 @@ const ChatScreen = () => {
         }
         }
             async function consultaSala() {
-                if (conectado) {
+                if (true) {
                     if (salaId === 0) {
                         const urlsala = `https://ljusstudie.site/Consulta_Sala.php?nombre=${encodeURIComponent(sala)}&pass=${encodeURIComponent(passSala)}`;
                         const consultaSala = await fetch(urlsala);
@@ -196,7 +198,7 @@ const ChatScreen = () => {
                 }
             }
             async function consultaUser() {
-                if (conectado) {
+                if (true) {
                     if (nameId === 0) {
                         const url = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(passUser)}&nombre=${encodeURIComponent(name)}`;
                         const consultaU = await fetch(url);
@@ -215,7 +217,7 @@ const ChatScreen = () => {
                 }
             }
             async function consultaEmisor() {
-                if (conectado) {
+                if (true) {
                     const result = await drizzleDb.select().from(schema.emisor);
                     const urlUss = `https://ljusstudie.site/ConsultaUsuarioWsala.php?id_sala=${salaId}`;
                     if (result.length === 0) {
@@ -295,7 +297,7 @@ const ChatScreen = () => {
                     const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
                     handleAlert(['Error',3,1],message);
                 }
-                if (conectado) {
+                if (true) {
                     try {
                         const sizeM = Math.round(messages.length/0.7);
                         const sizeMidle = messages.length-sizeM<20?sizeM:messages.length-20;

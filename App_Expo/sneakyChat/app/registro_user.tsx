@@ -5,6 +5,8 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
 import { router } from "expo-router";
+import { RSA } from 'react-native-rsa-native';
+import * as SecureStore from 'expo-secure-store';
 
 export default function Registro_user() {
 const [name, setName] = useState("")
@@ -24,18 +26,31 @@ const login = async () => {
         } else {
             const dataU = await consultaU.json();
             if (dataU.length > 0) {
-              await drizzleDb.insert(schema.datosp).values({
-                pass: pass,
-                idUser: name,
-                Id_Usserver: Number(dataU[0].Id_User),
-                year: Number(year)
-              });
-              Alert.alert('Confirmado', 'Tu usuario fue encontrado.',
-              [
-                {text: "OK", style: 'cancel', onPress: ()=> router.replace('./login_sala')}
-              ],
-              { cancelable: false }
-              );
+              const keys = await RSA.generateKeys(512);
+              await SecureStore.setItemAsync('llavePrivada', keys.private);
+              const urlUp = `https://ljusstudie.site/Consulta_Usuario.php?key=${encodeURIComponent(keys.public)}&pass=${encodeURIComponent(pass)}&nombre=${encodeURIComponent(name)}`;
+              const updateU = await fetch(urlUp);
+              if (!updateU.ok) {
+                Alert.alert('Error',`HTTP error! status: ${updateU.status}`);
+              } else {
+                const dataUp = await updateU.json();
+                if (dataUp.length > 0) {
+                  await drizzleDb.insert(schema.datosp).values({
+                    pass: pass,
+                    idUser: name,
+                    Id_Usserver: Number(dataU[0].Id_User),
+                    year: Number(year)
+                  });
+                  Alert.alert('Confirmado', 'Tu usuario fue encontrado.',
+                    [
+                      {text: "OK", style: 'cancel', onPress: ()=> router.replace('./login_sala')}
+                    ],
+                    { cancelable: false }
+                    );
+                } else {
+                  Alert.alert('Lo siento', 'Tu usuario no fue encontrado.');
+                }
+              }
             } else {
               Alert.alert('Lo siento', 'Tu usuario no fue encontrado.');
             }
@@ -84,24 +99,30 @@ const registro = async ()=>{
   if (!(name.length === pass.length && name.length === 0)) {
     if(Number(year) >= 15){
       if(Rpass === pass) {
-        try {
-            await drizzleDb.insert(schema.datosp).values({
-              idUser: name,
-              pass: pass,
-              Id_Usserver: 0,
-              year: Number(year)
-            })
-            setTimeout(()=>{router.replace('/')}, 3000);
-        } catch (error) {
-          Alert.alert(
-            "Error:", // Title of the alert
-            error+'', // Message of the alert
-            [
-              {text: "OK", style: 'cancel'}
-            ],
-            { cancelable: true }
-          );
-        }
+        const url = `https://ljusstudie.site/NoRepitUser.php?nombre=${encodeURIComponent(name)}`;
+          const consultaU = await fetch(url);
+          if (!consultaU.ok) { Alert.alert('Error',`HTTP error! status: ${consultaU.status}`);
+        } else {
+          const dataU = await consultaU.json();
+          if (Number(dataU?.Num)===0) {
+            try {
+                await drizzleDb.insert(schema.datosp).values({
+                  idUser: name,
+                  pass: pass,
+                  Id_Usserver: 0,
+                  year: Number(year)
+                })
+                Alert.alert('Exito', 'Tu usuario será registrado en seguida, no olvides tu contraseña con la que accederas a los chats \ncontraseña: '+pass,
+                  [{text: 'Ok', style: 'default', onPress: ()=>router.replace('./login_sala'),}],
+                  {cancelable: false}
+                );
+            } catch (error) {
+              Alert.alert("Error:", error+'');
+            }
+          } else if (Number(dataU?.Num)>0) {
+            Alert.alert('Ups!', 'Este nombre de usuario ya existe, consiguete otro.');
+          }
+      }
       } else {
         Alert.alert(
           "Error:", // Title of the alert

@@ -9,7 +9,6 @@ import { RSA } from 'react-native-rsa-native';
 import * as SecureStore from 'expo-secure-store';
 import Animated, { useSharedValue, Easing } from 'react-native-reanimated';
 import { eq } from "drizzle-orm";
-import { text } from "drizzle-orm/gel-core";
 
 export default function Registro_sala() {
   const [name, setName] = useState("");

@@ -73,8 +73,8 @@ export function useGlobalStyles() {
       marginTop: 10,
       marginLeft: 10,
       justifyContent: 'center',
+      alignItems: 'center',
       overflow: 'hidden',
-      padding: 5,
     },
     leyenda: {
       width: ((Dimensions.get('window').width * 0.9)- PixelRatio.getPixelSizeForLayoutSize(40)),

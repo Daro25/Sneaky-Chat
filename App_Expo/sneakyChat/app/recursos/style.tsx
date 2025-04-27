@@ -59,18 +59,22 @@ export function useGlobalStyles() {
     msjbox: {
         width: '100%',
         height: '20%',
-        maxHeight: PixelRatio.getPixelSizeForLayoutSize(70),
+        maxHeight: PixelRatio.getPixelSizeForLayoutSize(40),
         position: 'relative',
         backgroundColor: '#441752',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        paddingTop: 10
     },
     msjboxBtn:{
-      maxWidth: PixelRatio.getPixelSizeForLayoutSize(20),
-      maxHeight: PixelRatio.getPixelSizeForLayoutSize(20),
+      width: PixelRatio.getPixelSizeForLayoutSize(20),
+      height: PixelRatio.getPixelSizeForLayoutSize(20),
       borderRadius: '50%',
       backgroundColor: '#9B7EBD',
-      marginTop: 5,
+      marginTop: 10,
+      marginLeft: 10,
       justifyContent: 'center',
+      overflow: 'hidden',
+      padding: 5,
     },
     leyenda: {
       width: ((Dimensions.get('window').width * 0.9)- PixelRatio.getPixelSizeForLayoutSize(40)),

@@ -4,7 +4,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
 import { Nota , Categoria } from "@/db/schema";
-import { View, FlatList, TouchableOpacity, Text, Pressable, Alert } from "react-native";
+import { View, FlatList, TouchableOpacity, Text, Pressable} from "react-native";
 import NotaView, { CategoriaView } from "@/assets/Componentes/Nota";
 import { Href, router } from "expo-router";
 import { Image } from 'expo-image';
@@ -54,9 +54,8 @@ export default function Index() {
   }
   const updateForId = async (id: number) => {
     const result = await drizzleDb.select().from(schema.notas).where(eq(schema.notas.id, id));
-    const noteToUpdate = result.find(resultI => resultI.id === id);
-    if (noteToUpdate?.id) {
-      const href: Href = `./${noteToUpdate.id}`;
+    if (result.length>0) {
+      const href: Href = `./${id}`;
       router.push(href);
     }
   };

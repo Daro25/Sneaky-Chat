@@ -1,12 +1,10 @@
-import { Text, View, TextInput, SafeAreaView, Button, Touchable, TouchableOpacity, Alert } from "react-native";
-import { useGlobalStyles, useTheme } from "./recursos/style";
+import { Text, View, TextInput, SafeAreaView, TouchableOpacity, Alert } from "react-native";
+import { useGlobalStyles } from "./recursos/style";
 import { useState } from "react"
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
-import Animated, { FadeIn } from 'react-native-reanimated';
 import { router } from "expo-router";
-import { eq } from "drizzle-orm";
 
 export default function Registro_user() {
 const [name, setName] = useState("")
@@ -34,9 +32,9 @@ const login = async () => {
               });
               Alert.alert('Confirmado', 'Tu usuario fue encontrado.',
               [
-                {text: "OK", style: 'cancel', onPress: ()=> router.replace('/')}
+                {text: "OK", style: 'cancel', onPress: ()=> router.replace('./login_sala')}
               ],
-              { cancelable: true }
+              { cancelable: false }
               );
             } else {
               Alert.alert('Lo siento', 'Tu usuario no fue encontrado.');

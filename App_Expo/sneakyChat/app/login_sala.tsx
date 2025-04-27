@@ -6,9 +6,9 @@ import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { router } from "expo-router";
 import * as schema from '@/db/schema';
 import { RSA } from 'react-native-rsa-native';
-import { GuardarLlavePrivada } from "./recursos/secureStore";
 import Animated, { useSharedValue, Easing } from 'react-native-reanimated';
 import { eq } from "drizzle-orm";
+import * as SecureStore from 'expo-secure-store';
 
 export default function Registro_sala() {
   const [name, setName] = useState("");
@@ -56,7 +56,7 @@ export default function Registro_sala() {
             if (data.length > 0) {
               if (userResult.length > 0) {
                 const keys = await RSA.generateKeys(512);
-                GuardarLlavePrivada(keys.private);
+                await SecureStore.setItemAsync('llavePrivada', keys.private);
                 const url = `https://ljusstudie.site/registro_usuario.php?nomb=${encodeURIComponent(idUser)}&contra=${encodeURIComponent(userPass)}&sala_id=${encodeURIComponent(salaId)}&edad=${encodeURIComponent(year)}&key=${encodeURIComponent(keys.public)}`;
                 const responseU = await fetch(url);
                 if (!responseU.ok) throw new Error(`HTTP error! status2: ${responseU.status}`);
@@ -68,7 +68,10 @@ export default function Registro_sala() {
             }
           }
         await drizzleDb.insert(schema.salas).values({ idSala: salaId, nombre: name, pass: pass });
-        router.replace('/');
+        Alert.alert('Exito', 'La sala fue encontrada de manera correcta',
+          [{text: 'Ok', style: 'default', onPress: ()=>router.dismissAll(),}],
+          {cancelable: false}
+        );
       }
     } catch (error) {
       Alert.alert("Error:", error+'' || String(error));

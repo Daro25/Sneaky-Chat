@@ -1,14 +1,15 @@
-import { Text, View, TextInput, SafeAreaView, TouchableOpacity, Dimensions, Alert, ActivityIndicator } from "react-native";
-import { useGlobalStyles, useTheme } from "./recursos/style";
-import { useEffect, useState } from "react";
+import { Text, View, TextInput, SafeAreaView, TouchableOpacity, Dimensions, Alert } from "react-native";
+import { useGlobalStyles } from "./recursos/style";
+import { useState } from "react";
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { router } from "expo-router";
 import * as schema from '@/db/schema';
 import { RSA } from 'react-native-rsa-native';
-import { GuardarLlavePrivada } from "./recursos/secureStore";
+import * as SecureStore from 'expo-secure-store';
 import Animated, { useSharedValue, Easing } from 'react-native-reanimated';
 import { eq } from "drizzle-orm";
+import { text } from "drizzle-orm/gel-core";
 
 export default function Registro_sala() {
   const [name, setName] = useState("");
@@ -62,7 +63,7 @@ export default function Registro_sala() {
           if (dataU.length === 0) {
             if (userResult.length > 0) {
               const keys = await RSA.generateKeys(512);
-              GuardarLlavePrivada(keys.private);
+              await SecureStore.setItemAsync('llavePrivada', keys.private);
               const url = `https://ljusstudie.site/registro_usuario.php?nomb=${encodeURIComponent(idUser)}&contra=${encodeURIComponent(userPass)}&sala_id=${encodeURIComponent(salaId)}&edad=${year}&key=${encodeURIComponent(keys.public)}`;
               const responseU = await fetch(url);
               if (!responseU.ok) throw new Error(`HTTP error! status3: ${responseU.status}`);
@@ -73,7 +74,10 @@ export default function Registro_sala() {
             }
           }
           await drizzleDb.insert(schema.salas).values([{ idSala: salaId, nombre: name, pass: pass }]);
-          router.replace('/');
+          Alert.alert('Exito', 'La sala fue creada exitosamente. Comparte los datos de la sala para mandar mensajes:\nsala: '+name+'\ncontraseña: '+pass,
+            [{text: 'Ok', style: 'default', onPress: ()=>router.dismissAll(),}],
+            {cancelable: false}
+          );
         }
       }
     } catch (error) {

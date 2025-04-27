@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useGlobalSearchParams, useLocalSearchParams } from "expo-router";
 import { FlatList, Pressable, SafeAreaView, View, StyleSheet, Text, TextInput, TouchableOpacity, PixelRatio, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import React, { useEffect, useState } from "react";
@@ -19,12 +19,11 @@ export default function ModalCreacion() {
   const db = useSQLiteContext();
   const drizzleDb = drizzle(db, { schema });
   const [limitChar, setLimitChar] = useState(0);
-  const id = Number(useLocalSearchParams().id);
+  const id = Number(useLocalSearchParams().id)||Number(useGlobalSearchParams().id);
   const [editin, setEditin] = useState(false);
   const [ID, setId] = useState(0);
   const [msjButton, setMsjButton] = useState('Crear Nota');
   const [Categorias, setCategorias] = useState<Categoria[]>([]);
-  const [Notas, setNotas] = useState<Nota[]>([]);
 
   useEffect(() => {
     const consultaCat = async () => {
@@ -41,24 +40,13 @@ export default function ModalCreacion() {
   async function consultaN () {
     try {
       const result = await drizzleDb.select().from(schema.notas).where(eq(schema.notas.id, id));
-      setNotas(result);
-      setEditin(result.length > 0);
-    } catch (error) {
-      setNotas([]);
-    }
-  }
-  useEffect(() => {
-    if (id!=0) {
-      setId(id);
-      setMsjButton('Confirmar Edición de nota');
-      consultaN();
-      const result = Notas.find(notasId => notasId.id === id);
-      if (result?.id){
-        setCategoria(result.idCategoria);
-        setName(result.titulo);
-        setText(result.descripcion);
+      if (result.length>0) {
+        setName(result[0].titulo)
+        setText(result[0].descripcion)
+        setId(id)
+        setCategoria(result[0].idCategoria)
+        setEditin(result.length > 0);
       } else {
-        setEditin(false);
         Alert.alert(
           "Error:", // Title of the alert
           'No se puede editar la nota, está pantalla no hará ninguna acción.', // Message of the alert
@@ -67,8 +55,17 @@ export default function ModalCreacion() {
           ],
           { cancelable: true }
         )
-        router.dismissAll()
       }
+    } catch (error) {
+      const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
+      Alert.alert('Error',message)
+    }
+  }
+  useEffect(() => {
+    if (id!=0) {
+      setId(id);
+      setMsjButton('Confirmar Edición de nota');
+      consultaN();
     }
   }, []);
   useEffect(() => setLimitChar(texto.length), [texto]);

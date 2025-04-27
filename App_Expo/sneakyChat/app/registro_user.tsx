@@ -34,7 +34,7 @@ const login = async () => {
                 Alert.alert('Error',`HTTP error! status: ${updateU.status}`);
               } else {
                 const dataUp = await updateU.json();
-                if (dataUp.length > 0) {
+                if (Number(dataUp?.Num) > 0) {
                   await drizzleDb.insert(schema.datosp).values({
                     pass: pass,
                     idUser: name,

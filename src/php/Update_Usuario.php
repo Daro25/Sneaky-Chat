@@ -4,19 +4,6 @@ header("Access-Control-Allow-Methods: GET, POST");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 
-
-class Tabla 
-{
-    public $Id_User, $Nomb, $KeyPublic;
-    
-    function __construct($Id_User, $Nomb, $KeyPublic)
-    {
-        $this->Id_User = $Id_User;
-        $this->Nomb = $Nomb;
-        $this->KeyPublic = $KeyPublic;
-    }
-}
-
 $user = 'droa';
 $server = 'localhost';
 $database = 'mensajer_a';
@@ -36,16 +23,7 @@ if($conex) {
     
     // Obtener resultados
     $result = $stmt->get_result();
-    $tablasArray = [];
-    
-    while ($li = $result->fetch_assoc()) {
-        $Id_User = $li['Id_User'];
-        $Nomb = $li['Nomb']; 
-        $keyPublic = $li['keyPublic'];
-        $tablasArray[] = new Tabla($Id_User, $Nomb, $keyPublic);
-    }
-
-    echo json_encode($tablasArray);
+    echo json_encode(['Num'=>mysqli_affected_rows($conex)]);
     
     // Cerrar conexión
     mysqli_close($conex);

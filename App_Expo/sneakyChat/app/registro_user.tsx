@@ -28,13 +28,13 @@ const login = async () => {
             if (dataU.length > 0) {
               const keys = await RSA.generateKeys(512);
               await SecureStore.setItemAsync('llavePrivada', keys.private);
-              const urlUp = `https://ljusstudie.site/Consulta_Usuario.php?key=${encodeURIComponent(keys.public)}&pass=${encodeURIComponent(pass)}&nombre=${encodeURIComponent(name)}`;
+              const urlUp = `https://ljusstudie.site/Update_Usuario.php?key=${encodeURIComponent(keys.public)}&pass=${encodeURIComponent(pass)}&nombre=${encodeURIComponent(name)}`;
               const updateU = await fetch(urlUp);
               if (!updateU.ok) {
                 Alert.alert('Error',`HTTP error! status: ${updateU.status}`);
               } else {
                 const dataUp = await updateU.json();
-                if (Number(dataUp?.Num) > 0) {
+                if (dataUp?.Num > 0) {
                   await drizzleDb.insert(schema.datosp).values({
                     pass: pass,
                     idUser: name,

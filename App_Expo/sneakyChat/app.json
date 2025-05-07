@@ -39,7 +39,13 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-secure-store",
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+        }
+      ],
       "expo-sqlite"
     ],
     "experiments": {
@@ -53,6 +59,6 @@
         "projectId": "9f8f89d6-0e34-4902-8c09-df27ee64331d"
       }
     },
-    "owner": "25droa13"
+    "owner": "ljusstudie"
   }
 }

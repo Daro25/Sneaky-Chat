@@ -6,10 +6,10 @@ import { Image } from 'expo-image';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
-import { eq, gt } from 'drizzle-orm';
+import { and, eq, gt, not, notInArray, sql } from 'drizzle-orm';
 import { RSA } from 'react-native-rsa-native';
 import * as SecureStore from 'expo-secure-store';
-import NetInfo from "@react-native-community/netinfo";
+//import NetInfo from "@react-native-community/netinfo";
 
 const ChatScreen = () => {
     const flatListRef = useRef<FlatList>(null); // Referencia a FlatList para controlar el desplazamiento
@@ -24,11 +24,11 @@ const ChatScreen = () => {
     const [poss, setPoss] = useState(0);
     const [alertas, setAlertas] = useState([{title: '', message:''},]);
     const [keyPublic, setKey] = useState('');
+    const [keyPublics, setKeys] = useState <string[]>([]);
     const [emisorName, setEmisorName] = useState('');
+    const [llavePrivada, setKeyPriv] = useState('');
     const [messages, setMessages] = useState<{idS: number,id: number; userId: string; fecha: string; hora: string; text: string; isCurrentUser: boolean; }[]>([]);
-    const [lastId, setLastId] = useState(0);
     const isDev = __DEV__;
-    const [conectado, setConectado] = useState(false);
     function addAlert(title: string, message: string) {
         setAlertas((prevAlertas)=>[...prevAlertas,{title: title, message: message}]);
     }
@@ -74,12 +74,6 @@ const ChatScreen = () => {
     }, [messages]); // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
     const consulta = async ()=>{
         try {
-            await consultaMensajes();
-        } catch (error) {
-            const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
-            handleAlert(['Error',1,1], message);
-        }
-        try {
             const salaResult = await drizzleDb.select().from(schema.salas);
             setSala(salaResult[0].nombre);
             setPassSala(salaResult[0].pass);
@@ -110,11 +104,22 @@ const ChatScreen = () => {
                 setKey(emisorResult[0].n);
             }
             if (keyPublic === '') {
-                await consultaEmisor()
+                await consultaEmisor(false)
             }
         } catch (error) {
             const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
             handleAlert(['Error',1,4],message);
+        }
+        try {
+            const llavePrivadaS = await SecureStore.getItemAsync('llavePrivada') || '';
+            setKeyPriv(llavePrivadaS);
+        } catch (error) {
+            
+        }
+        try {
+            await consultaMensajes();
+        } catch (error) {
+            
         }
     }
     useEffect(()=>{
@@ -125,21 +130,15 @@ const ChatScreen = () => {
                 handleAlert(['Error', 1], error + '');
             }
         })();
-    }, [conectado]);
+    }, []);
     //--------------------------------------------------
     const [contador, setContador] = useState(0)
-    useEffect(()=>{
-        const intervalo = setInterval(() => {
-            setContador(contador+1);
-            NetInfo.addEventListener(state=>{
-                setConectado(state.isConnected || false);
-            })
-            consultaMensajes();
-        }, 10000);
-        return ()=>{
-            clearInterval(intervalo);
-        };
-    }, [contador]);
+    useEffect(() => {
+        setTimeout(() => {
+          consultaMensajes();
+          setContador(prev => prev + 1);
+        }, 1000);
+      }, [contador]);
     //----------------------------------------------------
     const digitMSJ = async()=>{
         const textoVoid = '';
@@ -150,31 +149,20 @@ const ChatScreen = () => {
                         await consulta();
                     } else {
                         setText(textoVoid);
-                        const newTexto = await RSA.encrypt(texto, keyPublic);
-                        const url1 = `https://ljusstudie.site/registro_mensaje.php?sala_Id=${salaId}&User_Id=${nameId}&Texto=${encodeURIComponent(newTexto)}`;
-                        const response = await fetch(url1);
-                        if (!response.ok) { handleAlert(['Error',2,1,1],`HTTP error! status: ${response.status}`);} else {
-                            try {
-                                const dataC = await response.json();
-                                if(dataC?.ID){
-                                    await drizzleDb.insert(schema.mensaje).values({ 
-                                        idUser: name,
-                                        idServer: dataC.ID,
-                                        sala: sala,
-                                        dates: dataC.FechayHora,
-                                        texto: texto,
-                                    });
-                                } else {
-                                    handleAlert(['Error',2,1,2], 'No se registró nada en la base de datos local');
-                                }
-                            } catch (error) {
-                                const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
-                                handleAlert(['Error',2,1], message)
-                            }
+                        if (keyPublics.length == 0 || name === emisorName) {
+                            await consultaEmisor(true);
+                        }
+                        for await (const keyPub of keyPublics) {
+                            const newTexto = await RSA.encrypt(texto, keyPub);
+                            const url1 = `https://ljusstudie.site/registro_mensaje.php?sala_Id=${salaId}&User_Id=${nameId}&Texto=${encodeURIComponent(newTexto)}`;
+                            const response = await fetch(url1);
+                            if (!response.ok) handleAlert(['Error',2,1,1],`HTTP error! status: ${response.status}`);
+                            if (!response.ok) Alert.alert('Error de envio de mensaje', 'Error de conección.');
                         }
                     }
                 } catch (error) {
                     const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
+                    Alert.alert('Error de envio de mensaje', 'Ocurrio un error al enviar el mensaje');
                     handleAlert(['Error',2], message)
                 }
                 }
@@ -216,15 +204,16 @@ const ChatScreen = () => {
                     }
                 }
             }
-            async function consultaEmisor() {
+            async function consultaEmisor(bolovan: boolean) {
                 if (true) {
                     const result = await drizzleDb.select().from(schema.emisor);
                     const urlUss = `https://ljusstudie.site/ConsultaUsuarioWsala.php?id_sala=${salaId}`;
+                    const consultaU = await fetch(urlUss);
+                    const dataU = await consultaU.json();
+                    setKey(elegirEmisor(dataU));
                     if (result.length === 0) {
-                        const consultaU = await fetch(urlUss);
                         if (!consultaU.ok) { handleAlert([], `HTTP error! statusU1: ${consultaU.status}`);
                         } else {
-                            const dataU = await consultaU.json();
                             if (dataU.length > 1) {
                                 const emisor =  elegirEmisor(dataU);
                                 if (emisor != null) {
@@ -237,9 +226,12 @@ const ChatScreen = () => {
                                 }
                             } else {
                                 handleAlert(['Error'], 'No se encontró al emisor');
+                                if (contador === 2) {
+                                    Alert.alert('Error', 'no podrás enviar mensaje hasta que otro usuario se una a la sala');
+                                }
                             }
                         }
-                    } else if (result.length > 0 && keyPublic === '') {
+                    } else if (result.length > 0 && keyPublic === '' || bolovan || emisorName === name) {
                         const consultaU = await fetch(urlUss);
                         if (!consultaU.ok) { handleAlert([], `HTTP error! statusU1: ${consultaU.status}`);
                         } else {
@@ -247,7 +239,7 @@ const ChatScreen = () => {
                             if(dataU.length > 1){
                                 const emisor =  elegirEmisor(dataU);
                                 if (emisor != null) {
-                                    await drizzleDb.update(schema.emisor).set({n: emisor.KeyPublic}).where(eq(schema.emisor.id, result[0].id));
+                                    await drizzleDb.update(schema.emisor).set({n: emisor.KeyPublic, idUser: emisor.idUser, idUsserver: emisor.idUsserver}).where(eq(schema.emisor.id, result[0].id));
                                     handleAlert([],'User encontrado');
                                 }
                             }
@@ -255,109 +247,164 @@ const ChatScreen = () => {
                     }
                 }
             }
-            const elegirEmisor = (usuarios: any[]) => {
+            const elegirEmisor = (usuarios: any[]) => { 
+                let keys:string[] = []
+                let usuarioOne = null
                 for (let usuario of usuarios) {
-                    if (usuario.Id_User !== nameId) {
+                    keys.push(usuario.KeyPublic)
+                    setKeys(keys);
+                    if (!(usuario.Id_User === nameId)) {
                         setEmisorName(usuario.Nomb);
                         setKey(usuario.KeyPublic);
-                        return usuario;
+                        usuarioOne = usuario;
                     }
                 }
-                return null;
+                return usuarioOne;
             };
-            const [errorKey, setErrorKey] = useState(false);
             async function consultaMensajes() {
-                let newMsj: {idS: number, id: number; userId: string; fecha: string; 
-                        hora: string; text: string; isCurrentUser: boolean; } []= [];
-                let ids : number[] = [0];
+                let newMsj: { idS: number, id: number; userId: string; fecha: string;
+                  hora: string; text: string; isCurrentUser: boolean; }[] = [];
+                let processedServerIds: Set<number> = new Set(); // Usaremos un Set para eficiencia en la búsqueda
+              
                 try {
-                    const result = await drizzleDb.select().from(schema.mensaje).where(gt(schema.mensaje.id,lastId));
-                    if (result.length>0) {
-                        for (const msj of result) {
-                            const date = new Date(msj.dates);
-                            const fecha = date.toLocaleDateString(); // Convierte a formato de fecha local
-                            const hora = date.toLocaleTimeString();
-                            const msjconvert = {
-                                idS: msj.idServer,
-                                id: msj.id, userId: msj.idUser, fecha: fecha,
-                                hora: hora, text: msj.texto, 
-                                isCurrentUser: msj.idUser === emisorName,
-                            }
-                            setLastId(msj.id);
-                            ids.push(msj.idServer);
-                            newMsj.push(msjconvert);
-                        }
-                        setMessages((prevMsj)=>{
-                            const existingIds = new Set(prevMsj.map(m => m.id));
-                            const filteredNewMessages = newMsj.filter(m => !existingIds.has(m.id));
-                            return [...prevMsj, ...filteredNewMessages];
-                        });
+                  const localMessagesResult = await drizzleDb.select().from(schema.mensaje);
+                  if (localMessagesResult.length > 0) {
+                    for (const msj of localMessagesResult) {
+                      const date = new Date(msj.dates);
+                      const fecha = date.toLocaleDateString();
+                      const hora = date.toLocaleTimeString();
+                      const msjconvert = {
+                        idS: msj.idServer,
+                        id: msj.id,
+                        userId: msj.idUser,
+                        fecha: fecha,
+                        hora: hora,
+                        text: msj.texto,
+                        isCurrentUser: (msj.idUser != emisorName),
+                      };
+                      processedServerIds.add(msj.idServer); // Almacenamos los IDs locales para evitar duplicados al sincronizar
+                      newMsj.push(msjconvert);
                     }
+                    newMsj.sort((a, b) => a.idS - b.idS);
+                    setMessages(newMsj);
+                  }
                 } catch (error) {
-                    const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
-                    handleAlert(['Error',3,1],message);
+                  const message = (error instanceof Error) ? `${error.message}\n\nStack:\n${error.stack}` : JSON.stringify(error);
+                  handleAlert(['Error', 3, 1], message);
                 }
-                if (true) {
-                    try {
-                        const sizeM = Math.round(messages.length/0.7);
-                        const sizeMidle = messages.length-sizeM<20?sizeM:messages.length-20;
-                        const size = messages.length;
-                        const lastid = size>0 ? newMsj[size>1? sizeMidle : 0].idS : 0;
-                        //const msss = useFetchMessages(nameId, lastid, name, emisorName, salaId);
-                        const urlMss = `https://ljusstudie.site/Consulta.php?sala=${salaId}&Id=${lastid}`;
-                        const consultaM = await fetch(urlMss);
-                        if (!consultaM.ok) { handleAlert([], `HTTP error! statusU1: ${consultaM.status}`);
+              
+                try {
+                  //const latestServerId = messages.length > 5 ? messages[messages.length - 5].idS : 0;
+                  const urlMss = `https://ljusstudie.site/Consulta.php?sala=${salaId}&Id=0`;
+                  const consultaM = await fetch(urlMss);
+                  if (!consultaM.ok) {
+                    handleAlert([], `HTTP error! statusU1: ${consultaM.status}`);
+                  } else {
+                    const msss = await consultaM.json();
+                    if (llavePrivada === '' && contador === 2) {
+                      const actualice = async () => {
+                        const keys = await RSA.generateKeys(512);
+                        await SecureStore.setItemAsync('llavePrivada', keys.private);
+                        const urlUp = `https://ljusstudie.site/Update_Usuario.php?key=${encodeURIComponent(keys.public)}&pass=${encodeURIComponent(passUser)}&nombre=${encodeURIComponent(name)}`;
+                        const updateU = await fetch(urlUp);
+                        if (!updateU.ok) {
+                          Alert.alert('Error', `HTTP error! status: ${updateU.status}`);
                         } else {
-                            const msss = await consultaM.json();
-                            const llavePrivada = await SecureStore.getItemAsync('llavePrivada');
-                            if(llavePrivada && !errorKey){Alert.alert('ErrorKey', 'No se encontró tu llave privada.'); setErrorKey(true)}
-                            if (msss.length > 0 && llavePrivada) {
-                                for await (const mss of msss) {
-                                    if (!ids.includes(mss.idS)) {
-                                        try {
-                                            let newText = await RSA.decrypt(mss.Texto, llavePrivada);
-                                            await drizzleDb.insert(schema.mensaje).values({ 
-                                                idUser: Number(mss.User_id) === nameId? name : emisorName,
-                                                idServer: Number(mss.ID),
-                                                sala: sala,
-                                                dates: mss.FechayHora,
-                                                texto: newText,
-                                            });
-                                        } catch(error){}
-                                    }
-                                }
-                            }}
-                    } catch (error) {
-                        const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
-                        handleAlert(['Error',3,2],message);
+                          const dataUp = await updateU.json();
+                          if (Number(dataUp?.Num) > 0) {
+                            Alert.alert('Acción:', 'Se actualizo correctamente');
+                          } else Alert.alert('Acción:', 'No fue logrado, revisa tu conexión de internet');
+                        }
+                      };
+                      Alert.alert('Key Error', 'Tu Llave privada no se encontró, actualiza tu llave privada',
+                        [{ text: "Actualizar", style: 'cancel', onPress: async () => await actualice() }],
+                        { cancelable: false });
                     }
+                    if (llavePrivada === '') {
+                      const llavePrivadaS = await SecureStore.getItemAsync('llavePrivada') || '';
+                      setKeyPriv(llavePrivadaS);
+                    }
+                    if (msss.length > 0 && llavePrivada) {
+                      for await (const mss of msss) {
+                        if (!processedServerIds.has(Number(mss.ID))) { // Verificamos si ya procesamos este ID del servidor
+                          try {
+                            let newText = await RSA.decrypt(mss.Texto, llavePrivada).catch(() => null); // Manejar errores de desencriptación
+                            if (newText !== null) {
+                              await drizzleDb.insert(schema.mensaje).values({
+                                idUser: Number(mss.User_id) === nameId ? name : emisorName,
+                                idServer: Number(mss.ID),
+                                sala: sala,
+                                dates: mss.FechayHora,
+                                texto: newText,
+                              });
+                              // No es necesario actualizar el estado 'messages' aquí en cada inserción,
+                              // se actualizará en la próxima llamada a 'consultaMensajes'
+                            }
+                          } catch (error) {
+                            console.error("Error al insertar o desencriptar mensaje:", error);
+                          }
+                        }
+                      }
+                      // Después de insertar los nuevos mensajes, podrías volver a cargar la lista completa
+                      correctDuplicateMessages();
+                    }
+                  }
+                } catch (error) {
+                  const message = (error instanceof Error) ? `${error.message}\n\nStack:\n${error.stack}` : JSON.stringify(error);
+                  handleAlert(['Error', 3, 2], message);
                 }
+              }
+              
+              // Función para eliminar mensajes duplicados basada en idServer
+            async function correctDuplicateMessages() {
                 try {
-                    if (messages.length>1) {
-                        setMessages(messages.sort((a, b)=> a.idS - b.idS));
+                    const messagesDB = await drizzleDb.select().from(schema.mensaje);
+                    const uniqueMess = removeDuplicateMessages(messagesDB);
+
+                    if (uniqueMess.length > 0 && messagesDB.length > uniqueMess.length) {
+                    for await (const element of uniqueMess) {
+                        const deleteResult = await drizzleDb.delete(schema.mensaje)
+                        .where(and(eq(schema.mensaje.idServer, element.idServer), not(eq(schema.mensaje.id, element.id))));
+                        console.log(`Removed ${deleteResult.changes} duplicate messages (using Drizzle V2).`);
+                    }
+                    } else {
+                    console.log('No duplicate messages found with Drizzle V2.');
                     }
                 } catch (error) {
-                    const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
-                    handleAlert(['Error',3,3],message);
+                    console.error('Error correcting duplicate messages with Drizzle V2:', error);
                 }
-            } 
+            }
+            function removeDuplicateMessages(message: schema.Msj[]) {
+                const uniqueMessagesMap = new Map();
+                const uniqueMessages: typeof message = [];
+              
+                for (const mess of message) {
+                  const uniqueKey = `${mess.idServer}`;
+                  if (!uniqueMessagesMap.has(uniqueKey)) {
+                    uniqueMessagesMap.set(uniqueKey, true);
+                    uniqueMessages.push(mess);
+                  }
+                }
+              
+                return uniqueMessages;
+              }
     try {
         return (
             <View style={[useGlobalStyles().container, [,{overflowX:'hidden'}]]}>
-                <FlatList style={{width:'101%', position:'relative', marginTop: 20}}
+                <FlatList style={{width:'100%', position:'relative', marginTop: 20}}
                     ref={flatListRef} // Asigna la referencia a FlatList
                     data={messages} // Datos de los mensajes obtenidos
-                    keyExtractor={(item) => item.id.toString()} // Clave única para cada mensaje
+                    keyExtractor={(item) => item.id + ''} // Clave única para cada mensaje
                     renderItem={({ item }) => (
-                        item.isCurrentUser ? 
+                        item.isCurrentUser || item.userId != emisorName ? 
                         <MensajeRight 
-                        user= {emisorName}
+                        user= {item.userId}
                         fecha= {item.fecha}
                         context= {item.text}
                         hora= {item.hora}/> 
                         : 
                         <MensajeLeft
-                        user= {name}
+                        user= {item.userId}
                         fecha= {item.fecha}
                         context= {item.text}
                         hora= {item.hora}/> 

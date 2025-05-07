@@ -74,7 +74,7 @@ export default function Registro_sala() {
           }
           await drizzleDb.insert(schema.salas).values([{ idSala: salaId, nombre: name, pass: pass }]);
           Alert.alert('Exito', 'La sala fue creada exitosamente. Comparte los datos de la sala para mandar mensajes:\nsala: '+name+'\ncontraseña: '+pass,
-            [{text: 'Ok', style: 'default', onPress: ()=>router.dismissAll(),}],
+            [{text: 'Ok', style: 'default', onPress: ()=>router.replace('./'),}],
             {cancelable: false}
           );
         }

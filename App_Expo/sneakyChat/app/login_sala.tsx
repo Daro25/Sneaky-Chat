@@ -69,7 +69,7 @@ export default function Registro_sala() {
           }
         await drizzleDb.insert(schema.salas).values({ idSala: salaId, nombre: name, pass: pass });
         Alert.alert('Exito', 'La sala fue encontrada de manera correcta',
-          [{text: 'Ok', style: 'default', onPress: ()=>router.dismissAll(),}],
+          [{text: 'Ok', style: 'default', onPress: ()=>router.replace('./'),}],
           {cancelable: false}
         );
       }

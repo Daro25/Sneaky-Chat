@@ -10,6 +10,8 @@ import { Src} from "./recursos/categorias";
 import { Categoria, Nota} from "@/db/schema";
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { eq } from "drizzle-orm";
+import * as SecureStore from 'expo-secure-store';
+import { RSA } from "react-native-rsa-native";
 
 export default function ModalCreacion() {
   const [categoria, setCategoria] = useState(1);
@@ -77,15 +79,17 @@ export default function ModalCreacion() {
       if(nombre.replace(/\s+/g,'') === 'sneakychat'|| nombre.replace(/\s+/g,'')=== 'SneakyChat' || nombre.replace(/\s+/g,'')=== 'Sneakychat'){
         if (texto.replace(/\s+/g,'') === 'ActualizeData') {
           try {
-            if (result[0].Id_Usserver === 0 || result[0].Id_Usserver === null || !result[0].Id_Usserver) {
-              const url = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(result[0].pass)}&nombre=${encodeURIComponent(result[0].idUser)}`;
-              const consultaU = await fetch(url);
-              if (!consultaU.ok) { Alert.alert('Error',`HTTP error! status: ${consultaU.status}`);} else {
-                  const dataU = await consultaU.json();
-                  await drizzleDb.update(schema.datosp).set({Id_Usserver: Number(dataU[0].Id_User)}).where(eq(schema.datosp.id, result[0].id))
-                  Alert.alert(url,dataU);
-              }
-            }
+            const keys = await RSA.generateKeys(512);
+                          await SecureStore.setItemAsync('llavePrivada', keys.private);
+                          const urlUp = `https://ljusstudie.site/Update_Usuario.php?key=${encodeURIComponent(keys.public)}&pass=${encodeURIComponent(result[0].pass)}&nombre=${encodeURIComponent(result[0].idUser)}`;
+                          const updateU = await fetch(urlUp);
+                          if (!updateU.ok) {
+                            Alert.alert('Error',`HTTP error! status: ${updateU.status}`);
+                          } else {
+                            const dataUp = await updateU.json();
+                            if (Number(dataUp?.Num) > 0) Alert.alert('data', 'Accion comfirmada')
+                              else Alert.alert('data', 'Accion no realizada')
+                          }
           } catch (error) {
             Alert.alert('Error', error+'')
           }

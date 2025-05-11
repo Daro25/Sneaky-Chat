@@ -9,10 +9,14 @@ import * as schema from '@/db/schema';
 import { and, eq, gt, not, notInArray, sql } from 'drizzle-orm';
 import { RSA } from 'react-native-rsa-native';
 import * as SecureStore from 'expo-secure-store';
-//import NetInfo from "@react-native-community/netinfo";
+import LottieView from 'lottie-react-native';
 
 const ChatScreen = () => {
     const flatListRef = useRef<FlatList>(null); // Referencia a FlatList para controlar el desplazamiento
+    const animation = useRef<LottieView>(null);
+    const [phase, setPhase] = useState<'intro' | 'loop' | 'finish' | 'hidden'>('intro');
+    const [onload, setOnload] = useState(false); // esto lo activas desde fuera
+    const [promises, setPromises] = useState <Function[]>([]);
     const [initialLoad, setInitialLoad] = useState(0);
     const [texto, setText] = useState('');
     const [name, setName] = useState("");
@@ -65,81 +69,111 @@ const ChatScreen = () => {
     //base de datos mas facil con drizzle
     const db = useSQLiteContext();
     const drizzleDb = drizzle(db, { schema});
+    const [deslice, setDeslice] = useState(false);
     // useEffect para desplazar automáticamente la lista al final cuando se añaden nuevos mensajes
     useEffect(() => {
-        if (initialLoad < 4 && flatListRef.current) {
+        if ((deslice && flatListRef.current) || (initialLoad < 4 && flatListRef.current)) {
             flatListRef.current.scrollToEnd({ animated: true });
             setInitialLoad(initialLoad+1)
+            setDeslice(false);
         }
     }, [messages]); // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
-    const consulta = async ()=>{
-        try {
-            const salaResult = await drizzleDb.select().from(schema.salas);
-            setSala(salaResult[0].nombre);
-            setPassSala(salaResult[0].pass);
-            setSalaId(salaResult[0].idSala || 0);
-            if (salaId) {
-                await consultaSala()
-            }
-        } catch (error) {
-            const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
-            handleAlert(['Error',1,2], message);
+    const consulta = async ()=>{ 
+        async function salaResult() {
+                const salaResult = await drizzleDb.select().from(schema.salas);
+                setSala(salaResult[0].nombre);
+                setPassSala(salaResult[0].pass);
+                setSalaId(salaResult[0].idSala || 0);
+                if (salaId) {
+                    await consultaSala()
+                }
+        }
+        async function userResult() {
+                const userResult = await drizzleDb.select().from(schema.datosp);
+                setName(userResult[0].idUser);
+                setPassUser(userResult[0].pass);
+                setNameId(userResult[0].Id_Usserver);
+                if (nameId === 0) {
+                    await consultaUser()
+                }
+        }
+        async function emisorResult() {
+                const emisorResult = await drizzleDb.select().from(schema.emisor);
+                if (emisorResult.length != 0) {
+                    setEmisorName(emisorResult[0].idUser);
+                    setKey(emisorResult[0].n);
+                }
+                if (keyPublic === '') {
+                    await consultaEmisor(false)
+                }
+        }
+        async function setLlavePriv() {
+                const llavePrivadaS = await SecureStore.getItemAsync('llavePrivada') || '';
+                setKeyPriv(llavePrivadaS);
         }
         try {
-            const userResult = await drizzleDb.select().from(schema.datosp);
-            setName(userResult[0].idUser);
-            setPassUser(userResult[0].pass);
-            setNameId(userResult[0].Id_Usserver);
-            if (nameId === 0) {
-                await consultaUser()
-            }
-        } catch (error) {
-            const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
-            handleAlert(['Error',1,3], message);
-        }
-        try {
-            const emisorResult = await drizzleDb.select().from(schema.emisor);
-            if (emisorResult.length != 0) {
-                setEmisorName(emisorResult[0].idUser);
-                setKey(emisorResult[0].n);
-            }
-            if (keyPublic === '') {
-                await consultaEmisor(false)
-            }
-        } catch (error) {
-            const message = (error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error);
-            handleAlert(['Error',1,4],message);
-        }
-        try {
-            const llavePrivadaS = await SecureStore.getItemAsync('llavePrivada') || '';
-            setKeyPriv(llavePrivadaS);
+            const tareas = [salaResult(), userResult(), setLlavePriv(),consultaMensajes()];
+            await Promise.all(tareas);
+            await emisorResult();
         } catch (error) {
             
-        }
-        try {
-            await consultaMensajes();
-        } catch (error) {
-            
-        }
+}
     }
+//--------------------Ejecuta la primera consulta y se ejecuta una vez----
+    useEffect(() => {
+    if (animation.current && phase === 'intro') {
+        animation.current.play(0, 35); // Introducción
+    }
+    }, [phase]);
+    useEffect(() => {
+    if (onload && phase === 'loop') {
+        animation.current?.play(45, 149); // transición de salida
+        setPhase('finish');
+    }
+    }, [onload, phase]);
+    const handleFinish = () => {
+    if (phase === 'intro') {
+        animation.current?.play(35, 45); // comienza loop
+        setPhase('loop');
+    } else if (phase === 'loop' && !onload) {
+        animation.current?.play(35, 45); // sigue repitiendo si no se ha cargado
+    } else if (phase === 'finish') {
+        setPhase('hidden'); // ya se puede ocultar
+    }
+    };
+
     useEffect(()=>{
         (async () => {
             try {
                 await consulta();
+                setPromises([...promises, consultaMensajes]);
+                // cuando termina de cargar:
+                setOnload(true);
             } catch (error) {
                 handleAlert(['Error', 1], error + '');
             }
         })();
     }, []);
-    //--------------------------------------------------
+//--------------------Funcion que se repite cada segundo-------------------
     const [contador, setContador] = useState(0)
+    const [ envio, setEnvio] = useState(false);
     useEffect(() => {
+        async function ejectPromises() {
+            await Promise.all(promises);
+            if (promises.length > 1){ setPromises(promises.slice(0,-1));}
+            setEnvio(true);
+        }
         setTimeout(() => {
-          consultaMensajes();
+          ejectPromises();
           setContador(prev => prev + 1);
         }, 1000);
       }, [contador]);
-    //----------------------------------------------------
+//-------------------Funcion para mitigar cuello de botella---------------
+    function addPromises(){
+        setPromises([...promises, digitMSJ]);
+        setEnvio(false);
+    }
+//------------------------------------------------------------------------
     const digitMSJ = async()=>{
         const textoVoid = '';
         if (true) {
@@ -391,6 +425,17 @@ const ChatScreen = () => {
     try {
         return (
             <View style={[useGlobalStyles().container, [,{overflowX:'hidden'}]]}>
+            {phase !== 'hidden' && (
+            <LottieView
+                ref={animation}
+                source={require('../assets/images/CierreLoad.json')}
+                style={{ width: 200, height: 250, backgroundColor: 'transparent' }}
+                loop={false}
+                onAnimationFinish={handleFinish}
+            />
+            )}{
+                phase === 'hidden' &&
+                (<>
                 <FlatList style={{width:'100%', position:'relative', marginTop: 20}}
                     ref={flatListRef} // Asigna la referencia a FlatList
                     data={messages} // Datos de los mensajes obtenidos
@@ -409,6 +454,8 @@ const ChatScreen = () => {
                         context= {item.text}
                         hora= {item.hora}/> 
                     )}
+                    onEndReached= {()=>setDeslice(true)}
+                    onEndReachedThreshold= {-5}
                 />
                 <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().center, useGlobalStyles().inlineBlock, [,{position:'absolute',right:7, backgroundColor: head}]]}
                 onPress={() => {
@@ -432,15 +479,24 @@ const ChatScreen = () => {
                     multiline={true}
                     style={useGlobalStyles().leyenda}/>
     
-                    <TouchableOpacity style={useGlobalStyles().msjboxBtn}
-                    onPress={digitMSJ}>
+                    {envio&&(<TouchableOpacity style={useGlobalStyles().msjboxBtn}
+                    onPress={()=>addPromises()}>
                         <Image source={require('@/assets/images/enviar.png')}
                         style={{
                               width: PixelRatio.getPixelSizeForLayoutSize(10),
                               height: PixelRatio.getPixelSizeForLayoutSize(10),
                               borderRadius: '50%'}}/>
-                    </TouchableOpacity>
+                    </TouchableOpacity>)}
+                    {!envio&&(<TouchableOpacity style={useGlobalStyles().msjboxBtn}>
+                        <Text
+                        style={{
+                              width: PixelRatio.getPixelSizeForLayoutSize(10),
+                              height: PixelRatio.getPixelSizeForLayoutSize(10),
+                              borderRadius: '50%'}}>O</Text>
+                    </TouchableOpacity>)}
                 </View>
+                </> )
+                }
             </View>
         );
     } catch (error) {

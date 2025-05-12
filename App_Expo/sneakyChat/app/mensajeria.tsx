@@ -161,10 +161,10 @@ const ChatScreen = () => {
                 await digitMSJ();
                 setEnvio(true);
             }
-            await consultaMensajes();
+            consultaMensajes();
         }
         setTimeout(() => {
-            ejectPromises();
+          ejectPromises();
           setContador(prev => prev + 1);
         }, 1000);
       }, [contador]);
@@ -440,17 +440,17 @@ return (
           keyExtractor={(item) => item.id + ''}
           renderItem={({ item }) =>
             item.isCurrentUser || item.userId != emisorName ? 
-                    <MensajeRight 
-                        user= {item.userId}
-                        fecha= {item.fecha}
-                        context= {item.text}
-                        hora= {item.hora}/> 
-                        : 
-                    <MensajeLeft
-                        user= {item.userId}
-                        fecha= {item.fecha}
-                        context= {item.text}
-                        hora= {item.hora}/> 
+            <MensajeRight 
+              user= {item.userId}
+              fecha= {item.fecha}
+              context= {item.text}
+              hora= {item.hora}/> 
+            : 
+            <MensajeLeft
+              user= {item.userId}
+              fecha= {item.fecha}
+              context= {item.text}
+              hora= {item.hora}/> 
           }
           onEndReached={() => setDeslice(true)}
           onEndReachedThreshold={-5}

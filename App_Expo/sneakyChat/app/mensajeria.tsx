@@ -16,7 +16,6 @@ const ChatScreen = () => {
     const animation = useRef<LottieView>(null);
     const [phase, setPhase] = useState<'intro' | 'loop' | 'finish' | 'hidden'>('intro');
     const [onload, setOnload] = useState(false); // esto lo activas desde fuera
-    const [promises, setPromises] = useState <Function[]>([]);
     const [initialLoad, setInitialLoad] = useState(0);
     const [texto, setText] = useState('');
     const [name, setName] = useState("");
@@ -146,7 +145,6 @@ const ChatScreen = () => {
         (async () => {
             try {
                 await consulta();
-                setPromises([...promises, consultaMensajes]);
                 // cuando termina de cargar:
                 setOnload(true);
             } catch (error) {
@@ -159,20 +157,17 @@ const ChatScreen = () => {
     const [ envio, setEnvio] = useState(false);
     useEffect(() => {
         async function ejectPromises() {
-            await Promise.all(promises);
-            if (promises.length > 1){ setPromises(promises.slice(0,-1));}
-            setEnvio(true);
+            if (!envio) {
+                await digitMSJ();
+                setEnvio(true);
+            }
+            await consultaMensajes();
         }
         setTimeout(() => {
-          ejectPromises();
+            ejectPromises();
           setContador(prev => prev + 1);
         }, 1000);
       }, [contador]);
-//-------------------Funcion para mitigar cuello de botella---------------
-    function addPromises(){
-        setPromises([...promises, digitMSJ]);
-        setEnvio(false);
-    }
 //------------------------------------------------------------------------
     const digitMSJ = async()=>{
         const textoVoid = '';
@@ -422,86 +417,103 @@ const ChatScreen = () => {
               
                 return uniqueMessages;
               }
-    try {
-        return (
-            <View style={[useGlobalStyles().container, [,{overflowX:'hidden'}]]}>
-            {phase !== 'hidden' && (
-            <LottieView
-                ref={animation}
-                source={require('../assets/images/CierreLoad.json')}
-                style={{ width: 200, height: 250, backgroundColor: 'transparent' }}
-                loop={false}
-                onAnimationFinish={handleFinish}
-            />
-            )}{
-                phase === 'hidden' &&
-                (<>
-                <FlatList style={{width:'100%', position:'relative', marginTop: 20}}
-                    ref={flatListRef} // Asigna la referencia a FlatList
-                    data={messages} // Datos de los mensajes obtenidos
-                    keyExtractor={(item) => item.id + ''} // Clave única para cada mensaje
-                    renderItem={({ item }) => (
-                        item.isCurrentUser || item.userId != emisorName ? 
-                        <MensajeRight 
+    const styles = useGlobalStyles(); // <--- Llamado siempre
+
+return (
+  <View style={[styles.container, { overflowX: 'hidden' }]}>
+    {phase !== 'hidden' && (
+      <LottieView
+        ref={animation}
+        source={require('../assets/images/CierreLoad.json')}
+        style={{ width: 200, height: 250, backgroundColor: 'transparent' }}
+        loop={false}
+        onAnimationFinish={handleFinish}
+      />
+    )}
+
+    {phase === 'hidden' && (
+      <>
+        <FlatList
+          style={{ width: '100%', position: 'relative', marginTop: 20 }}
+          ref={flatListRef}
+          data={messages}
+          keyExtractor={(item) => item.id + ''}
+          renderItem={({ item }) =>
+            item.isCurrentUser || item.userId != emisorName ? 
+                    <MensajeRight 
                         user= {item.userId}
                         fecha= {item.fecha}
                         context= {item.text}
                         hora= {item.hora}/> 
                         : 
-                        <MensajeLeft
+                    <MensajeLeft
                         user= {item.userId}
                         fecha= {item.fecha}
                         context= {item.text}
                         hora= {item.hora}/> 
-                    )}
-                    onEndReached= {()=>setDeslice(true)}
-                    onEndReachedThreshold= {-5}
-                />
-                <TouchableOpacity style={[useGlobalStyles().btn_normal, useGlobalStyles().center, useGlobalStyles().inlineBlock, [,{position:'absolute',right:7, backgroundColor: head}]]}
-                onPress={() => {
-                        if (flatListRef.current) {
-                            flatListRef.current.scrollToEnd({ animated: true });
-                        }
-                    }
-                }>
-                    <Text style={[[,{color:'white'}], useGlobalStyles().negrita, useGlobalStyles().center]}>▼</Text>
-                </TouchableOpacity>
-                <View style={[useGlobalStyles().msjbox, useGlobalStyles().container_H]}>
-                    <TextInput
-                    value={texto}
-                    onChangeText={setText}
-                    placeholder='Digite su mensaje'
-                    placeholderTextColor={'#a9a9a9'}
-                    numberOfLines={7}
-                    maxLength={100}
-                    textAlignVertical="top"
-                    textAlign="left"
-                    multiline={true}
-                    style={useGlobalStyles().leyenda}/>
-    
-                    {envio&&(<TouchableOpacity style={useGlobalStyles().msjboxBtn}
-                    onPress={()=>addPromises()}>
-                        <Image source={require('@/assets/images/enviar.png')}
-                        style={{
-                              width: PixelRatio.getPixelSizeForLayoutSize(10),
-                              height: PixelRatio.getPixelSizeForLayoutSize(10),
-                              borderRadius: '50%'}}/>
-                    </TouchableOpacity>)}
-                    {!envio&&(<TouchableOpacity style={useGlobalStyles().msjboxBtn}>
-                        <Text
-                        style={{
-                              width: PixelRatio.getPixelSizeForLayoutSize(10),
-                              height: PixelRatio.getPixelSizeForLayoutSize(10),
-                              borderRadius: '50%'}}>O</Text>
-                    </TouchableOpacity>)}
-                </View>
-                </> )
-                }
-            </View>
-        );
-    } catch (error) {
-        return(<Text>{(error instanceof Error)? `${error.message}\n\nStack:\n${error.stack}`:JSON.stringify(error)}</Text>);
-    }
+          }
+          onEndReached={() => setDeslice(true)}
+          onEndReachedThreshold={-5}
+        />
+
+        <TouchableOpacity
+          style={[
+            styles.btn_normal,
+            styles.center,
+            styles.inlineBlock,
+            { position: 'absolute', right: 7, backgroundColor: head },
+          ]}
+          onPress={() => {
+            flatListRef.current?.scrollToEnd({ animated: true });
+          }}
+        >
+          <Text style={[{ color: 'white' }, styles.negrita, styles.center]}>▼</Text>
+        </TouchableOpacity>
+
+        <View style={[styles.msjbox, styles.container_H]}>
+          <TextInput
+            value={texto}
+            onChangeText={setText}
+            placeholder="Digite su mensaje"
+            placeholderTextColor="#a9a9a9"
+            numberOfLines={7}
+            maxLength={100}
+            textAlignVertical="top"
+            textAlign="left"
+            multiline
+            style={styles.leyenda}
+          />
+
+          <TouchableOpacity
+            style={styles.msjboxBtn}
+            onPress={envio ? ()=>setEnvio(false) : undefined}
+          >
+            {envio ? (
+              <Image
+                source={require('@/assets/images/enviar.png')}
+                style={{
+                  width: PixelRatio.getPixelSizeForLayoutSize(10),
+                  height: PixelRatio.getPixelSizeForLayoutSize(10),
+                  borderRadius: 9999,
+                }}
+              />
+            ) : (
+            <Image
+                source={require('@/assets/images/senal-de-stop.png')}
+                style={{
+                  width: PixelRatio.getPixelSizeForLayoutSize(10),
+                  height: PixelRatio.getPixelSizeForLayoutSize(10),
+                  borderRadius: 9999,
+                }}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
+      </>
+    )}
+  </View>
+);
+
 };
 
 export default ChatScreen;

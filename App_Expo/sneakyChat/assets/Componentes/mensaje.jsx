@@ -3,24 +3,26 @@ import { StyleSheet, View, Text } from "react-native";
 import { useGlobalStyles } from "@/app/recursos/style";
 
 export function MensajeLeft(props) {
+    const styles2 = useGlobalStyles(); // <--- Llamado siempre
     return (
         <View style={styles.container}>
             <View style={[styles.mensaje, styles.leftAlignedContainer]}>
                 <Text style={styles.fecha}>{props.fecha}</Text>
-                <Text style={[useGlobalStyles().text, useGlobalStyles().negrita]}>{props.user}</Text>
-                <Text style={[useGlobalStyles().text, styles.text]}>{props.context}</Text>
+                <Text style={[styles2.text, styles2.negrita]}>{props.user}</Text>
+                <Text style={[styles2.text, styles.text]}>{props.context}</Text>
                 <Text style={styles.hora}>{props.hora}</Text>
             </View>
         </View>
     );
 }
 export function MensajeRight(props) {
+    const styles2 = useGlobalStyles(); // <--- Llamado siempre
     return (
         <View style={styles.container}>
             <View style={[styles.mensaje, styles.rightAlignedContainer]}>
                 <Text style={styles.fecha}>{props.fecha}</Text>
-                <Text style={[useGlobalStyles().text, useGlobalStyles().negrita]}>{props.user}</Text>
-                <Text style={[useGlobalStyles().text, styles.text]}>{props.context}</Text>
+                <Text style={[styles2.text, styles2.negrita]}>{props.user}</Text>
+                <Text style={[styles2.text, styles.text]}>{props.context}</Text>
                 <Text style={styles.hora}>{props.hora}</Text>
             </View>
         </View>

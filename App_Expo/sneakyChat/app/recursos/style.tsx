@@ -56,6 +56,30 @@ export function useGlobalStyles() {
         textDecorationLine: 'underline',
         color: colorText(isDarkMode)
       },
+    containerLottie:{
+      position: 'relative',
+      width: 200,
+      height: 250,
+    },
+    lottie: {
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'transparent'
+    },
+    topFade: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      height: 30, // alto del desvanecimiento
+      width: '100%',
+    },
+    bottomFade: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      height: 30,
+      width: '100%',
+    },
     msjbox: {
         width: '100%',
         height: '20%',
@@ -75,6 +99,17 @@ export function useGlobalStyles() {
       justifyContent: 'center',
       alignItems: 'center',
       overflow: 'hidden',
+    },
+    btnLeyendo:{
+      width: PixelRatio.getPixelSizeForLayoutSize(10),
+      height: PixelRatio.getPixelSizeForLayoutSize(10),
+      borderRadius: '50%',
+      backgroundColor: '#9B7EBD',
+      justifyContent: 'center',
+      alignItems: 'center',
+      overflow: 'hidden',
+      position: 'absolute', 
+      bottom: '30%', right: 7
     },
     leyenda: {
       width: ((Dimensions.get('window').width * 0.9)- PixelRatio.getPixelSizeForLayoutSize(40)),

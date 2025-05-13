@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, FlatList, Text, TouchableOpacity, TextInput, Alert, PixelRatio } from 'react-native';
-import  { MensajeLeft, MensajeRight } from '@/assets/Componentes/mensaje'
-import { useGlobalStyles, head } from "./recursos/style";
+import  { MensajeLeft, MensajeRight } from '@/assets/Componentes/mensaje';
+import { LinearGradient } from 'expo-linear-gradient';
+import colorBase, { useGlobalStyles, head, useTheme, colorContainer } from "./recursos/style";
 import { Image } from 'expo-image';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
@@ -68,13 +69,12 @@ const ChatScreen = () => {
     //base de datos mas facil con drizzle
     const db = useSQLiteContext();
     const drizzleDb = drizzle(db, { schema});
-    const [deslice, setDeslice] = useState(false);
+    const [deslice, setDeslice] = useState(true);
     // useEffect para desplazar automáticamente la lista al final cuando se añaden nuevos mensajes
     useEffect(() => {
         if ((deslice && flatListRef.current) || (initialLoad < 4 && flatListRef.current)) {
             flatListRef.current.scrollToEnd({ animated: true });
             setInitialLoad(initialLoad+1)
-            setDeslice(false);
         }
     }, [messages]); // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
     const consulta = async ()=>{ 
@@ -140,13 +140,17 @@ const ChatScreen = () => {
         setPhase('hidden'); // ya se puede ocultar
     }
     };
-
+    
+    const isdarck = useTheme();
+    const [colorBase, setcolorBase] = useState("#25292e");
     useEffect(()=>{
         (async () => {
+          setcolorBase(colorContainer(isdarck))
             try {
                 await consulta();
                 // cuando termina de cargar:
                 setOnload(true);
+                setEnvio(true);
             } catch (error) {
                 handleAlert(['Error', 1], error + '');
             }
@@ -156,20 +160,14 @@ const ChatScreen = () => {
     const [contador, setContador] = useState(0)
     const [ envio, setEnvio] = useState(false);
     useEffect(() => {
-        async function ejectPromises() {
-            if (!envio) {
-                await digitMSJ();
-                setEnvio(true);
-            }
-            consultaMensajes();
-        }
         setTimeout(() => {
-          ejectPromises();
+          consultaMensajes();
           setContador(prev => prev + 1);
         }, 1000);
       }, [contador]);
 //------------------------------------------------------------------------
     const digitMSJ = async()=>{
+      setEnvio(false);
         const textoVoid = '';
         if (true) {
             if ( texto.trim()){
@@ -195,7 +193,8 @@ const ChatScreen = () => {
                     handleAlert(['Error',2], message)
                 }
                 }
-        }
+        } 
+        setEnvio(true);
         }
             async function consultaSala() {
                 if (true) {
@@ -409,12 +408,14 @@ const ChatScreen = () => {
               
                 for (const mess of message) {
                   const uniqueKey = `${mess.idServer}`;
-                  if (!uniqueMessagesMap.has(uniqueKey)) {
+                  if (!uniqueMessagesMap.has(uniqueKey) &&
+                        mess.idUser !== null &&
+                        mess.idUser !== undefined &&
+                        mess.idUser.trim() !== "") {
                     uniqueMessagesMap.set(uniqueKey, true);
                     uniqueMessages.push(mess);
                   }
                 }
-              
                 return uniqueMessages;
               }
     const styles = useGlobalStyles(); // <--- Llamado siempre
@@ -422,13 +423,22 @@ const ChatScreen = () => {
 return (
   <View style={[styles.container, { overflowX: 'hidden' }]}>
     {phase !== 'hidden' && (
-      <LottieView
-        ref={animation}
-        source={require('../assets/images/CierreLoad.json')}
-        style={{ width: 200, height: 250, backgroundColor: 'transparent' }}
-        loop={false}
-        onAnimationFinish={handleFinish}
-      />
+      <View style={styles.containerLottie}>
+        <LottieView
+          ref={animation}
+          source={require('../assets/images/CierreLoad.json')}
+          style={styles.lottie}
+          loop={false}
+          onAnimationFinish={handleFinish}/>
+          <LinearGradient
+            colors={[colorBase, 'rgba(255,255,255,0)']}
+            style={styles.topFade}/>
+
+          {/* Gradiente inferior */}
+          <LinearGradient
+            colors={['rgba(255,255,255,0)', colorBase]}
+            style={styles.bottomFade}/>
+      </View>
     )}
 
     {phase === 'hidden' && (
@@ -452,8 +462,6 @@ return (
               context= {item.text}
               hora= {item.hora}/> 
           }
-          onEndReached={() => setDeslice(true)}
-          onEndReachedThreshold={-5}
         />
 
         <TouchableOpacity
@@ -461,7 +469,7 @@ return (
             styles.btn_normal,
             styles.center,
             styles.inlineBlock,
-            { position: 'absolute', right: 7, backgroundColor: head },
+            { position: 'absolute', right: 7, backgroundColor: head},
           ]}
           onPress={() => {
             flatListRef.current?.scrollToEnd({ animated: true });
@@ -470,6 +478,30 @@ return (
           <Text style={[{ color: 'white' }, styles.negrita, styles.center]}>▼</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+            style={styles.btnLeyendo}
+            onPress={deslice ? ()=>setDeslice(false) : ()=>setDeslice(true)}
+          >
+            {deslice ? (
+              <Image
+                source={require('@/assets/images/mano.png')}
+                style={{
+                  width: PixelRatio.getPixelSizeForLayoutSize(7),
+                  height: PixelRatio.getPixelSizeForLayoutSize(7),
+                  borderRadius: '50%',
+                }}
+              />
+            ) : (
+            <Image
+                source={require('@/assets/images/estudiar.png')}
+                style={{
+                  width: PixelRatio.getPixelSizeForLayoutSize(7),
+                  height: PixelRatio.getPixelSizeForLayoutSize(7),
+                  borderRadius: '50%',
+                }}
+              />
+            )}
+          </TouchableOpacity>
         <View style={[styles.msjbox, styles.container_H]}>
           <TextInput
             value={texto}
@@ -486,7 +518,7 @@ return (
 
           <TouchableOpacity
             style={styles.msjboxBtn}
-            onPress={envio ? ()=>setEnvio(false) : undefined}
+            onPress={envio ? digitMSJ : undefined}
           >
             {envio ? (
               <Image

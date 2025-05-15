@@ -101,8 +101,8 @@ export function useGlobalStyles() {
       overflow: 'hidden',
     },
     btnLeyendo:{
-      width: PixelRatio.getPixelSizeForLayoutSize(10),
-      height: PixelRatio.getPixelSizeForLayoutSize(10),
+      width: PixelRatio.getPixelSizeForLayoutSize(17),
+      height: PixelRatio.getPixelSizeForLayoutSize(17),
       borderRadius: '50%',
       backgroundColor: '#9B7EBD',
       justifyContent: 'center',

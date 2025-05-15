@@ -32,6 +32,8 @@ const ChatScreen = () => {
     const [emisorName, setEmisorName] = useState('');
     const [llavePrivada, setKeyPriv] = useState('');
     const [messages, setMessages] = useState<{idS: number,id: number; userId: string; fecha: string; hora: string; text: string; isCurrentUser: boolean; }[]>([]);
+    const [length, setLength] = useState(0);
+    const [diference, setDiference] = useState(0);
     const isDev = __DEV__;
     function addAlert(title: string, message: string) {
         setAlertas((prevAlertas)=>[...prevAlertas,{title: title, message: message}]);
@@ -76,7 +78,7 @@ const ChatScreen = () => {
             flatListRef.current.scrollToEnd({ animated: true });
             setInitialLoad(initialLoad+1)
         }
-    }, [messages]); // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
+    }, [length]); // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
     const consulta = async ()=>{ 
         async function salaResult() {
                 const salaResult = await drizzleDb.select().from(schema.salas);
@@ -313,8 +315,12 @@ const ChatScreen = () => {
                       processedServerIds.add(msj.idServer); // Almacenamos los IDs locales para evitar duplicados al sincronizar
                       newMsj.push(msjconvert);
                     }
-                    newMsj.sort((a, b) => a.idS - b.idS);
-                    setMessages(newMsj);
+                    if (newMsj.length !== length) {
+                      setDiference(newMsj.length - length);
+                      newMsj.sort((a, b) => a.idS - b.idS);
+                      setMessages(newMsj);
+                      setLength(newMsj.length);
+                    }
                   }
                 } catch (error) {
                   const message = (error instanceof Error) ? `${error.message}\n\nStack:\n${error.stack}` : JSON.stringify(error);
@@ -475,7 +481,7 @@ return (
             flatListRef.current?.scrollToEnd({ animated: true });
           }}
         >
-          <Text style={[{ color: 'white' }, styles.negrita, styles.center]}>▼</Text>
+          <Text style={[{ color: 'white' }, styles.negrita, styles.center]}>▼{diference===0?'':diference}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -486,8 +492,8 @@ return (
               <Image
                 source={require('@/assets/images/mano.png')}
                 style={{
-                  width: PixelRatio.getPixelSizeForLayoutSize(7),
-                  height: PixelRatio.getPixelSizeForLayoutSize(7),
+                  width: PixelRatio.getPixelSizeForLayoutSize(10),
+                  height: PixelRatio.getPixelSizeForLayoutSize(10),
                   borderRadius: '50%',
                 }}
               />
@@ -495,8 +501,8 @@ return (
             <Image
                 source={require('@/assets/images/estudiar.png')}
                 style={{
-                  width: PixelRatio.getPixelSizeForLayoutSize(7),
-                  height: PixelRatio.getPixelSizeForLayoutSize(7),
+                  width: PixelRatio.getPixelSizeForLayoutSize(10),
+                  height: PixelRatio.getPixelSizeForLayoutSize(10),
                   borderRadius: '50%',
                 }}
               />

@@ -113,9 +113,10 @@ const ChatScreen = () => {
                 setKeyPriv(llavePrivadaS);
         }
         try {
-            const tareas = [salaResult(), userResult(), setLlavePriv(),consultaMensajes()];
+            const tareas = [salaResult(), userResult(), setLlavePriv()];
             await Promise.all(tareas);
             await emisorResult();
+            await consultaMensajes();
         } catch (error) {
             
 }
@@ -164,6 +165,9 @@ const ChatScreen = () => {
     useEffect(() => {
         setTimeout(() => {
           consultaMensajes();
+          if (keyPublic === ''|| salaId === 0 || nameId === 0 || name === '' || !salaId || !name || !keyPublic || !nameId) {
+            consulta();
+          }
           setContador(prev => prev + 1);
         }, 1000);
       }, [contador]);
@@ -174,7 +178,7 @@ const ChatScreen = () => {
         if (true) {
             if ( texto.trim()){
                 try {
-                    if (keyPublic === ''|| salaId === 0 || nameId === 0 || name === '') {
+                    if (keyPublic === ''|| salaId === 0 || nameId === 0|| !nameId || name === '') {
                         await consulta();
                     } else {
                         setText(textoVoid);
@@ -238,10 +242,10 @@ const ChatScreen = () => {
                 if (true) {
                     const result = await drizzleDb.select().from(schema.emisor);
                     const urlUss = `https://ljusstudie.site/ConsultaUsuarioWsala.php?id_sala=${salaId}`;
-                    const consultaU = await fetch(urlUss);
-                    const dataU = await consultaU.json();
-                    setKey(elegirEmisor(dataU));
                     if (result.length === 0) {
+                      const consultaU = await fetch(urlUss);
+                      const dataU = await consultaU.json();
+                    setKey(elegirEmisor(dataU));
                         if (!consultaU.ok) { handleAlert([], `HTTP error! statusU1: ${consultaU.status}`);
                         } else {
                             if (dataU.length > 1) {
@@ -274,6 +278,9 @@ const ChatScreen = () => {
                                 }
                             }
                         }
+                    } else {
+                      setEmisorName(result[0].idUser);
+                      setKey(result[0].n);
                     }
                 }
             }
@@ -363,7 +370,7 @@ const ChatScreen = () => {
                         if (!processedServerIds.has(Number(mss.ID))) { // Verificamos si ya procesamos este ID del servidor
                           try {
                             let newText = await RSA.decrypt(mss.Texto, llavePrivada).catch(() => null); // Manejar errores de desencriptación
-                            if (newText !== null) {
+                            if (newText !== null && (emisorName !==''||!emisorName)) {
                               await drizzleDb.insert(schema.mensaje).values({
                                 idUser: Number(mss.User_id) === nameId ? name : emisorName,
                                 idServer: Number(mss.ID),

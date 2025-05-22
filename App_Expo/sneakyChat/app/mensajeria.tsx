@@ -371,13 +371,17 @@ const ChatScreen = () => {
                           try {
                             let newText = await RSA.decrypt(mss.Texto, llavePrivada).catch(() => null); // Manejar errores de desencriptación
                             if (newText !== null && (emisorName !==''||!emisorName)) {
-                              await drizzleDb.insert(schema.mensaje).values({
-                                idUser: Number(mss.User_id) === nameId ? name : emisorName,
-                                idServer: Number(mss.ID),
-                                sala: sala,
-                                dates: mss.FechayHora,
-                                texto: newText,
-                              });
+                              const urlDelete = `https://ljusstudie.site/deleteMensaje.php?id=${mss.ID}`;
+                              const updateD = await fetch(urlDelete);
+                              if (updateD.ok) {
+                                await drizzleDb.insert(schema.mensaje).values({
+                                  idUser: Number(mss.User_id) === nameId ? name : emisorName,
+                                  idServer: Number(mss.ID),
+                                  sala: sala,
+                                  dates: mss.FechayHora,
+                                  texto: newText,
+                                });
+                              }
                               // No es necesario actualizar el estado 'messages' aquí en cada inserción,
                               // se actualizará en la próxima llamada a 'consultaMensajes'
                             }

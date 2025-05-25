@@ -7,7 +7,7 @@ import { Image } from 'expo-image';
 import { useSQLiteContext } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import * as schema from '@/db/schema';
-import { and, eq, gt, not, notInArray, sql } from 'drizzle-orm';
+import { and, eq, gt, isNull, not, notInArray, or, sql } from 'drizzle-orm';
 import { RSA } from 'react-native-rsa-native';
 import * as SecureStore from 'expo-secure-store';
 import LottieView from 'lottie-react-native';
@@ -71,14 +71,23 @@ const ChatScreen = () => {
     //base de datos mas facil con drizzle
     const db = useSQLiteContext();
     const drizzleDb = drizzle(db, { schema});
-    const [deslice, setDeslice] = useState(true);
+    const [deslice, setDeslice] = useState(false);
     // useEffect para desplazar automáticamente la lista al final cuando se añaden nuevos mensajes
     useEffect(() => {
-        if ((deslice && flatListRef.current) || (initialLoad < 4 && flatListRef.current)) {
+        if (deslice && flatListRef.current) {
             flatListRef.current.scrollToEnd({ animated: true });
             setInitialLoad(initialLoad+1)
+            setDiference(0)
         }
-    }, [length]); // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
+    }, [length]);
+     // Dependencia en messages para ejecutar el efecto cuando cambian los mensajes
+     useEffect(() => {
+        if ((initialLoad < 4 && flatListRef.current)) {
+            flatListRef.current.scrollToEnd({ animated: true });
+            setInitialLoad(initialLoad+1)
+            setDiference(0);
+        }
+    },[messages]);
     const consulta = async ()=>{ 
         async function salaResult() {
                 const salaResult = await drizzleDb.select().from(schema.salas);
@@ -164,9 +173,10 @@ const ChatScreen = () => {
     const [ envio, setEnvio] = useState(false);
     useEffect(() => {
         setTimeout(() => {
-          consultaMensajes();
-          if (keyPublic === ''|| salaId === 0 || nameId === 0 || name === '' || !salaId || !name || !keyPublic || !nameId) {
+          if (keyPublic === ''|| salaId === 0 || nameId === 0 || name === '' || emisorName.trim()=='' || !salaId || !name || !keyPublic || !nameId || !emisorName) {
             consulta();
+          } else {
+            consultaMensajes();
           }
           setContador(prev => prev + 1);
         }, 1000);
@@ -220,7 +230,6 @@ const ChatScreen = () => {
                 }
             }
             async function consultaUser() {
-                if (true) {
                     if (nameId === 0) {
                         const url = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(passUser)}&nombre=${encodeURIComponent(name)}`;
                         const consultaU = await fetch(url);
@@ -236,54 +245,69 @@ const ChatScreen = () => {
                             }
                         }
                     }
-                }
             }
             async function consultaEmisor(bolovan: boolean) {
-                if (true) {
-                    const result = await drizzleDb.select().from(schema.emisor);
-                    const urlUss = `https://ljusstudie.site/ConsultaUsuarioWsala.php?id_sala=${salaId}`;
-                    if (result.length === 0) {
+              try {
+                  const result = await drizzleDb.select().from(schema.emisor);
+                  if (result.length>1) await drizzleDb.delete(schema.emisor).where(gt(schema.emisor.id, 1));
+                  const urlUss = `https://ljusstudie.site/ConsultaUsuarioWsala.php?id_sala=${salaId}`;
+
+                  const shouldFetchRemote =
+                      result.length === 0 ||
+                      bolovan ||
+                      keyPublic === '' ||
+                      emisorName === name ||
+                      emisorName.trim() === "";
+
+                  if (shouldFetchRemote) {
                       const consultaU = await fetch(urlUss);
+                      if (!consultaU.ok) {
+                          handleAlert([], `HTTP error! statusU1: ${consultaU.status}`);
+                          return;
+                      }
+
                       const dataU = await consultaU.json();
-                    setKey(elegirEmisor(dataU));
-                        if (!consultaU.ok) { handleAlert([], `HTTP error! statusU1: ${consultaU.status}`);
-                        } else {
-                            if (dataU.length > 1) {
-                                const emisor =  elegirEmisor(dataU);
-                                if (emisor != null) {
-                                    await drizzleDb.insert(schema.emisor).values({
-                                        idUsserver: Number(emisor.Id_User),
-                                        n: emisor.KeyPublic,
-                                        idUser: emisor.Nomb
-                                    });
-                                    handleAlert([],'User encontrado');
-                                }
-                            } else {
-                                handleAlert(['Error'], 'No se encontró al emisor');
-                                if (contador === 2) {
-                                    Alert.alert('Error', 'no podrás enviar mensaje hasta que otro usuario se una a la sala');
-                                }
-                            }
-                        }
-                    } else if (result.length > 0 && keyPublic === '' || bolovan || emisorName === name) {
-                        const consultaU = await fetch(urlUss);
-                        if (!consultaU.ok) { handleAlert([], `HTTP error! statusU1: ${consultaU.status}`);
-                        } else {
-                            const dataU = await consultaU.json();
-                            if(dataU.length > 1){
-                                const emisor =  elegirEmisor(dataU);
-                                if (emisor != null) {
-                                    await drizzleDb.update(schema.emisor).set({n: emisor.KeyPublic, idUser: emisor.idUser, idUsserver: emisor.idUsserver}).where(eq(schema.emisor.id, result[0].id));
-                                    handleAlert([],'User encontrado');
-                                }
-                            }
-                        }
-                    } else {
-                      setEmisorName(result[0].idUser);
-                      setKey(result[0].n);
-                    }
-                }
-            }
+                      if (dataU.length > 1) {
+                          const emisor = elegirEmisor(dataU);
+                          if (emisor != null) {
+                              // Insertar o actualizar
+                              if (result.length === 0) {
+                                  await drizzleDb.insert(schema.emisor).values({
+                                      idUsserver: Number(emisor.Id_User),
+                                      n: emisor.KeyPublic,
+                                      idUser: emisor.Nomb
+                                  });
+                              } else {
+                                  await drizzleDb.update(schema.emisor)
+                                      .set({
+                                          n: emisor.KeyPublic,
+                                          idUser: emisor.Nomb,
+                                          idUsserver: Number(emisor.Id_User)
+                                      })
+                                      .where(eq(schema.emisor.id, 1));
+                              }
+
+                              setKey(emisor.KeyPublic);
+                              setEmisorName(emisor.Nomb);
+                              handleAlert([], 'User encontrado');
+                          }
+                      } else {
+                          handleAlert(['Error'], 'No se encontró al emisor');
+                          if (contador === 2) {
+                              Alert.alert('Error', 'no podrás enviar mensaje hasta que otro usuario se una a la sala');
+                          }
+                      }
+                  } else {
+                      // Caso en que ya hay un emisor en DB y no hace falta actualizar
+                      const ultimo = result[result.length - 1];
+                      setKey(ultimo.n);
+                      setEmisorName(ultimo.idUser);
+                  }
+              } catch (error) {
+                  handleAlert(['Error'], `Excepción al consultar emisor: ${error}`);
+              }
+          }
+
             const elegirEmisor = (usuarios: any[]) => { 
                 let keys:string[] = []
                 let usuarioOne = null
@@ -404,6 +428,13 @@ const ChatScreen = () => {
             async function correctDuplicateMessages() {
                 try {
                     const messagesDB = await drizzleDb.select().from(schema.mensaje);
+                    await drizzleDb.delete(schema.mensaje).where(
+                        or(
+                            isNull(schema.mensaje.idUser),
+                            eq(schema.mensaje.idUser, '')
+                        )
+                    );
+                    console.log('Deleted messages with empty idUser.');
                     const uniqueMess = removeDuplicateMessages(messagesDB);
 
                     if (uniqueMess.length > 0 && messagesDB.length > uniqueMess.length) {
@@ -425,10 +456,7 @@ const ChatScreen = () => {
               
                 for (const mess of message) {
                   const uniqueKey = `${mess.idServer}`;
-                  if (!uniqueMessagesMap.has(uniqueKey) &&
-                        mess.idUser !== null &&
-                        mess.idUser !== undefined &&
-                        mess.idUser.trim() !== "") {
+                  if (!uniqueMessagesMap.has(uniqueKey)) {
                     uniqueMessagesMap.set(uniqueKey, true);
                     uniqueMessages.push(mess);
                   }
@@ -490,6 +518,7 @@ return (
           ]}
           onPress={() => {
             flatListRef.current?.scrollToEnd({ animated: true });
+            setDiference(0);
           }}
         >
           <Text style={[{ color: 'white' }, styles.negrita, styles.center]}>▼{diference===0?'':diference}</Text>

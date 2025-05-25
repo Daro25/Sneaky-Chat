@@ -1,0 +1,54 @@
+"filename", "language", "HTML", "PostCSS", "JSON", "JavaScript", "Markdown", "JSON with Comments", "MS SQL", "TypeScript", "TypeScript JSX", "XML", "JavaScript JSX", "comment", "blank", "total"
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\.idea\misc.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 6
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\.idea\modules.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 8
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\.idea\sneakyChat.iml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 9
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\.idea\vcs.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 6
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\README.md", "Markdown", 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 0, 20, 51
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app.json", "JSON", 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 65
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\+not-found.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 1, 29
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\[id].tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 301, 0, 0, 0, 5, 306
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\_layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 58, 0, 0, 0, 3, 61
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\crearCate.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 109, 0, 0, 0, 5, 114
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 146, 0, 0, 1, 7, 154
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\login_sala.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 137, 0, 0, 0, 6, 143
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\mensajeria.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 561, 0, 0, 15, 21, 597
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\recursos\categorias.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 2, 9, 75
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\recursos\cripto.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 4, 25
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\recursos\secureStore.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 2, 16
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\recursos\style.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 187, 0, 0, 0, 9, 196
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\registro_sala.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 142, 0, 0, 0, 9, 151
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\registro_user.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 210, 0, 0, 0, 5, 215
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\useFetchMessages.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 4, 28
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\assets\Componentes\Nota.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 85, 0, 7, 92
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\assets\Componentes\mensaje.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 1, 74
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\assets\images\CierreLoad.json", "JSON", 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\babel.config.js", "JavaScript", 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 2, 9
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\db\schema.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 6, 50
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\drizzle.config.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 1, 8
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\drizzle\0000_careless_zaladane.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 5, 1, 44
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\drizzle\meta\0000_snapshot.json", "JSON", 0, 0, 239, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 239
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\drizzle\meta\_journal.json", "JSON", 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\drizzle\migrations.js", "JavaScript", 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 1, 3, 12
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\eas.json", "JSON", 0, 0, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 35
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\metro.config.js", "JavaScript", 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 4, 9
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\package-lock.json", "JSON", 0, 0, 14900, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 14901
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\package.json", "JSON", 0, 0, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 79
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 1, 19
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\README.md", "Markdown", 0, 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 18, 50
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\database\mensajer__a.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 59, 30, 152
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Metodológico\Met Agil y Scrum.md", "Markdown", 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 5, 22
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Metodológico\Metodología de Desarrollo.md", "Markdown", 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 5, 8
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Metodológico\Rol de Integrantes.md", "Markdown", 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 7, 26
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Teorico\Historia.md", "Markdown", 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 17, 50
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Teorico\NOTAS.md", "Markdown", 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 3, 4
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Teorico\Plataformas.md", "Markdown", 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 14, 27
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Planteamientos\Obj-Hipo-Justi.md", "Markdown", 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 15, 30
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\intro\README.md", "Markdown", 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 10, 33
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\package-lock.json", "JSON", 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Block Notas.html", "HTML", 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Index.html", "HTML", 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 23
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Mensajes.html", "HTML", 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 83
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Notas.html", "HTML", 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\style.css", "PostCSS", 0, 117, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 120
+"c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\javascript\chat.js", "JavaScript", 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 0, 4, 0, 51
+"Total", "-", 137, 117, 15335, 66, 187, 18, 101, 51, 2002, 29, 158, 89, 271, 18561

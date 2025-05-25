@@ -126,7 +126,7 @@ export default function Index() {
           <Image style={{width: 90, height: 90, borderRadius:45}} source={PlaceholderImage}/>
       </TouchableOpacity>
 
-      <View style={{backgroundColor: useTheme()? 'black': '#E5C1CD',overflow:'hidden', borderRadius: 10, width:'70%', height: 'auto', padding: 9, alignSelf:'flex-start', margin:10}}>
+      <View style={{backgroundColor: useTheme()? 'black': '#BE8ED0',overflow:'hidden', borderRadius: 10, width:'70%', height: 'auto', padding: 9, alignSelf:'flex-start', margin:10}}>
         <Text style={[useGlobalStyles().negrita, useGlobalStyles().text]}>Categorias:</Text>
         <View style={[useGlobalStyles().container_H, [{height:'auto', minHeight:120, maxHeight:'40%'}]]}>
           <Pressable style={{width: '47%', justifyContent: 'center', height:'auto', backgroundColor: '#9B7EBD', borderRadius:10,}}

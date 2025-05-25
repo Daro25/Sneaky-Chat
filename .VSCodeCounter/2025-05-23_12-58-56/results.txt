@@ -1,0 +1,110 @@
+Date : 2025-05-23 12:58:56
+Directory : c:\Users\windo\OneDrive\Documentos\Sneaky-Chat
+Total : 52 files,  18201 codes, 89 comments, 271 blanks, all 18561 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          8 |     15,335 |          0 |          5 |     15,340 |
+| TypeScript JSX     |         14 |      2,002 |         18 |         90 |      2,110 |
+| Markdown           |         10 |        187 |          0 |        114 |        301 |
+| JavaScript JSX     |          2 |        158 |          0 |          8 |        166 |
+| HTML               |          4 |        137 |          1 |          3 |        141 |
+| PostCSS            |          1 |        117 |          0 |          3 |        120 |
+| MS SQL             |          2 |        101 |         64 |         31 |        196 |
+| JavaScript         |          4 |         66 |          6 |          9 |         81 |
+| TypeScript         |          2 |         51 |          0 |          7 |         58 |
+| XML                |          4 |         29 |          0 |          0 |         29 |
+| JSON with Comments |          1 |         18 |          0 |          1 |         19 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                  | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                     |         52 |     18,201 |         89 |        271 |     18,561 |
+| . (Files)                                                                                             |          2 |         38 |          0 |         19 |         57 |
+| App_Expo                                                                                              |         35 |     17,675 |         25 |        140 |     17,840 |
+| App_Expo\sneakyChat                                                                                   |         35 |     17,675 |         25 |        140 |     17,840 |
+| App_Expo\sneakyChat (Files)                                                                           |          9 |     15,143 |          1 |         32 |     15,176 |
+| App_Expo\sneakyChat\.idea                                                                             |          4 |         29 |          0 |          0 |         29 |
+| App_Expo\sneakyChat\app                                                                               |         14 |      2,002 |         18 |         90 |      2,110 |
+| App_Expo\sneakyChat\app (Files)                                                                       |         10 |      1,716 |         16 |         66 |      1,798 |
+| App_Expo\sneakyChat\app\recursos                                                                      |          4 |        286 |          2 |         24 |        312 |
+| App_Expo\sneakyChat\assets                                                                            |          3 |        159 |          0 |          8 |        167 |
+| App_Expo\sneakyChat\assets\Componentes                                                                |          2 |        158 |          0 |          8 |        166 |
+| App_Expo\sneakyChat\assets\images                                                                     |          1 |          1 |          0 |          0 |          1 |
+| App_Expo\sneakyChat\db                                                                                |          1 |         44 |          0 |          6 |         50 |
+| App_Expo\sneakyChat\drizzle                                                                           |          4 |        298 |          6 |          4 |        308 |
+| App_Expo\sneakyChat\drizzle (Files)                                                                   |          2 |         46 |          6 |          4 |         56 |
+| App_Expo\sneakyChat\drizzle\meta                                                                      |          2 |        252 |          0 |          0 |        252 |
+| database                                                                                              |          1 |         63 |         59 |         30 |        152 |
+| docs                                                                                                  |          8 |        124 |          0 |         76 |        200 |
+| docs\Marco Metodológico                                                                               |          3 |         39 |          0 |         17 |         56 |
+| docs\Marco Teorico                                                                                    |          3 |         47 |          0 |         34 |         81 |
+| docs\Planteamientos                                                                                   |          1 |         15 |          0 |         15 |         30 |
+| docs\intro                                                                                            |          1 |         23 |          0 |         10 |         33 |
+| src                                                                                                   |          6 |        301 |          5 |          6 |        312 |
+| src\disign                                                                                            |          5 |        254 |          1 |          6 |        261 |
+| src\javascript                                                                                        |          1 |         47 |          4 |          0 |         51 |
++-------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                              | language           | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\.idea\misc.xml                     | XML                |          6 |          0 |          0 |          6 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\.idea\modules.xml                  | XML                |          8 |          0 |          0 |          8 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\.idea\sneakyChat.iml               | XML                |          9 |          0 |          0 |          9 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\.idea\vcs.xml                      | XML                |          6 |          0 |          0 |          6 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\README.md                          | Markdown           |         31 |          0 |         20 |         51 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app.json                           | JSON               |         64 |          0 |          1 |         65 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\+not-found.tsx                 | TypeScript JSX     |         28 |          0 |          1 |         29 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\[id].tsx                       | TypeScript JSX     |        301 |          0 |          5 |        306 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\_layout.tsx                    | TypeScript JSX     |         58 |          0 |          3 |         61 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\crearCate.tsx                  | TypeScript JSX     |        109 |          0 |          5 |        114 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\index.tsx                      | TypeScript JSX     |        146 |          1 |          7 |        154 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\login_sala.tsx                 | TypeScript JSX     |        137 |          0 |          6 |        143 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\mensajeria.tsx                 | TypeScript JSX     |        561 |         15 |         21 |        597 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\recursos\categorias.tsx        | TypeScript JSX     |         64 |          2 |          9 |         75 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\recursos\cripto.tsx            | TypeScript JSX     |         21 |          0 |          4 |         25 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\recursos\secureStore.tsx       | TypeScript JSX     |         14 |          0 |          2 |         16 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\recursos\style.tsx             | TypeScript JSX     |        187 |          0 |          9 |        196 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\registro_sala.tsx              | TypeScript JSX     |        142 |          0 |          9 |        151 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\registro_user.tsx              | TypeScript JSX     |        210 |          0 |          5 |        215 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\app\useFetchMessages.tsx           | TypeScript JSX     |         24 |          0 |          4 |         28 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\assets\Componentes\Nota.jsx        | JavaScript JSX     |         85 |          0 |          7 |         92 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\assets\Componentes\mensaje.jsx     | JavaScript JSX     |         73 |          0 |          1 |         74 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\assets\images\CierreLoad.json      | JSON               |          1 |          0 |          0 |          1 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\babel.config.js                    | JavaScript         |          7 |          0 |          2 |          9 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\db\schema.ts                       | TypeScript         |         44 |          0 |          6 |         50 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\drizzle.config.ts                  | TypeScript         |          7 |          0 |          1 |          8 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\drizzle\0000_careless_zaladane.sql | MS SQL             |         38 |          5 |          1 |         44 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\drizzle\meta\0000_snapshot.json    | JSON               |        239 |          0 |          0 |        239 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\drizzle\meta\_journal.json         | JSON               |         13 |          0 |          0 |         13 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\drizzle\migrations.js              | JavaScript         |          8 |          1 |          3 |         12 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\eas.json                           | JSON               |         34 |          0 |          1 |         35 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\metro.config.js                    | JavaScript         |          4 |          1 |          4 |          9 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\package-lock.json                  | JSON               |     14,900 |          0 |          1 |     14,901 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\package.json                       | JSON               |         78 |          0 |          1 |         79 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\App_Expo\sneakyChat\tsconfig.json                      | JSON with Comments |         18 |          0 |          1 |         19 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\README.md                                              | Markdown           |         32 |          0 |         18 |         50 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\database\mensajer__a.sql                               | MS SQL             |         63 |         59 |         30 |        152 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Metodológico\Met Agil y Scrum.md            | Markdown           |         17 |          0 |          5 |         22 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Metodológico\Metodología de Desarrollo.md   | Markdown           |          3 |          0 |          5 |          8 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Metodológico\Rol de Integrantes.md          | Markdown           |         19 |          0 |          7 |         26 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Teorico\Historia.md                         | Markdown           |         33 |          0 |         17 |         50 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Teorico\NOTAS.md                            | Markdown           |          1 |          0 |          3 |          4 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Marco Teorico\Plataformas.md                      | Markdown           |         13 |          0 |         14 |         27 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\Planteamientos\Obj-Hipo-Justi.md                  | Markdown           |         15 |          0 |         15 |         30 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\docs\intro\README.md                                   | Markdown           |         23 |          0 |         10 |         33 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\package-lock.json                                      | JSON               |          6 |          0 |          1 |          7 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Block Notas.html                            | HTML               |         21 |          0 |          0 |         21 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Index.html                                  | HTML               |         22 |          1 |          0 |         23 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Mensajes.html                               | HTML               |         80 |          0 |          3 |         83 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\Notas.html                                  | HTML               |         14 |          0 |          0 |         14 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\disign\style.css                                   | PostCSS            |        117 |          0 |          3 |        120 |
+| c:\Users\windo\OneDrive\Documentos\Sneaky-Chat\src\javascript\chat.js                                 | JavaScript         |         47 |          4 |          0 |         51 |
+| Total                                                                                                 |                    |     18,201 |         89 |        271 |     18,561 |
++-------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

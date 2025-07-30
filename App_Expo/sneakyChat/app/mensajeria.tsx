@@ -394,7 +394,7 @@ const ChatScreen = () => {
                         if (!processedServerIds.has(Number(mss.ID))) { // Verificamos si ya procesamos este ID del servidor
                           try {
                             let newText = await RSA.decrypt(mss.Texto, llavePrivada).catch(() => null); // Manejar errores de desencriptación
-                            if (newText !== null && (emisorName !==''||!emisorName)) {
+                            if (newText != null && (emisorName !=''||!emisorName) && mss.User_id != nameId) {
                               const urlDelete = `https://ljusstudie.site/deleteMensaje.php?id=${mss.ID}`;
                               const updateD = await fetch(urlDelete);
                               if (updateD.ok) {

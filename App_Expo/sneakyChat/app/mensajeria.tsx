@@ -311,7 +311,6 @@ const ChatScreen = () => {
             const elegirEmisor = (usuarios: any[]) => { 
                 let keys:string[] = []
                 let usuarioOne = null
-                let usuarioPrime = null
                 for (let usuario of usuarios) {
                     keys.push(usuario.KeyPublic)
                     setKeys(keys);
@@ -320,47 +319,9 @@ const ChatScreen = () => {
                         setKey(usuario.KeyPublic);
                         usuarioOne = usuario;
                     }
-                    if (usuario.Id_User === nameId) {
-                        usuarioPrime = usuario;
-                    }
-                }
-                if (usuarioPrime === null) {
-                  crearUsuario();
-                }
+                  }
                 return usuarioOne;
             };
-
-            async function crearUsuario() {
-                try { 
-                  const url = new URL("https://ljusstudie.site/registro_usuario.php");
-                  const result = await drizzleDb.select().from(schema.datosp);
-                  const datosUsuario = result[0];
-                  url.searchParams.append("nomb", datosUsuario.idUser); // se usa como nombre
-                  url.searchParams.append("contra", datosUsuario.pass);
-                  url.searchParams.append("key", keyPublic); // clave RSA pública
-                  url.searchParams.append("sala_id", salaId.toString()); // sala_id
-                  url.searchParams.append("edad", datosUsuario.year.toString()); // edad = año
-
-                  fetch(url.toString(), {
-                    method: "GET",
-                  })
-                    .then((response) => response.json())
-                    .then((json) => {
-                      if (json.ID) {
-                        drizzleDb.update(schema.datosp).set({Id_Usserver: json?.ID? json.ID : 0}).where(eq(schema.datosp.id, 0));
-                        console.log("✅ Registro exitoso. ID:", json.ID);
-                        // Aquí puedes guardar json.ID como Id_Usserver
-                      } else {
-                        console.log("❌ Falló el registro:", json.resultado);
-                      }
-                    })
-                    .catch((error) => {
-                      console.error("🛑 Error en el fetch:", error);
-                    });
-                } catch (error) {
-                  console.error("🛑 Error al crear usuario:", error) ;
-                }
-              }
             async function consultaMensajes() {
                 let newMsj: { idS: number, id: number; userId: string; fecha: string;
                   hora: string; text: string; isCurrentUser: boolean; }[] = [];

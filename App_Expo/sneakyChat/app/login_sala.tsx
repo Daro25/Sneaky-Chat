@@ -62,6 +62,12 @@ export default function Registro_sala() {
                 if (!responseU.ok) throw new Error(`HTTP error! status2: ${responseU.status}`);
                 if (responseU.ok) {
                     const resultU = await responseU.json();
+                    if (resultU.resultado){
+                      Alert.alert('Ey:', resultU.resultado,
+                      [{text: 'Ok', style: 'default', onPress: ()=>{return},}],
+                      {cancelable: false}
+                    );
+                    }
                     await drizzleDb.update(schema.datosp).set({Id_Usserver: resultU?.ID? resultU.ID : 0}).where(eq(schema.datosp.id, 0));
                 }
               }

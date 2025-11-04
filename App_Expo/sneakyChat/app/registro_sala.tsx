@@ -59,7 +59,8 @@ export default function Registro_sala() {
         if (!consultaU.ok) { Alert.alert('Error',`HTTP error! status: ${consultaU.status}`);
         } else {
           const dataU = await consultaU.json();
-          if (dataU.length === 0) {
+          //await alertAsync("Debug Usuario",JSON.stringify(dataU));
+          if (dataU?.error === "Usuario no encontrado.") {
             if (userResult.length > 0) {
               const keys = await RSA.generateKeys(512);
               await SecureStore.setItemAsync('llavePrivada', keys.private);
@@ -91,7 +92,21 @@ export default function Registro_sala() {
       setIsLoading(false);
     }
   };
-
+function alertAsync(title: string, message: string): Promise<void> {
+  return new Promise((resolve) => {
+    Alert.alert(
+      title,
+      message,
+      [
+        {
+          text: "OK",
+          onPress: () => resolve(),
+        },
+      ],
+      { cancelable: false }
+    );
+  });
+}
   if (errors === '') {
     return (
       <SafeAreaView style={[useGlobalStyles().container]}>

@@ -6,10 +6,7 @@
 Dávila Reyes Oscar Alexis            23500010            ITIC´s          4to sem.
 Flores Avendaño Zuris Aday           23500469            ITIC´s          4to sem.
 Mota Casados Johan Uriel             23500011            ITIC´s          4to sem.
-Tomas José Luz Elizabeth             23500014            ITIC´s          4to sem.
-López Capellini Michelle             22500436             IGE            6to sem.
-Balleza Torres Ana Lucía             21500301             IGE            6to sem. 
-Hernandez Martínez Angel Gustavo     22500052             CP             6to sem. 
+Tomas José Luz Elizabeth             23500014            ITIC´s          4to sem. 
 
 
 ## *********INTRODUCCIÓN*********
